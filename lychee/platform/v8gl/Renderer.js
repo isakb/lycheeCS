@@ -60,6 +60,8 @@ lychee.define('Renderer').tags({
 			}
 
 
+			glut.initDisplayMode(glut.DOUBLE | glut.RGBA | glut.DEPTH);
+
 			if (width !== this.__width || height !== this.__height) {
 
 				if (this.__window !== null) {
@@ -85,9 +87,6 @@ lychee.define('Renderer').tags({
 				}
 
 			}
-
-
-			glut.initDisplayMode(glut.DOUBLE | glut.RGBA | glut.DEPTH);
 
 
 			gl.matrixMode(gl.PROJECTION);
