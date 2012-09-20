@@ -421,13 +421,13 @@ lychee.define('Renderer').tags({
 				gl.bindTexture(gl.TEXTURE_2D, texture.id);
 
 				gl.begin(gl.QUADS);
-				gl.texCoord2d(sx1, sy1);
+				gl.texCoord2f(sx1, sy1);
 				gl.vertex2f(x1, y1);
-				gl.texCoord2d(sx2, sy1);
+				gl.texCoord2f(sx2, sy1);
 				gl.vertex2f(x2, y1);
-				gl.texCoord2d(sx2, sy2);
+				gl.texCoord2f(sx2, sy2);
 				gl.vertex2f(x2, y2);
-				gl.texCoord2d(sx1, sy2);
+				gl.texCoord2f(sx1, sy2);
 				gl.vertex2f(x1, y2);
 				gl.end();
 
@@ -455,13 +455,13 @@ lychee.define('Renderer').tags({
 				gl.bindTexture(gl.TEXTURE_2D, texture.id);
 
 				gl.begin(gl.QUADS);
-				gl.texCoord2d(sx1, sy1);
+				gl.texCoord2f(sx1, sy1);
 				gl.vertex2f(x1, y1);
-				gl.texCoord2d(sx2, sy1);
+				gl.texCoord2f(sx2, sy1);
 				gl.vertex2f(x2, y1);
-				gl.texCoord2d(sx2, sy2);
+				gl.texCoord2f(sx2, sy2);
 				gl.vertex2f(x2, y2);
-				gl.texCoord2d(sx1, sy2);
+				gl.texCoord2f(sx1, sy2);
 				gl.vertex2f(x1, y2);
 				gl.end();
 
@@ -574,13 +574,13 @@ lychee.define('Renderer').tags({
 					gl.bindTexture(gl.TEXTURE_2D, texture.id);
 
 					gl.begin(gl.QUADS);
-					gl.texCoord2d(sx1, sy1);
+					gl.texCoord2f(sx1, sy1);
 					gl.vertex2f(x1, y1);
-					gl.texCoord2d(sx2, sy1);
+					gl.texCoord2f(sx2, sy1);
 					gl.vertex2f(x2, y1);
-					gl.texCoord2d(sx2, sy2);
+					gl.texCoord2f(sx2, sy2);
 					gl.vertex2f(x2, y2);
-					gl.texCoord2d(sx1, sy2);
+					gl.texCoord2f(sx1, sy2);
 					gl.vertex2f(x1, y2);
 					gl.end();
 
