@@ -203,13 +203,12 @@ lychee.define('Renderer').tags({
 		 * Setters
 		 */
 
-		// TODO: Implement global alpha
 		setAlpha: function(alpha) {
 
 			alpha = typeof alpha === 'number' ? alpha : null;
 
 			if (alpha !== null && alpha >= 0 && alpha <= 1) {
-
+				this.__alpha = alpha;
 			}
 
 		},
@@ -415,7 +414,10 @@ lychee.define('Renderer').tags({
 				gl.matrixMode(gl.MODELVIEW);
 				gl.loadIdentity();
 
-				gl.color3f(1.0, 1.0, 1.0);
+				gl.color4f(1.0, 1.0, 1.0, this.__alpha);
+
+				gl.enable(gl.BLEND);
+				gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 				gl.enable(gl.TEXTURE_2D);
 				gl.bindTexture(gl.TEXTURE_2D, texture.id);
@@ -449,7 +451,10 @@ lychee.define('Renderer').tags({
 				gl.matrixMode(gl.MODELVIEW);
 				gl.loadIdentity();
 
-				gl.color3f(1.0, 1.0, 1.0);
+				gl.color4f(1.0, 1.0, 1.0, this.__alpha);
+
+				gl.enable(gl.BLEND);
+				gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 				gl.enable(gl.TEXTURE_2D);
 				gl.bindTexture(gl.TEXTURE_2D, texture.id);
@@ -565,7 +570,7 @@ lychee.define('Renderer').tags({
 					gl.matrixMode(gl.MODELVIEW);
 					gl.loadIdentity();
 
-					gl.color3f(1.0, 1.0, 1.0);
+					gl.color4f(1.0, 1.0, 1.0, this.__alpha);
 
 					gl.enable(gl.BLEND);
 					gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
