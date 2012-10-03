@@ -17,6 +17,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 		// Reuse this cache for performance relevant methods
 		this.__cache = {
+			position: {},
 			tween: {},
 			effect: {}
 		};
@@ -224,6 +225,10 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 				x: 0, y: 0, z: 0
 			},
 
+			radius: 0,
+			width:  0,
+			height: 0,
+
 			shape: Class.SHAPE.circle,
 			collision: Class.COLLISION.none,
 
@@ -276,57 +281,49 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 			if (this.__tween !== null && (this.__clock <= this.__tween.start + this.__tween.duration)) {
 
+				var cache = this.__cache.position;
 				t = (this.__clock - this.__tween.start) / this.__tween.duration;
 
-				var diff;
 
-				var delta = {};
 				if (typeof this.__position.x === 'number') {
-					delta.x = this.__tween.to.x - this.__tween.from.x;
+					cache.x = this.__tween.to.x - this.__tween.from.x;
 				} else {
-					delta.x = 0;
+					cache.x = 0;
 				}
 
 				if (typeof this.__position.y === 'number') {
-					delta.y = this.__tween.to.y - this.__tween.from.y;
+					cache.y = this.__tween.to.y - this.__tween.from.y;
 				} else {
-					delta.y = 0;
+					cache.y = 0;
 				}
 
 				if (typeof this.__position.z === 'number') {
-					delta.z = this.__tween.to.z - this.__tween.from.z;
+					cache.z = this.__tween.to.z - this.__tween.from.z;
 				} else {
-					delta.z = 0;
+					cache.z = 0;
 				}
 
 
-				var diff = this.__tween.callback.call(this.__tween.scope, t, delta.x, delta.y, delta.z);
+				var diff = this.__tween.callback.call(this.__tween.scope, t, cache.x, cache.y, cache.z);
 
-				var newPosition = {};
 				if (typeof this.__position.x === 'number') {
-					newPosition.x = this.__tween.from.x + diff.x;
+					cache.x = this.__tween.from.x + diff.x;
 				}
 
 				if (typeof this.__position.y === 'number') {
-					newPosition.y = this.__tween.from.y + diff.y;
+					cache.y = this.__tween.from.y + diff.y;
 				}
 
 				if (typeof this.__position.z === 'number') {
-					newPosition.z = this.__tween.from.z + diff.z;
+					cache.z = this.__tween.from.z + diff.z;
 				}
 
-				this.setPosition(newPosition);
+				this.setPosition(cache);
 
 			} else if (this.__tween !== null) {
 
-				// This case is for having not enough update
-				// for tween to be finished in time.
-				this.setPosition({
-					x: this.__tween.to.x,
-					y: this.__tween.to.y,
-					z: this.__tween.to.z
-				});
-
+				// We didn't have enough time for the tween
+				this.setPosition(this.__tween.to);
 				this.__tween = null;
 
 			}
@@ -571,21 +568,17 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 
 			var animation = null;
-
-			var _animationdefaults = {
-				frame: 0,
-				frames: 10
-			};
-
-
 			if (duration !== null || settings !== null) {
 
-				var ani = lychee.extend({}, _animationdefaults, settings);
+				// Faster than an animationdefaults object lookup
+				settings.frame  = settings.frame || 0;
+				settings.frames = settings.frames || 10;
+
 
 				animation = {
 					start: this.__clock,
-					frame: ani.frame,
-					frames: ani.frames,
+					frame: settings.frame,
+					frames: settings.frames,
 					duration: duration,
 					loop: loop
 				};
@@ -595,6 +588,10 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 			this.__animation = animation;
 
+		},
+
+		clearAnimation: function() {
+			this.__animation = null;
 		},
 
 		setEffect: function(duration, data, settings, scope, loop) {
