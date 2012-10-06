@@ -1,19 +1,24 @@
 
 lychee.define('lychee.game.Entity').exports(function(lychee) {
 
-	var Class = function(settings) {
+	var Class = function(data) {
 
-		this.settings = lychee.extend({}, this.defaults, settings);
+		var settings = lychee.extend({}, this.defaults, data);
+
 
 		this.__clock = null;
 
-		this.__collision = null;
-		this.__shape = null;
-
 		this.__animation = null;
+		this.__collision = null;
 		this.__effect = null;
+		this.__position = { x: 0, y: 0, z: 0 };
+		this.__shape = null;
 		this.__state = 'default';
 		this.__tween = null;
+
+
+		this.__states = lychee.extend({}, this.defaults.states, settings.states);
+
 
 		// Reuse this cache for performance relevant methods
 		this.__cache = {
@@ -23,14 +28,18 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		};
 
 
-		this.__position = {
-			x: 0, y: 0, z: 0
-		};
+		this.width  = settings.width;
+		this.height = settings.height;
+		this.radius = settings.radius;
 
-		this.setPosition(this.settings.position);
-		this.setCollisionType(this.settings.collision);
-		this.setShape(this.settings.shape);
-		this.setState(this.settings.state);
+
+		this.setPosition(settings.position);
+		this.setCollisionType(settings.collision);
+		this.setShape(settings.shape);
+		this.setState(settings.state);
+
+
+		settings = null;
 
 	};
 
@@ -430,7 +439,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 			id = typeof id === 'string' ? id : null;
 
-			if (id !== null && this.settings.states[id] !== undefined) {
+			if (id !== null && this.__states[id] !== undefined) {
 				this.__state = id;
 				return true;
 			}
@@ -461,7 +470,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 				&& shapeB === Class.SHAPE.circle
 			) {
 
-				var collisionDistance = this.settings.radius + entity.settings.radius;
+				var collisionDistance = this.radius + entity.radius;
 				var realDistance = Math.sqrt(
 					Math.pow(posB.x - posA.x, 2) + Math.pow(posB.y - posA.y, 2)
 				);
@@ -476,9 +485,9 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 				&& shapeB === Class.SHAPE.rectangle
 			) {
 
-				var radius = this.settings.radius;
-				var halfWidth = entity.settings.width / 2;
-				var halfHeight = entity.settings.height / 2;
+				var radius = this.radius;
+				var halfWidth = entity.width / 2;
+				var halfHeight = entity.height / 2;
 
 				if (
 					(posA.x + radius > posB.x - halfWidth)
