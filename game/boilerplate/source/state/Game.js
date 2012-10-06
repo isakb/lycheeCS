@@ -1,6 +1,6 @@
 
 lychee.define('game.state.Game').includes([
-	'lychee.game.State',
+	'lychee.game.State'
 ]).exports(function(lychee, global) {
 
 	var Class = function(game) {

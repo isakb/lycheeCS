@@ -10,8 +10,6 @@ lychee.define('game.Renderer').requires([
 
 		lychee.Renderer.call(this, id);
 
-		this.settings = lychee.extend({}, this.defaults);
-
 	};
 
 	Class.prototype = {
@@ -32,15 +30,14 @@ lychee.define('game.Renderer').requires([
 			var sprite = settings.image;
 
 
-			var stateId = entity.getState();
-			var state = settings.states[stateId];
+			var state = settings.states[entity.getState()];
 			var frame = entity.getFrame();
-			var position = entity.getPosition();
+			var pos = entity.getPosition();
 
 
 			this.drawSprite(
-				position.x,
-				position.y,
+				pos.x,
+				pos.y,
 				sprite,
 				state.map[frame]
 			);

@@ -99,6 +99,7 @@ lychee.define('game.state.Menu').includes([
    				}
 			};
 
+
 			this.__headline = new game.entity.Text(
 				'',
 				this.game.fonts.headline, {
@@ -108,6 +109,46 @@ lychee.define('game.state.Menu').includes([
 					}
 				}
 			);
+
+
+			// Example Sprites with States
+			var sprite1 = new game.entity.Sprite({
+				position: {
+					x: 64,
+					y: 192 + 16
+				},
+				state: 'first'
+			});
+
+			var sprite2 = new game.entity.Sprite({
+				position: {
+					x: 64,
+					y: 192 + 32 + 16 * 2
+				},
+				state: 'second'
+			});
+
+			var sprite3 = new game.entity.Sprite({
+				position: {
+					x: 64,
+					y: 192 + 32 * 2 + 16 * 3
+				},
+				state: 'third'
+			});
+
+
+			var animation = {
+				frame: 0,
+				frames: 6,
+				fps: 6
+			};
+
+
+			sprite1.setAnimation(1000, animation, true);
+			sprite2.setAnimation(2000, animation, true);
+			sprite3.setAnimation(4000, animation, true);
+
+			this.__sprites = [ sprite1, sprite2, sprite3 ];
 
 		},
 
@@ -271,46 +312,6 @@ lychee.define('game.state.Menu').includes([
 				this.__loop.timeout(1000 + i * 200, function() {
 					this.__locked = false;
 				}, this);
-
-
-				// Example Sprites with States
-				var sprite1 = new game.entity.Sprite({
-					position: {
-						x: 64,
-						y: 192 + 16
-					},
-					state: 'first'
-				});
-
-				var sprite2 = new game.entity.Sprite({
-					position: {
-						x: 64,
-						y: 192 + 32 + 16 * 2
-					},
-					state: 'second'
-				});
-
-				var sprite3 = new game.entity.Sprite({
-					position: {
-						x: 64,
-						y: 192 + 32 * 2 + 16 * 3
-					},
-					state: 'third'
-				});
-
-
-				var animation = {
-					frame: 0,
-					frames: 6,
-					fps: 6
-				};
-
-
-				sprite1.setAnimation(1000, animation, true);
-				sprite2.setAnimation(2000, animation, true);
-				sprite3.setAnimation(4000, animation, true);
-
-				this.__sprites = [ sprite1, sprite2, sprite3 ];
 
 			}
 

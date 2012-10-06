@@ -47,7 +47,8 @@ lychee.define('game.Main').requires([
 				base + '/img/font_48_white.png',
 				base + '/img/font_32_white.png',
 				base + '/img/font_16_white.png',
-				base + '/img/sprite.png'
+				base + '/img/sprite.png',
+				base + '/json/sprite.json'
 			];
 
 
@@ -77,50 +78,9 @@ lychee.define('game.Main').requires([
 					map: [9,11,14,17,13,18,15,10,12,12,13,12,10,12,11,14,14,11,14,13,13,13,14,12,14,14,10,10,19,12,19,13,22,12,13,12,13,12,12,14,13,9,11,13,11,16,13,14,12,14,12,13,12,13,12,15,12,12,14,12,14,12,19,14,10,12,13,12,13,12,12,14,13,9,11,13,11,16,13,14,12,14,12,13,12,13,12,15,12,12,14,16,11,16,19]
 				});
 
+				this.map = assets[urls[4]];
+				this.map.sprite.image = assets[urls[3]];
 
-				this.map = {
-					sprite: {
-						image: assets[urls[3]],
-						states: {
-							'first': {
-								width:  32,
-								height: 32,
-								map: [
-									{ x: 0,    y: 0, w: 32, h: 32 },
-									{ x: 32,   y: 0, w: 32, h: 32 },
-									{ x: 64,   y: 0, w: 32, h: 32 },
-									{ x: 96,   y: 0, w: 32, h: 32 },
-									{ x: 128,  y: 0, w: 32, h: 32 },
-									{ x: 160,  y: 0, w: 32, h: 32 }
-								]
-							},
-							'second': {
-								width:  32,
-								height: 32,
-								map: [
-									{ x: 0,    y: 64, w: 32, h: 32 },
-									{ x: 32,   y: 64, w: 32, h: 32 },
-									{ x: 64,   y: 64, w: 32, h: 32 },
-									{ x: 96,   y: 64, w: 32, h: 32 },
-									{ x: 128,  y: 64, w: 32, h: 32 },
-									{ x: 160,  y: 64, w: 32, h: 32 }
-								]
-							},
-							'third': {
-								width:  32,
-								height: 32,
-								map: [
-									{ x: 0,    y: 128, w: 32, h: 32 },
-									{ x: 32,   y: 128, w: 32, h: 32 },
-									{ x: 64,   y: 128, w: 32, h: 32 },
-									{ x: 96,   y: 128, w: 32, h: 32 },
-									{ x: 128,  y: 128, w: 32, h: 32 },
-									{ x: 160,  y: 128, w: 32, h: 32 }
-								]
-							}
-						}
-					}
-				};
 
 				this.init();
 
@@ -151,7 +111,7 @@ lychee.define('game.Main').requires([
 			}
 
 
-			this.renderer.reset(this.settings.width, this.settings.height, true);
+			this.renderer.reset(this.settings.width, this.settings.height, false);
 
 			this.__rendererEnv = env;
 

@@ -3,14 +3,16 @@ lychee.define('game.entity.Text').includes([
 	'lychee.game.Entity'
 ]).exports(function(lychee, global) {
 
-	var Class = function(text, font, settings) {
+	var Class = function(text, font, data) {
 
-		this.settings = lychee.extend({}, this.defaults, settings);
+		var settings = data;
 
 		this.text = text;
 		this.font = font;
 
-		lychee.game.Entity.call(this, this.settings);
+		lychee.game.Entity.call(this, settings);
+
+		settings = null;
 
 	};
 
