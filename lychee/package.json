@@ -48,6 +48,7 @@
 
 		"game": {
 			"Entity": [ "js" ],
+			"Graph": [ "js" ],
 			"Loop": [ "js" ],
 			"Main": [ "js" ],
 			"State": [ "js" ],
@@ -64,6 +65,11 @@
 			"ASTWalker": [ "js" ],
 			"Tokenizer": [ "js" ],
 			"Parser": [ "js" ]
+		},
+
+		"ui": {
+			"Entity": [ "js" ],
+			"Graph": [ "js" ]
 		},
 
 		"Font": [ "js" ],
