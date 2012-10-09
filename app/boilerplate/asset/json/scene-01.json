@@ -1,0 +1,143 @@
+{
+	"entities": [{
+		"id":       "tile-blue",
+		"type":     "Tile",
+		"parent":   null,
+		"data": {
+			"color": "#3333cc",
+			"position": {
+				"x": 0.5,
+				"y": 0.5
+			}
+		}
+	}, {
+		"id":       "tile-red",
+		"type":     "Tile",
+		"parent":   null,
+		"data": {
+			"color": "#cc3333",
+			"position": {
+				"x": 1.5,
+				"y": 0.5
+			}
+		}
+	}, {
+		"id":       "tile-green",
+		"type":     "Tile",
+		"parent":   null,
+		"data": {
+			"color": "#33cc33",
+			"position": {
+				"x": 2.5,
+				"y": 0.5
+			}
+		}
+	}, {
+		"type":     "Text",
+		"parent":   "tile-blue",
+		"data": {
+			"text": "Scene-Graph",
+			"font": "headline",
+			"layout": {
+				"position": "relative",
+				"x": 0,
+				"y": -0.5
+			}
+		}
+	}, {
+		"type":     "Text",
+		"parent":   "tile-blue",
+		"data": {
+			"text": "Swipe to scroll",
+			"font": "normal",
+			"layout": {
+				"position": "relative",
+				"x": 0,
+				"y": 0
+			}
+		}
+	}, {
+		"id":       "exit",
+		"type":     "Text",
+		"parent":   "tile-blue",
+		"data": {
+			"text": "Exit",
+			"font": "normal",
+			"layout": {
+				"position": "relative",
+				"x": -0.5,
+				"y": 0.5
+			}
+		}
+	}, {
+		"type":     "Text",
+		"parent":   "tile-red",
+		"data": {
+			"text": "This is Tile 2",
+			"font": "headline",
+			"position": {
+				"x": 0,
+				"y": -20
+			}
+		}
+	}, {
+		"type":     "Sprite",
+		"parent":   "tile-green",
+		"data": {
+			"position": {
+				"x": -100,
+				"y": 40
+			},
+			"state": "first",
+			"animation": {
+				"duration": 6000,
+				"loop": true,
+				"frame": 0,
+				"frames": 6
+			}
+		}
+	}, {
+		"type":     "Sprite",
+		"parent":   "tile-green",
+		"data": {
+			"position": {
+				"x": -0,
+				"y": 40
+			},
+			"state": "second",
+			"animation": {
+				"duration": 3000,
+				"loop": true,
+				"frame": 0,
+				"frames": 6
+			}
+		}
+	}, {
+		"type":     "Sprite",
+		"parent":   "tile-green",
+		"data": {
+			"position": {
+				"x": 100,
+				"y": 40
+			},
+			"state": "third",
+			"animation": {
+				"duration": 1000,
+				"loop": true,
+				"frame": 0,
+				"frames": 6
+			}
+		}
+	}, {
+		"type":     "Text",
+		"parent":   "tile-green",
+		"data": {
+			"text": "This is Tile 3",
+			"font": "headline",
+			"position": {
+				"x": 0,
+				"y": -20
+			}
+		}
+	}]
+}
