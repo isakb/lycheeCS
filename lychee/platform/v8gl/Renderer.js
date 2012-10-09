@@ -96,6 +96,8 @@ lychee.define('Renderer').tags({
 			gl.disable(gl.DEPTH_TEST);
 
 
+			this.__updateEnvironment();
+
 		},
 
 		start: function() {
@@ -130,6 +132,17 @@ lychee.define('Renderer').tags({
 		},
 
 		getEnvironment: function() {
+			this.__updateEnvironment();
+			return this.__environment;
+		},
+
+
+
+		/*
+		 * PRIVATE API: Helpers
+		 */
+
+		__updateEnvironment: function() {
 
 			this.__environment.width = this.__width;
 			this.__environment.height = this.__height;
@@ -140,16 +153,7 @@ lychee.define('Renderer').tags({
 			this.__environment.offset.x = 0;
 			this.__environment.offset.y = 0;
 
-
-			return this.__environment;
-
 		},
-
-
-
-		/*
-		 * Helpers
-		 */
 
 		__hexToRGB: function(hex) {
 

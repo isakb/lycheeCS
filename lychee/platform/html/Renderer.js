@@ -59,6 +59,7 @@ lychee.define('Renderer').tags({
 		/*
 		 * State and Environment Management
 		 */
+
 		reset: function(width, height, resetCache) {
 
 			width = typeof width === 'number' ? width : this.__width;
@@ -78,6 +79,9 @@ lychee.define('Renderer').tags({
 
 			this.__canvas.style.width = width + 'px';
 			this.__canvas.style.height = height + 'px';
+
+
+			this.__updateEnvironment();
 
 		},
 
@@ -108,9 +112,17 @@ lychee.define('Renderer').tags({
 		},
 
 		getEnvironment: function() {
+			this.__updateEnvironment();
+			return this.__environment;
+		},
 
-			this.__environment.width = this.__width;
-			this.__environment.height = this.__height;
+
+
+		/*
+		 * PRIVATE API: Helpers
+		 */
+
+		__updateEnvironment: function() {
 
 			this.__environment.screen.width = global.innerWidth;
 			this.__environment.screen.height = global.innerHeight;
@@ -118,8 +130,8 @@ lychee.define('Renderer').tags({
 			this.__environment.offset.x = this.__canvas.offsetLeft;
 			this.__environment.offset.y = this.__canvas.offsetTop;
 
-
-			return this.__environment;
+			this.__environment.width = this.__width;
+			this.__environment.height = this.__height;
 
 		},
 
@@ -128,6 +140,7 @@ lychee.define('Renderer').tags({
 		/*
 		 * Setters
 		 */
+
 		setAlpha: function(alpha) {
 
 			alpha = typeof alpha === 'number' ? alpha : null;
@@ -152,6 +165,7 @@ lychee.define('Renderer').tags({
 		/*
 		 * Drawing API
 		 */
+
 		drawBox: function(x1, y1, x2, y2, color, background, lineWidth) {
 
 			if (this.__state !== 'running') return;
