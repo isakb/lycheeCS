@@ -39,6 +39,23 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		this.setState(settings.state);
 
 
+		if (Object.prototype.toString.call(settings.animation) === '[object Object]') {
+
+			if (typeof settings.animation.duration === 'number') {
+
+				var duration = settings.animation.duration;
+				var loop = settings.animation.loop === true ? true : false;
+
+				delete settings.animation.duration;
+				delete settings.animation.loop;
+
+				this.setAnimation(duration, settings.animation, loop);
+
+			}
+
+		}
+
+
 		settings = null;
 
 	};
