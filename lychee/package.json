@@ -69,7 +69,9 @@
 
 		"ui": {
 			"Entity": [ "js" ],
-			"Graph": [ "js" ]
+			"Graph": [ "js" ],
+			"Text": [ "js" ],
+			"Tile": [ "js" ]
 		},
 
 		"Font": [ "js" ],

@@ -31,6 +31,20 @@ lychee.define('lychee.ui.Entity').includes([
 		 * PUBLIC API
 		 */
 
+		hasEvent: function(type) {
+
+			if (this.___events[type] === undefined) {
+				return false;
+			}
+
+			if (this.___events[type].length === 0) {
+				return false;
+			}
+
+			return true;
+
+		},
+
 		bind: function(type, callback, scope) {
 
 			if (this.___events[type] === undefined) {
@@ -111,6 +125,7 @@ lychee.define('lychee.ui.Entity').includes([
 			var hwidth = parent.width / 2;
 			var hheight = parent.height / 2;
 
+
 			var layout = this.__layout;
 			if (layout !== null) {
 
@@ -149,11 +164,6 @@ lychee.define('lychee.ui.Entity').includes([
 
 		setLayout: function(layout) {
 
-			if (Object.prototype.toString.call(layout) !== '[object Object]') {
-				return false;
-			}
-
-
 			if (this.__layout === null) {
 
 				this.__layout = {
@@ -161,6 +171,11 @@ lychee.define('lychee.ui.Entity').includes([
 					x: 0, y: 0
 				};
 
+			}
+
+
+			if (Object.prototype.toString.call(layout) !== '[object Object]') {
+				return false;
 			}
 
 
