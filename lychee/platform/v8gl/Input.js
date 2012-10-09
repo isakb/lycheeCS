@@ -268,7 +268,7 @@ lychee.define('Input').tags({
 			}
 
 
-			this.trigger('touch', [ { x: x, y: y }, delta ]);
+			var cancelSwipe = !this.trigger('touch', [ { x: x, y: y }, delta ]);
 
 
 			for (var id in this.__touchareas) {
@@ -288,7 +288,11 @@ lychee.define('Input').tags({
 			this.__last.touch = Date.now();
 
 
-			if (this.__swipe === null && this.settings.fireSwipe === true) {
+			if (
+				cancelSwipe !== true
+				&& this.__swipe === null
+				&& this.settings.fireSwipe === true
+			) {
 
 				this.trigger('swipe', [ 'start', { x: x, y: y }, delta ]);
 
