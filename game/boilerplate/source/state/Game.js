@@ -59,6 +59,87 @@ lychee.define('game.state.Game').includes([
 				this.game.setState('menu');
 			}, this);
 
+
+			this.__entities.spriteA = new game.entity.Sprite({
+				width: 32,
+				height: 32,
+				position: {
+					x: width / 2 - 84,
+					y: height / 2
+				},
+				state: 'first',
+				animation: {
+					frame: 0,
+					frames: 6,
+					duration: 24000,
+					loop: true
+				}
+			});
+
+			this.__entities.spriteB = new game.entity.Sprite({
+				width: 32,
+				height: 32,
+				position: {
+					x: width / 2 - 42,
+					y: height / 2
+				},
+				state: 'second',
+				animation: {
+					frame: 0,
+					frames: 6,
+					duration: 12000,
+					loop: true
+				}
+			});
+
+			this.__entities.spriteC = new game.entity.Sprite({
+				width: 32,
+				height: 32,
+				position: {
+					x: width / 2,
+					y: height / 2
+				},
+				state: 'third',
+				animation: {
+					frame: 0,
+					frames: 6,
+					duration: 6000,
+					loop: true
+				}
+			});
+
+			this.__entities.spriteD = new game.entity.Sprite({
+				width: 32,
+				height: 32,
+				position: {
+					x: width / 2 + 42,
+					y: height / 2
+				},
+				state: 'fourth',
+				animation: {
+					frame: 0,
+					frames: 6,
+					duration: 3000,
+					loop: true
+				}
+			});
+
+			this.__entities.spriteE = new game.entity.Sprite({
+				width: 32,
+				height: 32,
+				position: {
+					x: width / 2 + 84,
+					y: height / 2
+				},
+				state: 'fifth',
+				animation: {
+					frame: 0,
+					frames: 6,
+					duration: 1000,
+					loop: true
+				}
+			});
+
 		},
 
 		enter: function() {
@@ -96,7 +177,7 @@ lychee.define('game.state.Game').includes([
 				this.__locked = false;
 
 				this.__entities.noisehint.setTween(500, {
-					y: height / 2
+					y: height / 2 + 50
 				}, lychee.game.Entity.TWEEN.easeOut);
 
 			}, this);
@@ -144,7 +225,7 @@ lychee.define('game.state.Game').includes([
 
 			for (var e in this.__entities) {
 				if (this.__entities[e] === null) continue;
-				this.__renderer.renderText(this.__entities[e]);
+				this.__renderer.renderEntity(this.__entities[e]);
 			}
 
 

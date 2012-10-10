@@ -6,9 +6,11 @@ lychee.define('game.entity.Sprite').includes([
 	var Class = function(settings) {
 
 		settings.states = {
-			first: 0,
+			first:  0,
 			second: 1,
-			third: 2
+			third:  2,
+			fourth: 3,
+			fifth:  4
 		};
 
 		lychee.game.Entity.call(this, settings);

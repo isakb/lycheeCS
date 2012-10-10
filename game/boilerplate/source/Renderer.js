@@ -1,7 +1,8 @@
 
 lychee.define('game.Renderer').requires([
 	'lychee.ui.Text',
-	'lychee.ui.Tile'
+	'lychee.ui.Tile',
+	'game.entity.Sprite'
 ]).includes([
 	'lychee.Renderer'
 ]).exports(function(lychee, global) {
@@ -31,11 +32,17 @@ lychee.define('game.Renderer').requires([
 			} else if (entity instanceof lychee.ui.Tile) {
 				// Do nothing, Tiles are only used for structure here.
 				// this.renderTile(entity, offsetX, offsetY);
+			} else if (entity instanceof game.entity.Sprite) {
+				this.renderSprite(entity, offsetX, offsetY);
 			}
 
 		},
 
-		renderSprite: function(entity) {
+		renderSprite: function(entity, offsetX, offsetY) {
+
+			offsetX = offsetX || 0;
+			offsetY = offsetY || 0;
+
 
 			var settings = this.settings.map.sprite;
 			var sprite = settings.image;
@@ -47,15 +54,13 @@ lychee.define('game.Renderer').requires([
 
 
 			this.drawSprite(
-				pos.x,
-				pos.y,
+				pos.x + offsetX - entity.width / 2,
+				pos.y + offsetY - entity.height / 2,
 				sprite,
 				state.map[frame]
 			);
 
 		},
-
-
 
 		renderText: function(entity, offsetX, offsetY) {
 
