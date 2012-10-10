@@ -8,17 +8,21 @@ lychee.define('game.Jukebox').includes([
 		lychee.game.Jukebox.call(this, 20, game.loop);
 
 		var base = game.settings.base + '/snd';
-		var formats = [ 'caf', 'mp3', 'ogg', 'gsm', 'amr' ];
+		var formats = [ 'mp3', 'ogg' ];
 
 		var tracks = [
+
 			// state.Game
 			'countdown',
 			'success',
 			'fail',
+
 			// state.Menu
 			'menuclick',
+
 			// Music
 			'music'
+
 		];
 
 
