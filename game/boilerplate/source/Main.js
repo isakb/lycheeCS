@@ -29,6 +29,7 @@ lychee.define('game.Main').requires([
 	Class.prototype = {
 
 		defaults: {
+			title: 'boilerplate',
 			base: './asset',
 			sound: true,
 			music: true,
@@ -164,24 +165,6 @@ lychee.define('game.Main').requires([
 			}
 
 			return this.__offset;
-
-		},
-
-		set: function(key, value) {
-
-			if (this.settings[key] !== undefined) {
-
-				if (value === null) {
-					value = this.defaults[key];
-				}
-
-				this.settings[key] = value;
-
-				return true;
-
-			}
-
-			return false;
 
 		}
 

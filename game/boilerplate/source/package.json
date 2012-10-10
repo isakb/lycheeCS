@@ -9,14 +9,14 @@
 		},
 
 		"entity": {
-			"Text": [ "js" ],
 			"Sprite": [ "js" ]
 		},
 
 		"DeviceSpecificHacks": [ "js" ],
 		"Jukebox": [ "js" ],
 		"Main": [ "js", "css" ],
-		"Renderer": [ "js" ]
+		"Renderer": [ "js" ],
+		"Scene": [ "js" ]
 
 	}
 }
