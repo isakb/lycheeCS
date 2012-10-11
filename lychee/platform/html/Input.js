@@ -133,33 +133,8 @@ lychee.define('Input').tags({
 
 
 			var supportsMouse = 'onmousedown' in global;
-			if (supportsMouse === true) {
-
-				document.addEventListener('mousedown', function(event) {
-					that.__processTouch(event.pageX, event.pageY);
-				}, true);
-
-
-				if (this.settings.fireSwipe === true) {
-
-					document.addEventListener('mousemove', function(event) {
-						that.__processSwipe('move', event.pageX, event.pageY);
-					}, true);
-
-					document.addEventListener('mouseup', function(event) {
-						that.__processSwipe('end', event.pageX, event.pageY);
-					}, true);
-
-					document.addEventListener('mouseout', function(event) {
-						that.__processSwipe('end', event.pageX, event.pageY);
-					}, true);
-
-				}
-
-			}
-
-
 			var supportsTouch = 'ontouchstart' in global;
+
 			if (supportsTouch === true) {
 
 				document.addEventListener('touchstart', function(event) {
@@ -199,6 +174,29 @@ lychee.define('Input').tags({
 
 						that.__processSwipe('end', touch.pageX, touch.pageY);
 
+					}, true);
+
+				}
+
+			} else if (supportsMouse === true) {
+
+				document.addEventListener('mousedown', function(event) {
+					that.__processTouch(event.pageX, event.pageY);
+				}, true);
+
+
+				if (this.settings.fireSwipe === true) {
+
+					document.addEventListener('mousemove', function(event) {
+						that.__processSwipe('move', event.pageX, event.pageY);
+					}, true);
+
+					document.addEventListener('mouseup', function(event) {
+						that.__processSwipe('end', event.pageX, event.pageY);
+					}, true);
+
+					document.addEventListener('mouseout', function(event) {
+						that.__processSwipe('end', event.pageX, event.pageY);
 					}, true);
 
 				}
