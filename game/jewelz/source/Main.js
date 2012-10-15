@@ -34,6 +34,7 @@ lychee.define('game.Main').requires([
 	Class.prototype = {
 
 		defaults: {
+			title: 'Jewelz',
 			base: './asset',
 			sound: true,
 			music: true,

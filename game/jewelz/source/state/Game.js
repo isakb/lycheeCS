@@ -1,5 +1,7 @@
 
-lychee.define('game.state.Game').includes([
+lychee.define('game.state.Game').requires([
+	'lychee.ui.Text'
+]).includes([
 	'lychee.game.State'
 ]).exports(function(lychee, global) {
 
@@ -26,15 +28,13 @@ lychee.define('game.state.Game').includes([
 
 		init: function() {
 
-			this.__intro = new game.entity.Text(
-				'3',
-				this.game.fonts.headline, {
-					position: {
-						x: 'center',
-						y: 'center'
-					}
+			this.__intro = new lychee.ui.Text({
+				text: '3',
+				font: this.game.fonts.headline,
+				position: {
+					x: 0, y: 0
 				}
-			);
+			});
 
 		},
 
@@ -65,20 +65,20 @@ lychee.define('game.state.Game').includes([
 
 
 			this.__loop.timeout(0, function(clock, delta) {
-				this.__intro.setText('3');
+				this.__intro.set('3');
 				this.__introTimeout = clock + this.game.settings.play.intro;
 			}, this);
 
 			this.__loop.timeout(1000, function() {
-				this.__intro.setText('2');
+				this.__intro.set('2');
 			}, this);
 
 			this.__loop.timeout(2000, function() {
-				this.__intro.setText('1');
+				this.__intro.set('1');
 			}, this);
 
 			this.__loop.timeout(3000, function() {
-				this.__intro.setText('Go!');
+				this.__intro.set('Go!');
 			}, this);
 
 			this.__loop.timeout(4000, function() {
@@ -153,7 +153,7 @@ lychee.define('game.state.Game').includes([
 
 
  			if (this.__introTimeout !== null) {
-				this.__renderer.renderText(this.__intro);
+				this.__renderer.renderText(this.__intro, this.game.settings.width / 2, this.game.settings.height / 2);
 			}
 
 

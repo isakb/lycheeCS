@@ -1,5 +1,7 @@
 
-lychee.define('game.state.Menu').includes([
+lychee.define('game.state.Menu').requires([
+	'game.Scene'
+]).includes([
 	'lychee.game.State'
 ]).exports(function(lychee, global) {
 
@@ -10,166 +12,198 @@ lychee.define('game.state.Menu').includes([
 		this.__input = this.game.input;
 		this.__renderer = this.game.renderer;
 
-		this.__menu = null;
-		this.__jewels = null;
+		this.__locked = true;
+		this.__scene = null;
 
-		this.__margin = {
-			x: 50,
-			y: 150
-		};
+		this.__welcome = null;
+		this.__settings = null;
 
-		this.init();
+
+		this.reset();
 
 	};
 
 
 	Class.prototype = {
 
-		init: function() {
+		reset: function() {
 
-			this.__menus = {
-				welcome: {
-					'playgame': {
-						desc: 'Play Game',
-						callback: function() {
-							this.game.setState('game');
-						}
-					},
-					'settings': {
-						desc: 'Settings',
-						href: 'settings'
-					},
-					'credits': {
-						desc: 'Credits',
-						callback: function() {
-							this.game.setState('credits');
-						}
-					}
-				},
-				settings: {
-					'music': {
-						desc: 'Music: ' + (this.game.settings.music === true ? 'On' : 'Off'),
-						callback: function() {
-
-							if (this.game.settings.music === true) {
-								this.game.set('music', false);
-							} else {
-								this.game.set('music', true);
-							}
+			var hwidth  = this.game.settings.width / 2;
+			var hheight = this.game.settings.height / 2;
+			var entity = null;
 
 
-							return {
-								desc: 'Music: ' + (this.game.settings.music === true ? 'On' : 'Off')
-							};
-
-						}
-					},
-					'sound': {
-						desc: 'Sound: ' + (this.game.settings.sound === true ? 'On' : 'Off'),
-						callback: function() {
-
-							if (this.game.settings.sound === true) {
-								this.game.set('sound', false);
-							} else {
-								this.game.set('sound', true);
-							}
+			this.__scene = new game.Scene(this.__renderer);
 
 
-							return {
-								desc: 'Sound: ' + (this.game.settings.sound === true ? 'On' : 'Off')
-							};
+			this.__welcome = this.__scene.add(new lychee.ui.Tile({
+				width: this.game.settings.width,
+				height: this.game.settings.height,
+				position: {
+					x: hwidth,
+					y: hheight
+				}
+			}), null);
 
-						}
-					},
-					'fullscreen': {
-						desc: 'Fullscreen: ' + (this.game.settings.fullscreen === true ? 'On' : 'Off'),
-						callback: function() {
+			this.__scene.add(new lychee.ui.Text({
+				text: this.game.settings.title,
+				font: this.game.fonts.headline,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: -hheight + 80
+				}
+			}), this.__welcome);
 
-							if (this.game.settings.fullscreen === true) {
-								this.game.set('fullscreen', false);
-							} else {
-								this.game.set('fullscreen', true);
-							}
+			this.__scene.add(new lychee.ui.Text({
+				text: 'powered by lycheeJS',
+				font: this.game.fonts.small,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: hheight - 30
+				}
+			}), this.__welcome);
 
-							this.game.reset();
-
-							var state = this.game.getState();
-							if (state) {
-								state.leave && state.leave();
-								state.enter && state.enter();
-								state.setMenu('settings');
-							}
-
-							return {
-								desc: 'Fullscreen: ' + (this.game.settings.fullscreen === true ? 'On' : 'Off')
-							};
-
-						}
-					}
-   				}
-			};
-
-		},
-
-		__createDecoJewelz: function() {
-
-			var width = this.game.settings.width;
-
-			this.__jewels = [];
-
-			var jewel;
-
-			jewel = new game.entity.Jewel();
-			jewel.setPosition({
-				x: 155,
-				y: 230
+			entity = new lychee.ui.Text({
+				text: 'New Game',
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: -24
+				}
 			});
-			jewel.setEffect(5000, lychee.game.Entity.EFFECT.wobble, {
-				x: 3
-			}, undefined, true);
-			this.__jewels.push(jewel);
 
-			jewel = new game.entity.Jewel();
-			jewel.setPosition({
-				x: 180,
-				y: 170
+			entity.bind('touch', function(entity) {
+				this.game.setState('game');
+			}, this);
+
+			this.__scene.add(entity, this.__welcome);
+
+			entity = new lychee.ui.Text({
+				text: 'Settings',
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 24
+				}
 			});
-			jewel.setEffect(7000, lychee.game.Entity.EFFECT.wobble, {
-				y: -2
-			}, undefined, true);
-			this.__jewels.push(jewel);
 
-			jewel = new game.entity.Jewel();
-			jewel.setPosition({
-				x: 95,
-				y: 195
+			entity.bind('touch', function(entity) {
+				this.__scene.scrollTo(this.__settings);
+			}, this);
+
+			this.__scene.add(entity, this.__welcome);
+
+			entity = new lychee.ui.Text({
+				text: 'Credits',
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 72
+				}
 			});
-			jewel.setEffect(9000, lychee.game.Entity.EFFECT.wobble, {
-				y: 3
-			}, undefined, true);
-			this.__jewels.push(jewel);
 
-			jewel = new game.entity.Jewel();
-			jewel.setPosition({
-				x: width - 95,
-				y: 195
+			entity.bind('touch', function(entity) {
+				this.game.setState('credits');
+			}, this);
+
+			this.__scene.add(entity, this.__welcome);
+
+
+			this.__settings = this.__scene.add(new lychee.ui.Tile({
+				width: this.game.settings.width,
+				height: this.game.settings.height,
+				position: {
+					x: hwidth * 3,
+					y: hheight
+				}
+			}), null);
+
+			entity = new lychee.ui.Text({
+				text: 'Settings',
+				font: this.game.fonts.headline,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: -hheight + 80
+				}
 			});
-			jewel.setEffect(7000, lychee.game.Entity.EFFECT.wobble, {
-				y: 3
-			}, undefined, true);
-			this.__jewels.push(jewel);
 
-			jewel = new game.entity.Jewel();
-			jewel.setPosition({
-				x: width - 185,
-				y: 235
+			entity.bind('touch', function(entity) {
+				this.__scene.scrollTo(this.__welcome);
+			}, this);
+
+			this.__scene.add(entity, this.__settings);
+
+			entity = new lychee.ui.Text({
+				text: 'Fullscreen: ' + (this.game.settings.fullscreen === true ? 'On' : 'Off'),
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: -24
+				}
 			});
-			jewel.setEffect(5000, lychee.game.Entity.EFFECT.wobble, {
-				x: -3
-			}, undefined, true);
-			this.__jewels.push(jewel);
 
-			this.__jewels.reverse();
+			entity.bind('touch', function(entity) {
+
+				this.game.settings.fullscreen = this.game.settings.fullscreen === true ? false : true;
+
+				entity.set('Fullscreen: ' + (this.game.settings.fullscreen === true ? 'On' : 'Off'));
+
+				this.game.reset();
+				this.reset();
+
+				this.__scene.scrollTo(this.__settings);
+
+			}, this);
+
+			this.__scene.add(entity, this.__settings);
+
+			entity = new lychee.ui.Text({
+				text: 'Music: ' + (this.game.settings.music === true ? 'On' : 'Off'),
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 24
+				}
+			});
+
+			entity.bind('touch', function(entity) {
+
+				this.game.settings.music = this.game.settings.music === true ? false : true;
+
+				entity.set('Music: ' + (this.game.settings.music === true ? 'On' : 'Off'));
+
+			}, this);
+
+			this.__scene.add(entity, this.__settings);
+
+ 			entity = new lychee.ui.Text({
+				text: 'Sound: ' + (this.game.settings.sound === true ? 'On' : 'Off'),
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 72
+				}
+			});
+
+			entity.bind('touch', function(entity) {
+
+				this.game.settings.sound = this.game.settings.sound === true ? false : true;
+
+				entity.set('Sound: ' + (this.game.settings.sound === true ? 'On' : 'Off'));
+
+			}, this);
+
+			this.__scene.add(entity, this.__settings);
+
 
 		},
 
@@ -177,11 +211,11 @@ lychee.define('game.state.Menu').includes([
 
 			lychee.game.State.prototype.enter.call(this);
 
-			if (this.game.settings.width > 600) {
-				this.__createDecoJewelz();
-			}
+			this.__locked = true;
 
-			this.setMenu('welcome');
+			this.__scene.scrollTo(this.__welcome, function() {
+				this.__locked = false;
+			}, this);
 
 			this.__input.bind('touch', this.__processTouch, this);
 			this.__renderer.start();
@@ -199,166 +233,44 @@ lychee.define('game.state.Menu').includes([
 
 		update: function(clock, delta) {
 
-			if (this.__jewels !== null) {
-				for (var j = 0; j < this.__jewels.length; j++) {
-					this.__jewels[j].update(clock, delta);
-				}
+			if (this.__scene !== null) {
+				this.__scene.update(clock, delta);
 			}
 
 		},
 
-		render: function() {
+		render: function(clock, delta) {
 
-			this.__renderer.clear();
-
-
-			if (this.__menu !== null) {
-
-				var menu = this.__menus[this.__menu];
-				var width = this.game.settings.width;
-				var height = this.game.settings.height;
-
-				var headline = this.__menu.charAt(0).toUpperCase() + this.__menu.substr(1);
-
-				var headlineFont = this.game.fonts.headline;
-				var normalFont = this.game.fonts.normal;
-
-
-				if (headline === 'Welcome') {
-					headline = '8BIT - Jewelz';
-				}
-
-				if (width <= 320) {
-					headlineFont = this.game.fonts.normal;
-				}
-
-
-				this.__renderer.drawText(
-					'center',
-					60,
-					headline,
-					headlineFont,
-					null
-				);
-
-
-				var i = 0;
-				for (var mId in menu) {
-
-					var entry = menu[mId];
-
-					this.__renderer.drawText(
-						'center',
-						this.__margin.y + 50 * i + 6,
-						entry.desc,
-						normalFont,
-						null
-					);
-
-					i++;
-
-				}
-
-			}
-
-
-			if (this.__jewels !== null) {
-				for (var j = 0; j < this.__jewels.length; j++) {
-					this.__renderer.renderJewel(this.__jewels[j]);
-				}
-			}
-
-			this.__renderer.drawText(
-				'center',
-				height - 40,
-				'powered by lycheeJS',
-				this.game.fonts.small,
-				null
-			);
-
-
-			this.__renderer.flush();
-
-		},
-
-		setMenu: function(id) {
-
-			if (this.__menus[id] !== undefined) {
-				this.__menu = id;
+			if (this.__scene !== null) {
+				this.__scene.render(clock, delta);
 			}
 
 		},
 
 		__processTouch: function(position, delta) {
 
-			if (this.__menu === null) {
-				this.setMenu('welcome');
-				return;
-			}
-
-			var menu = this.__menus[this.__menu],
-				offset = this.game.getOffset(),
-				width = this.game.settings.width,
-				height = this.game.settings.height;
-
-			position.x -= offset.x;
-			position.y -= offset.y;
+			if (this.__locked === true) return;
 
 
-			var i = 0;
-			for (var mId in menu) {
+			var gameOffset = this.game.getOffset(),
+				sceneOffset = this.__scene.getOffset();
 
-				var submenu = menu[mId];
+			position.x -= gameOffset.x;
+			position.y -= gameOffset.y;
 
-				var box = {
-					x1: width * 1/4,
-					x2: width * 3/4,
-					y1: this.__margin.y + 50 * i,
-					y2: this.__margin.y + 50 * (i + 1)
-				};
+			position.x -= sceneOffset.x;
+			position.y -= sceneOffset.y;
 
 
-				if (
-					position.x > box.x1
-					&& position.x < box.x2
-					&& position.y > box.y1
-					&& position.y < box.y2
-				) {
+			var entity = this.__scene.getEntityByPosition(position.x, position.y, null);
+			if (entity !== null) {
 
-					if (submenu.href !== undefined) {
-
-						if (this.game.settings.sound === true) {
-							this.game.jukebox.play('menuclick');
-						}
-
-						this.setMenu(submenu.href);
-
-					}
-
-					if (submenu.callback !== undefined) {
-
-						if (this.game.settings.sound === true) {
-							this.game.jukebox.play('menuclick');
-						}
-
-						var retMenu = submenu.callback.call(this);
-						if (Object.prototype.toString.call(retMenu) === '[object Object]') {
-							if (typeof retMenu.desc === 'string') {
-								submenu.desc = retMenu.desc;
-							}
-						}
-
-					}
-
+				if (this.game.settings.sound === true) {
+					this.game.jukebox.play('click');
 				}
 
-				i++;
+				entity.trigger('touch', [ entity ]);
 
-			}
-
-
-			if (position.y < this.__margin.y) {
-				this.setMenu('welcome');
 			}
 
 		}
@@ -369,3 +281,4 @@ lychee.define('game.state.Menu').includes([
 	return Class;
 
 });
+

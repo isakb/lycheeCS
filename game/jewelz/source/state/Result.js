@@ -15,40 +15,71 @@ lychee.define('game.state.Result').includes([
 
 		this.__locked = true;
 
+		this.reset();
+
 	};
 
 
 	Class.prototype = {
+
+		reset: function() {
+
+			this.__entities = {};
+
+			var hwidth = this.game.settings.width / 2;
+			var hheight = this.game.settings.height / 2;
+
+			var font = this.game.fonts.headline;
+			if (hwidth < 200) {
+				font = this.game.fonts.normal;
+			}
+
+
+			this.__entities.headline = new lychee.ui.Text({
+				text: 'Game Over',
+				font: font,
+				position: {
+					x: 0,
+					y: -hheight - 60
+				}
+			});
+
+			this.__entities.points = new lychee.ui.Text({
+				text: '0 Points',
+				font: font,
+				position: {
+					x: 0,
+					y: hheight + 50
+				}
+			});
+
+			this.__entities.hint = new lychee.ui.Text({
+				text: 'Touch to get back to Menu',
+				font: this.game.fonts.small,
+				position: {
+					x: 0,
+					y: hheight + 50
+				}
+			});
+
+		},
 
 		enter: function() {
 
 			lychee.game.State.prototype.enter.call(this);
 
 			this.__locked = true;
-			this.__entities = {};
 
 
-			var width = this.game.settings.width;
-			var height = this.game.settings.height;
-
-			var font = this.game.fonts.headline;
-			if (width < 400) {
-				font = this.game.fonts.normal;
-			}
+			var hwidth = this.game.settings.width / 2;
+			var hheight = this.game.settings.height / 2;
 
 
-			this.__entities.headline = new game.entity.Text(
-				'GAME OVER',
-				font, {
-					position: {
-						x: 'center',
-						y: -160
-					}
-				}
-			);
-
+			this.__entities.headline.setPosition({
+				y: -hheight - 60
+			});
 			this.__entities.headline.setTween(2000, {
-				y: 100
+				y: -60
 			}, lychee.game.Entity.TWEEN.bounceEaseOut);
 
 
@@ -59,42 +90,28 @@ lychee.define('game.state.Result').includes([
 				score = score.toString();
 			}
 
-			this.__entities.points = new game.entity.Text(
-				score + ' Points',
-				font, {
-					position: {
-						x: 'center',
-						y: height + 200
-					}
-				}
-			);
 
+			this.__entities.points.set(score + ' Points');
+			this.__entities.points.setPosition({
+				y: hheight + 50
+			});
    			this.__entities.points.setTween(2000, {
-   				y: 160
+   				y: 0
    			}, lychee.game.Entity.TWEEN.bounceEaseOut);
 
 
-			this.__entities.hint = new game.entity.Text(
-				'Touch to get back to Menu',
-				this.game.fonts.small, {
-					position: {
-						x: 'center',
-						y: height + 100
-					}
-				}
-			);
+			this.__entities.hint.setPosition({
+				y: hheight + 50
+			});
 
-
-			this.__loop.timeout(2000, function() {
+			this.__loop.timeout(3000, function() {
 
 				this.__entities.hint.setTween(500, {
-					y: height - 50
+					y: hheight - 20
 				}, lychee.game.Entity.TWEEN.easeOut);
 
-			}, this);
-
-			this.__loop.timeout(4000, function() {
 				this.__locked = false;
+
 			}, this);
 
 			this.__input.bind('touch', this.__processTouch, this);
@@ -126,10 +143,8 @@ lychee.define('game.state.Result').includes([
 
 
 			for (var e in this.__entities) {
-
 				if (this.__entities[e] === null) continue;
-				this.__renderer.renderText(this.__entities[e]);
-
+				this.__renderer.renderEntity(this.__entities[e], this.game.settings.width / 2, this.game.settings.height / 2);
 			}
 
 

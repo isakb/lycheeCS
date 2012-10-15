@@ -18,7 +18,7 @@ lychee.define('game.Jukebox').includes([
 			'fail',
 
 			// state.Menu
-			'menuclick',
+			'click',
 
 			// Music
 			'music'

@@ -12,8 +12,7 @@
 		},
 
 		"entity": {
-			"Jewel": [ "js" ],
-			"Text": [ "js" ]
+			"Jewel": [ "js" ]
 		},
 
 		"Board": [ "js" ],
@@ -21,6 +20,7 @@
 		"Jukebox": [ "js" ],
 		"Main": [ "js", "css" ],
 		"Renderer": [ "js" ],
+		"Scene": [ "js" ],
 		"Sidebar": [ "js" ],
 		"Score": [ "js" ]
 

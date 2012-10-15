@@ -1,7 +1,8 @@
 
 lychee.define('game.Renderer').requires([
-	'game.entity.Jewel',
-	'game.entity.Text'
+	'lychee.ui.Text',
+	'lychee.ui.Tile',
+	'game.entity.Jewel'
 ]).includes([
 	'lychee.Renderer'
 ]).exports(function(lychee, global) {
@@ -39,6 +40,14 @@ lychee.define('game.Renderer').requires([
 
 		},
 
+		renderEntity: function(entity, offsetX, offsetY) {
+
+			if (entity instanceof lychee.ui.Text) {
+				this.renderText(entity, offsetX, offsetY);
+			}
+
+		},
+
 		renderJewel: function(entity) {
 
 			var map = this.settings.map['jewel-' + entity.getColor()];
@@ -59,12 +68,18 @@ lychee.define('game.Renderer').requires([
 
 		},
 
-		renderText: function(entity) {
+		renderText: function(entity, offsetX, offsetY) {
+
+			offsetX = offsetX || 0;
+			offsetY = offsetY || 0;
 
 			var pos = entity.getPosition();
-
-
-			this.drawText(pos.x, pos.y, entity.text, entity.font);
+			this.drawText(
+				pos.x + offsetX - entity.width / 2,
+				pos.y + offsetY - entity.height / 2,
+				entity.text,
+				entity.font
+			);
 
 		}
 
