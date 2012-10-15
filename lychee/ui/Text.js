@@ -31,6 +31,9 @@ lychee.define('lychee.ui.Text').requires([
 
 		set: function(text) {
 
+			text = typeof text === 'string' ? text : '';
+
+
 			this.text = text;
 
 			if (this.font instanceof lychee.Font) {
