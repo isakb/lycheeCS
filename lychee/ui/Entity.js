@@ -9,6 +9,7 @@ lychee.define('lychee.ui.Entity').includes([
 
 
 		this.__layout = null;
+		this.__value = null;
 		this.___events = {};
 
 
@@ -93,8 +94,8 @@ lychee.define('lychee.ui.Entity').includes([
 		trigger: function(type, data) {
 
 			var passData = data;
-			if (Object.prototype.toString.call(data) !== '[object Array]') {
-				passData = [ data ];
+			if (data === undefined || Object.prototype.toString.call(data) !== '[object Array]') {
+				passData = [ this, this.__value ];
 			}
 
 
@@ -156,6 +157,18 @@ lychee.define('lychee.ui.Entity').includes([
 
 			}
 
+		},
+
+		getValue: function() {
+			return this.__value;
+		},
+
+		setValue: function(value) {
+			this.__value = value;
+		},
+
+		getLabel: function() {
+			return null;
 		},
 
 		getLayout: function() {
