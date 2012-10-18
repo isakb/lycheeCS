@@ -155,18 +155,13 @@ lychee.define('game.state.Game').requires([
 
 		__processTouch: function(position, delta) {
 
-			var gameOffset = this.game.getOffset(),
-				sceneOffset = this.__scene.getOffset();
+			var gameOffset = this.game.getOffset();
 
 			position.x -= gameOffset.x;
 			position.y -= gameOffset.y;
 
-			position.x -= sceneOffset.x;
-			position.y -= sceneOffset.y;
 
-
-			var entity = this.__scene.getEntityByPosition(position.x, position.y, null);
-
+			var entity = this.__scene.getEntityByPosition(position.x, position.y, null, true);
 			if (entity !== null && entity.hasEvent('touch')) {
 				entity.trigger('touch', [ entity ]);
 				return false;

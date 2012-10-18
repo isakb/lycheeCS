@@ -68,6 +68,31 @@ lychee.define('lychee.ui.Graph').includes([
 
 		},
 
+		getEntityByPosition: function(x, y, z, convert) {
+
+			convert = convert === true ? true : false;
+
+			if (convert === true) {
+
+				if (x !== null) {
+					x -= this.__offset.x;
+				}
+
+				if (y !== null) {
+					y -= this.__offset.y;
+				}
+
+				if (z !== null) {
+					z -= this.__offset.z;
+				}
+
+			}
+
+
+			return lychee.game.Graph.prototype.getEntityByPosition.call(this, x, y, z);
+
+		},
+
 		setTween: function(duration, position, callback, scope) {
 
 			duration = typeof duration === 'number' ? duration : 0;

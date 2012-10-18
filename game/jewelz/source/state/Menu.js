@@ -252,17 +252,13 @@ lychee.define('game.state.Menu').requires([
 			if (this.__locked === true) return;
 
 
-			var gameOffset = this.game.getOffset(),
-				sceneOffset = this.__scene.getOffset();
+			var gameOffset = this.game.getOffset();
 
 			position.x -= gameOffset.x;
 			position.y -= gameOffset.y;
 
-			position.x -= sceneOffset.x;
-			position.y -= sceneOffset.y;
 
-
-			var entity = this.__scene.getEntityByPosition(position.x, position.y, null);
+			var entity = this.__scene.getEntityByPosition(position.x, position.y, null, true);
 			if (entity !== null) {
 
 				if (this.game.settings.sound === true) {

@@ -19,7 +19,7 @@ lychee.define('game.Main').requires([
 		this.sprite = null;
 		this.map = null;
 
-		this.__offset = null;
+		this.__offset = { x: 0, y: 0 };
 
 		this.load();
 
@@ -114,9 +114,7 @@ lychee.define('game.Main').requires([
 
 			this.renderer.reset(this.settings.width, this.settings.height, false);
 
-			this.__rendererEnv = env;
-
-			this.getOffset(true);
+			this.__offset = env.offset; // Linked
 
 		},
 
@@ -158,14 +156,8 @@ lychee.define('game.Main').requires([
 
 		},
 
-		getOffset: function(reset) {
-
-			if (this.__offset === null || reset === true) {
-				this.__offset = this.__rendererEnv.offset;
-			}
-
+		getOffset: function() {
 			return this.__offset;
-
 		}
 
 	};
