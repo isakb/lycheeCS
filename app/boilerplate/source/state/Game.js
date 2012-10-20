@@ -37,31 +37,24 @@ lychee.define('game.state.Game').requires([
 
 			} else if (raw.type === 'Sprite') {
 
-				if (raw.data.state && this.game.map.sprite.states[raw.data.state]) {
-
-					var stateData = this.game.map.sprite.states[raw.data.state];
-
-					raw.data.width = stateData.width;
-					raw.data.height = stateData.height;
-
-				}
+				raw.data.image = this.game.config.sprite.image;
+				raw.data.states = this.game.config.sprite.states;
+				raw.data.map = this.game.config.sprite.map;
 
 			}
 
 			var entity = null;
+			if (lychee.ui[raw.type]) {
 
-			if (game.ui[raw.type]) {
-				entity = new game.ui[raw.type](raw.data);
-			} else if (lychee.ui[raw.type]) {
 				entity = new lychee.ui[raw.type](raw.data);
-			}
 
+				if (raw.id === 'exit') {
 
-			if (raw.id === 'exit') {
+					entity.bind('touch', function() {
+						this.game.setState('menu');
+					}, this);
 
-				entity.bind('touch', function() {
-					this.game.setState('menu');
-				}, this);
+				}
 
 			}
 

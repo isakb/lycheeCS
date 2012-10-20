@@ -77,8 +77,13 @@ lychee.define('game.Main').requires([
 					map: [9,11,14,17,13,18,15,10,12,12,13,12,10,12,11,14,14,11,14,13,13,13,14,12,14,14,10,10,19,12,19,13,22,12,13,12,13,12,12,14,13,9,11,13,11,16,13,14,12,14,12,13,12,13,12,15,12,12,14,12,14,12,19,14,10,12,13,12,13,12,12,14,13,9,11,13,11,16,13,14,12,14,12,13,12,13,12,15,12,12,14,16,11,16,19]
 				});
 
-				this.map = assets[urls[4]];
-				this.map.sprite.image = assets[urls[3]];
+
+				this.config = {
+					sprite: assets[urls[4]]
+				};
+
+				this.config.sprite.image = assets[urls[3]];
+
 
 				this.scenes = [
 					assets[urls[5]]
@@ -128,7 +133,7 @@ lychee.define('game.Main').requires([
 			this.renderer.reset(
 				this.settings.width,
 				this.settings.height,
-				true, { map: this.map }
+				true
 			);
 
 			this.renderer.setBackground("#222");

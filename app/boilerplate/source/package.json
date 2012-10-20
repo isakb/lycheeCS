@@ -12,10 +12,6 @@
 			"Text": [ "js" ]
 		},
 
-		"ui": {
-			"Sprite": [ "js" ]
-		},
-
 		"DeviceSpecificHacks": [ "js" ],
 		"Main": [ "js", "css" ],
 		"Scene": [ "js" ],
