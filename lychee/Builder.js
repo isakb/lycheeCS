@@ -267,7 +267,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 					} else {
 
 						if (lychee.debug === true) {
-							console.warn('> loading ' + packageId + '.' + classId + ' failed.');
+							console.warn('> loading ' + packageId + '.' + classId + ' failed. (required by ' + refererId + ')');
 						}
 
 					}
