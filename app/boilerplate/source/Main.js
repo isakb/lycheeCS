@@ -16,7 +16,6 @@ lychee.define('game.Main').requires([
 
 		this.fonts = {};
 		this.sprite = null;
-		this.map = null;
 
 		this.__offset = { x: 0, y: 0 };
 

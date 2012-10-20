@@ -8,10 +8,6 @@
 			"Menu": [ "js" ]
 		},
 
-		"entity": {
-			"Sprite": [ "js" ]
-		},
-
 		"DeviceSpecificHacks": [ "js" ],
 		"Jukebox": [ "js" ],
 		"Main": [ "js", "css" ],

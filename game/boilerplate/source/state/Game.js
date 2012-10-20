@@ -60,9 +60,16 @@ lychee.define('game.state.Game').includes([
 			}, this);
 
 
-			this.__entities.spriteA = new game.entity.Sprite({
-				width: 32,
-				height: 32,
+			var image = this.game.config.sprite.image;
+			var states = this.game.config.sprite.states;
+			var map = this.game.config.sprite.map;
+
+
+
+			this.__entities.spriteA = new lychee.ui.Sprite({
+				image: image,
+				states: states,
+				map: map,
 				position: {
 					x: width / 2 - 84,
 					y: height / 2
@@ -76,9 +83,10 @@ lychee.define('game.state.Game').includes([
 				}
 			});
 
-			this.__entities.spriteB = new game.entity.Sprite({
-				width: 32,
-				height: 32,
+			this.__entities.spriteB = new lychee.ui.Sprite({
+				image: image,
+				states: states,
+				map: map,
 				position: {
 					x: width / 2 - 42,
 					y: height / 2
@@ -92,9 +100,10 @@ lychee.define('game.state.Game').includes([
 				}
 			});
 
-			this.__entities.spriteC = new game.entity.Sprite({
-				width: 32,
-				height: 32,
+			this.__entities.spriteC = new lychee.ui.Sprite({
+ 				image: image,
+				states: states,
+				map: map,
 				position: {
 					x: width / 2,
 					y: height / 2
@@ -108,9 +117,10 @@ lychee.define('game.state.Game').includes([
 				}
 			});
 
-			this.__entities.spriteD = new game.entity.Sprite({
-				width: 32,
-				height: 32,
+			this.__entities.spriteD = new lychee.ui.Sprite({
+				image: image,
+				states: states,
+				map: map,
 				position: {
 					x: width / 2 + 42,
 					y: height / 2
@@ -124,9 +134,10 @@ lychee.define('game.state.Game').includes([
 				}
 			});
 
-			this.__entities.spriteE = new game.entity.Sprite({
-				width: 32,
-				height: 32,
+			this.__entities.spriteE = new lychee.ui.Sprite({
+				image: image,
+				states: states,
+				map: map,
 				position: {
 					x: width / 2 + 84,
 					y: height / 2
@@ -225,7 +236,7 @@ lychee.define('game.state.Game').includes([
 
 			for (var e in this.__entities) {
 				if (this.__entities[e] === null) continue;
-				this.__renderer.renderEntity(this.__entities[e]);
+				this.__renderer.renderUIEntity(this.__entities[e]);
 			}
 
 

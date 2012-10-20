@@ -33,7 +33,7 @@ lychee.define('game.state.Menu').requires([
 			var entity = null;
 
 
-			this.__scene = new game.Scene(this.__renderer);
+			this.__scene = new game.Scene(this.game);
 
 
 			this.__welcome = this.__scene.add(new lychee.ui.Tile({
