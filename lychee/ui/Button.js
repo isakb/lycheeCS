@@ -1,6 +1,7 @@
 
 lychee.define('lychee.ui.Button').requires([
-	'lychee.ui.Label'
+	'lychee.ui.Sprite',
+	'lychee.ui.Text'
 ]).includes([
 	'lychee.ui.Entity'
 ]).exports(function(lychee) {
@@ -10,12 +11,21 @@ lychee.define('lychee.ui.Button').requires([
 		var settings = lychee.extend({}, data);
 
 
+		this.__background = null;
 		this.__label = null;
 
-		if (settings.label != null && settings.label instanceof lychee.ui.Label) {
+		if (
+			typeof settings.background === 'object'
+			&& settings.background instanceof lychee.ui.Sprite
+		) {
+			this.__background = settings.background;
+		}
+
+		if (
+			typeof settings.label === 'object'
+			&& settings.label instanceof lychee.ui.Text
+		) {
 			this.__label = settings.label;
-		} else {
-			throw "settings.label needs to be a lychee.ui.Label instance.";
 		}
 
 
@@ -27,6 +37,10 @@ lychee.define('lychee.ui.Button').requires([
 
 
 	Class.prototype = {
+
+		getBackground: function() {
+			return this.__background;
+		},
 
 		getLabel: function() {
 			return this.__label;

@@ -70,6 +70,9 @@
 		"ui": {
 			"Entity": [ "js" ],
 			"Graph": [ "js" ],
+			"Renderer": [ "js" ],
+			"Button": [ "js" ],
+			"Sprite": [ "js" ],
 			"Text": [ "js" ],
 			"Tile": [ "js" ]
 		},
