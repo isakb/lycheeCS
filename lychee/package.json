@@ -51,6 +51,7 @@
 			"Graph": [ "js" ],
 			"Loop": [ "js" ],
 			"Main": [ "js" ],
+			"Sprite": [ "js" ],
 			"State": [ "js" ],
 			"Jukebox": [ "js" ]
 		},
