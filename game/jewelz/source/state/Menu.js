@@ -33,12 +33,13 @@ lychee.define('game.state.Menu').requires([
 			var entity = null;
 
 
-			this.__scene = new game.Scene(this.__renderer);
+			this.__scene = new game.Scene(this.game);
 
 
 			this.__welcome = this.__scene.add(new lychee.ui.Tile({
 				width: this.game.settings.width,
 				height: this.game.settings.height,
+				color: '#222',
 				position: {
 					x: hwidth,
 					y: hheight
@@ -117,6 +118,7 @@ lychee.define('game.state.Menu').requires([
 			this.__settings = this.__scene.add(new lychee.ui.Tile({
 				width: this.game.settings.width,
 				height: this.game.settings.height,
+				color: '#448',
 				position: {
 					x: hwidth * 3,
 					y: hheight

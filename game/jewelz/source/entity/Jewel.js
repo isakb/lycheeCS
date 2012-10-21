@@ -1,62 +1,46 @@
 
 lychee.define('game.entity.Jewel').includes([
-	'lychee.game.Entity'
+	'lychee.game.Sprite'
 ]).exports(function(lychee, global) {
 
 	var Class = function(settings) {
 
-		this.settings = lychee.extend({}, this.defaults, settings);
+		this.__lastStateId = null;
 
-		if (this.settings.color === null) {
-			this.setColor(this.getRandomColor());
-		}
+		lychee.game.Sprite.call(this, settings);
 
-		lychee.game.Entity.call(this, this.settings);
-
-	};
-
-
-	Class.COLORS = {
-
-		red:    'red',
-		orange: 'orange',
-		yellow: 'yellow',
-		white:  'white',
-		blue:   'blue',
-		green:  'green',
-		purple: 'purple',
-
-		length: 7
 	};
 
 
 	Class.prototype = {
 
-		defaults: {
-			color: null
-		},
+		getRandomState: function() {
 
-		getRandomColor: function() {
+			if (this.__lastStateId === null) {
 
-			var rand = Math.floor(Math.random() * Class.COLORS.length);
+				this.__lastStateId = 0;
 
-			var count = 0;
-			for (var id in Class.COLORS) {
-				if (count === rand) {
-					return id;
-					break;
+				for (var id in this.__states) {
+					if (this.__states[id] > this.__lastStateId) {
+						this.__lastStateId = this.__states[id];
+					}
 				}
-				count++;
+
 			}
 
-		},
 
-		getColor: function() {
-			return this.settings.color || Class.COLORS.red;
-		},
+			var rand = Math.random() * this.__lastStateId | 0;
+			var found = "default";
 
-		setColor: function(color) {
-			this.settings.color = color || Class.COLORS.red;
+			for (var id in this.__states) {
+				if (this.__states[id] === rand) {
+					found = id;
+				}
+			}
+
+
+			return found;
+
 		}
 
 	};

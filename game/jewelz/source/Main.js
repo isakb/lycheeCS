@@ -22,7 +22,6 @@ lychee.define('game.Main').requires([
 
 		this.fonts = {};
 		this.sprite = null;
-		this.map = null;
 
 		this.__offset = { x: 0, y: 0 };
 
@@ -61,9 +60,8 @@ lychee.define('game.Main').requires([
 				base + '/img/font_48_white.png',
 				base + '/img/font_32_white.png',
 				base + '/img/font_16_white.png',
-				base + '/img/spritemap_32.png',
-				base + '/img/spritemap_64.png',
-				base + '/json/spritemap.json'
+				base + '/img/jewel_64.png',
+				base + '/json/jewel_64.json'
 			];
 
 
@@ -99,12 +97,12 @@ lychee.define('game.Main').requires([
 				});
 
 
-				this.sprite = {
-					32: assets[urls[3]],
-					64: assets[urls[4]]
+				this.config = {
+					jewel: assets[urls[4]]
 				};
 
-				this.map = assets[urls[5]];
+				this.config.jewel.image = assets[urls[3]];
+
 
 				this.init();
 
@@ -155,10 +153,8 @@ lychee.define('game.Main').requires([
 			this.renderer.reset(
 				this.settings.width,
 				this.settings.height,
-				true, {
-				sprite: this.sprite[this.settings.tile],
-				tile: this.settings.tile
-			});
+				true
+			);
 
 
 			this.__offset = env.offset; // Linked
@@ -177,7 +173,7 @@ lychee.define('game.Main').requires([
 			this.renderer.reset(
 				this.settings.width,
 				this.settings.height,
-				true, { map: this.map }
+				true
 			);
 
 			this.renderer.setBackground("#222");

@@ -144,7 +144,7 @@ lychee.define('game.state.Result').includes([
 
 			for (var e in this.__entities) {
 				if (this.__entities[e] === null) continue;
-				this.__renderer.renderEntity(this.__entities[e], this.game.settings.width / 2, this.game.settings.height / 2);
+				this.__renderer.renderUIText(this.__entities[e], this.game.settings.width / 2, this.game.settings.height / 2);
 			}
 
 

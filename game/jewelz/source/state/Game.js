@@ -153,7 +153,7 @@ lychee.define('game.state.Game').requires([
 
 
  			if (this.__introTimeout !== null) {
-				this.__renderer.renderText(this.__intro, this.game.settings.width / 2, this.game.settings.height / 2);
+				this.__renderer.renderUIText(this.__intro, this.game.settings.width / 2, this.game.settings.height / 2);
 			}
 
 

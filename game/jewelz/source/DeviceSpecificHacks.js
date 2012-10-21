@@ -48,15 +48,6 @@ lychee.define('game.DeviceSpecificHacks').exports(function(lychee, global) {
 		}
 
 
-		var width = global.innerWidth,
-			height = global.innerHeight;
-
-
-		if (width <= 320 || height <= 320) {
-			this.settings.tile = 32;
-		}
-
-
 		if (_alreadyBound === false) {
 
 			var that = this;

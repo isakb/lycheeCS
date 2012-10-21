@@ -5,7 +5,7 @@ lychee.define('game.Score').includes([
 
 	var Class = function() {
 
-		this.data = {
+		this.__data = {
 			points: 0,
 			time:   0
 		};
@@ -18,33 +18,39 @@ lychee.define('game.Score').includes([
 	Class.prototype = {
 
 		get: function(key) {
-			return this.data[key] || null;
+			return this.__data[key] || null;
 		},
 
 		set: function(key, value) {
-			this.data[key] = value;
-			this.trigger('update', [ this.data ]);
+
+			this.__data[key] = value;
+			this.trigger('update', [ this.__data ]);
+
 		},
 
 		add: function(key, value) {
 
-			if (this.data[key] === undefined) {
-				this.data[key] = 0;
+			value = typeof value === 'number' ? value : 0;
+
+			if (this.__data[key] === undefined) {
+				this.__data[key] = 0;
 			}
 
-			this.data[key] += value;
-			this.trigger('update', [ this.data ]);
+			this.__data[key] += value;
+			this.trigger('update', [ this.__data ]);
 
 		},
 
 		subtract: function(key, value) {
 
-			if (this.data[key] === undefined) {
-				this.data[key] = 0;
+			value = typeof value === 'number' ? value : 0;
+
+			if (this.__data[key] === undefined) {
+				this.__data[key] = 0;
 			}
 
-			this.data[key] -= value;
-			this.trigger('update', [ this.data ]);
+			this.__data[key] -= value;
+			this.trigger('update', [ this.__data ]);
 
 		}
 

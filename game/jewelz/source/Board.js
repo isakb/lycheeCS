@@ -36,6 +36,9 @@ lychee.define('game.Board').requires([
 				tile = this.settings.tile;
 
 
+			this.__jewelConfig = this.game.config.jewel;
+
+
 			for (var x = 0; x < sizeX; x++) {
 				for (var y = 0; y < sizeY; y++) {
 
@@ -60,6 +63,11 @@ lychee.define('game.Board').requires([
 						} else {
 
 							entity = new game.entity.Jewel({
+								image: that.__jewelConfig.image,
+								states: that.__jewelConfig.states,
+								map: that.__jewelConfig.map,
+								width: that.settings.tile,
+								height: that.settings.tile,
 								position: pos
 							});
 
@@ -67,7 +75,7 @@ lychee.define('game.Board').requires([
 
 						}
 
-						entity.setColor(entity.getRandomColor());
+						entity.setState(entity.getRandomState());
 
 						entity.setTween(y * that.settings.tween, {
 							y: y * tile + tile / 2
@@ -104,7 +112,7 @@ lychee.define('game.Board').requires([
 
 		},
 
-		hit: function(x, y, color, hitmap, hits) {
+		hit: function(x, y, state, hitmap, hits) {
 
 			var returnHits = false;
 			if (hits === undefined) {
@@ -113,7 +121,7 @@ lychee.define('game.Board').requires([
 			}
 
 			var jewel = this.get(x, y);
-			if (jewel !== null && jewel.getColor() === color) {
+			if (jewel !== null && jewel.getState() === state) {
 
 				hits.push({
 					x: x,
@@ -152,9 +160,9 @@ lychee.define('game.Board').requires([
 				if (
 					hitmap[pos.x + '_' + pos.y] !== true
 					&& jewel !== null
-					&& jewel.getColor() === color
+					&& jewel.getState() === state
 				) {
-					this.hit(pos.x, pos.y, color, hitmap, hits);
+					this.hit(pos.x, pos.y, state, hitmap, hits);
 				}
 			}
 
@@ -173,9 +181,9 @@ lychee.define('game.Board').requires([
 
 			if (this.__locked !== true) {
 
-				var color = this.get(x, y).getColor();
+				var state = this.get(x, y).getState();
 				var hitmap = {};
-				var hits = this.hit(x, y, color, hitmap);
+				var hits = this.hit(x, y, state, hitmap);
 
 
 				var minHits = this.game.settings.play.hits;
@@ -241,9 +249,9 @@ lychee.define('game.Board').requires([
 			for (var x = 0; x < this.settings.width; x++) {
 				for (var y = this.settings.height - 1; y >= 0; y--) {
 
-					var color = this.get(x, y).getColor();
+					var state = this.get(x, y).getState();
 					var hitmap = {};
-					var hits = this.hit(x, y, color, {});
+					var hits = this.hit(x, y, state, {});
 
 					if (hits.length >= minHits) {
 						this.__hint = hits;
@@ -259,10 +267,10 @@ lychee.define('game.Board').requires([
 				var startX = Math.floor(Math.random() * (this.settings.width - minHits - 1));
 				var y = Math.floor(Math.random() * (this.settings.height - 1));
 
-				var color = this.get(startX, y).getColor();
+				var state = this.get(startX, y).getState();
 
 				for (var x = startX; x < startX + minHits; x++) {
-					this.get(x, y).setColor(color);
+					this.get(x, y).setState(state);
 				}
 
 
@@ -381,13 +389,20 @@ lychee.define('game.Board').requires([
 			if (entity == null) {
 
 				entity = new game.entity.Jewel({
+					image: this.__jewelConfig.image,
+					states: this.__jewelConfig.states,
+					map: this.__jewelConfig.map,
+					width: this.settings.tile,
+					height: this.settings.tile,
 					position: pos
 				});
+
+				entity.setState(entity.getRandomState());
 
 			} else {
 
 				entity.setPosition(pos);
-				entity.setColor(entity.getRandomColor());
+				entity.setState(entity.getRandomState());
 
 			}
 
