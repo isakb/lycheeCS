@@ -360,7 +360,8 @@ lychee.define('Input').tags({
 			}
 
 
-			var cancelSwipe = !this.trigger('touch', [ { x: x, y: y }, delta ]);
+			// Don't cancel the swipe event by default
+			var cancelSwipe = this.trigger('touch', [ { x: x, y: y }, delta ]) === true;
 
 
 			for (var id in this.__touchareas) {
