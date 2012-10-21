@@ -4,7 +4,7 @@ lychee.define('lychee.ui.Button').requires([
 	'lychee.ui.Text'
 ]).includes([
 	'lychee.ui.Entity'
-]).exports(function(lychee) {
+]).exports(function(lychee, global) {
 
 	var Class = function(data) {
 

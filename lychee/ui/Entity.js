@@ -1,7 +1,7 @@
 
 lychee.define('lychee.ui.Entity').includes([
 	'lychee.game.Entity'
-]).exports(function(lychee) {
+]).exports(function(lychee, global) {
 
 	var Class = function(data) {
 
