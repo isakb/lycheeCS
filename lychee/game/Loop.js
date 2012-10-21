@@ -7,9 +7,9 @@ lychee.define('lychee.game.Loop').includes([
 		_timeoutId = 0,
 		_intervalId = 0;
 
-	var Class = function(settings) {
+	var Class = function(data) {
 
-		this.settings = lychee.extend({}, this.defaults, settings);
+		var settings = lychee.extend({}, data);
 
 		this.__timeouts = {};
 		this.__intervals = {};
@@ -17,27 +17,24 @@ lychee.define('lychee.game.Loop').includes([
 		lychee.Events.call(this, 'loop');
 
 
-		this.reset(this.settings.updateFps, this.settings.renderFps);
+		this.reset(settings.update, settings.render);
+
+		settings = null;
 
 	};
 
 
 	Class.prototype = {
 
-		defaults: {
-			context: null,
-			renderFps: 60,
-			updateFps: 60
-		},
-
 		reset: function(updateFps, renderFps) {
 
 			updateFps = typeof updateFps === 'number' ? updateFps : null;
 			renderFps = typeof renderFps === 'number' ? renderFps : null;
 
+
 			if (
 				updateFps === null || renderFps === null
-				|| updateFps <= 1 || renderFps <= 1
+				|| updateFps < 1 || renderFps < 1
 			) {
 				return false;
 			}
@@ -55,35 +52,14 @@ lychee.define('lychee.game.Loop').includes([
 			};
 
 
-			this.settings.updateFps = updateFps;
-			this.settings.renderFps = renderFps;
+			this.__updateFps = updateFps;
+			this.__renderFps = renderFps;
 
 
-			this.setup();
+			this.__setup();
 
 
 			return true;
-
-		},
-
-		setup: function() {
-
-			if (_globalIntervalId !== null) {
-				global.clearInterval(_globalIntervalId);
-			}
-
-
-			this.__ms.min = this.__ms.update < this.__ms.render ? this.__ms.update : this.__ms.render;
-
-			var that = this;
-
-			_globalIntervalId = global.setInterval(function() {
-
-				var clock = Date.now() - that.__clock.start;
-				that._renderLoop(clock);
-				that._updateLoop(clock);
-
-			}, this.__ms.min);
 
 		},
 
@@ -155,17 +131,23 @@ lychee.define('lychee.game.Loop').includes([
 
 		},
 
+
+
+		/*
+		 * PROTECTED API
+		 */
+
 		_renderLoop: function(clock) {
 
 			if (this.__state !== 'running') return;
 
 
 			var delta = clock - this.__clock.render;
-
 			if (delta >= this.__ms.render) {
 				this.trigger('render', [ clock, delta ]);
 				this.__clock.render = clock;
 			}
+
 
 		},
 
@@ -175,7 +157,6 @@ lychee.define('lychee.game.Loop').includes([
 
 
 			var delta = clock - this.__clock.update;
-
 			if (
 				delta >= this.__ms.update
 				|| this.__ms.min === this.__ms.update
@@ -215,6 +196,34 @@ lychee.define('lychee.game.Loop').includes([
 				}
 
 			}
+
+		},
+
+
+
+		/*
+		 * PRIVATE API
+		 */
+
+		__setup: function() {
+
+			if (_globalIntervalId !== null) {
+				global.clearInterval(_globalIntervalId);
+			}
+
+
+			this.__ms.min = this.__ms.update < this.__ms.render ? this.__ms.update : this.__ms.render;
+
+			var that = this;
+
+			_globalIntervalId = global.setInterval(function() {
+
+				var clock = Date.now() - that.__clock.start;
+				that._updateLoop(clock);
+				that._renderLoop(clock);
+
+
+			}, this.__ms.min);
 
 		}
 
