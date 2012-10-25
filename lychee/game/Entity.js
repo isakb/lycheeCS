@@ -103,6 +103,10 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 				this.setPosition(this.__cache.effect);
 
+			},
+
+			clear: function(effect) {
+				this.setPosition(effect.origin);
 			}
 
 		}
@@ -635,12 +639,20 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 					data.callback instanceof Function
 				) {
 
+					var position = this.getPosition();
+
 					effect = {
 						start: this.__clock,
 						callback: data.callback,
+						clear: data.clear || null,
 						duration: duration,
 						scope: scope,
-						loop: loop
+						loop: loop,
+						origin: {
+							x: position.x,
+							y: position.y,
+							z: position.z
+						}
 					};
 
 					if (Object.prototype.toString.call(data.defaults) === '[object Object]') {
@@ -659,7 +671,13 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		},
 
 		clearEffect: function() {
+
+			if (this.__effect !== null && this.__effect.clear !== null) {
+				this.__effect.clear.call(this.__effect.scope, this.__effect);
+			}
+
 			this.__effect = null;
+
 		}
 
 	};
