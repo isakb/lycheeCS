@@ -64,7 +64,12 @@ lychee.define('game.state.Result').includes([
 
 		},
 
-		enter: function() {
+		enter: function(data) {
+
+			if (Object.prototype.toString.call(data) === '[object Object]') {
+				data.points	= (data.points === null ? 0 : data.points) + '';
+			}
+
 
 			lychee.game.State.prototype.enter.call(this);
 
@@ -83,15 +88,7 @@ lychee.define('game.state.Result').includes([
 			}, lychee.game.Entity.TWEEN.bounceEaseOut);
 
 
-			var score = this.game.score.get('points');
-			if (score === null) {
-				score = '0';
-			} else {
-				score = score.toString();
-			}
-
-
-			this.__entities.points.set(score + ' Points');
+			this.__entities.points.set(data.points + ' Points');
 			this.__entities.points.setPosition({
 				y: hheight + 50
 			});

@@ -2,9 +2,6 @@
 lychee.define('game.Main').requires([
 	'lychee.Font',
 	'lychee.Input',
-	'game.Board',
-	'game.Sidebar',
-	'game.Score',
 	'game.Jukebox',
 	'game.Renderer',
 	'game.state.Credits',
@@ -42,7 +39,7 @@ lychee.define('game.Main').requires([
 				hits: 3,
 				intro: 5000,
 				hint: 2000,
-				time: 30000
+				time: 100000
 			},
 			renderFps: 60,
 			updateFps: 60,
@@ -126,28 +123,32 @@ lychee.define('game.Main').requires([
 			var env = this.renderer.getEnvironment();
 
 			if (this.settings.fullscreen === true) {
-				this.settings.width = Math.floor(env.screen.width / this.settings.tile) * this.settings.tile;
-				this.settings.height = Math.floor(env.screen.height / this.settings.tile) * this.settings.tile;
+				this.settings.width = env.screen.width;
+				this.settings.height = env.screen.height;
 			} else {
 				this.settings.width = this.defaults.width;
 				this.settings.height = this.defaults.height;
 			}
 
 
-			this.settings.board = {
-				width: Math.floor(this.settings.width / this.settings.tile) - 3,
-				height: Math.floor(this.settings.height / this.settings.tile),
-				tile: this.settings.tile
+			this.settings.ui = {};
+			this.settings.ui.width  = Math.floor(this.settings.width / this.settings.tile) * 0.2 * this.settings.tile;
+			this.settings.ui.height = this.settings.height;
+			this.settings.ui.position = {
+				x: this.settings.width - this.settings.ui.width / 2,
+				y: this.settings.height / 2
 			};
 
-			this.settings.sidebar = {
-				width: 3 * this.settings.tile,
-				height: this.settings.height,
-				offset: {
-					x: this.settings.board.width * this.settings.tile,
-					y: 0
-				}
+
+			this.settings.game = {};
+			this.settings.game.width = Math.floor(this.settings.width / this.settings.tile) * 0.8 * this.settings.tile;
+			this.settings.game.height = this.settings.height;
+			this.settings.game.tile = this.settings.tile;
+			this.settings.game.position = {
+				x: this.settings.game.width / 2,
+				y: this.settings.game.height / 2
 			};
+
 
 
 			this.renderer.reset(
@@ -160,8 +161,14 @@ lychee.define('game.Main').requires([
 			this.__offset = env.offset; // Linked
 
 
-			this.board.resize(this.settings.board);
-			this.sidebar.resize(this.settings.sidebar);
+			if (this.states.menu !== undefined) {
+
+				this.states.menu.reset();
+				this.states.game.reset();
+				this.states.credits.reset();
+				this.states.result.reset();
+
+			}
 
 		},
 
@@ -180,10 +187,6 @@ lychee.define('game.Main').requires([
 
 			this.jukebox = new game.Jukebox(this);
 
-			this.score = new game.Score();
-			this.board = new game.Board(this, this.settings.board);
-			this.sidebar = new game.Sidebar(this, this.settings.sidebar);
-
 			this.reset();
 
 
@@ -193,12 +196,10 @@ lychee.define('game.Main').requires([
 			});
 
 
-			this.states = {
-				game:    new game.state.Game(this),
-				result:  new game.state.Result(this),
-				menu:    new game.state.Menu(this),
-				credits: new game.state.Credits(this)
-			};
+			this.states.game    = new game.state.Game(this);
+			this.states.result  = new game.state.Result(this);
+			this.states.menu    = new game.state.Menu(this);
+			this.states.credits = new game.state.Credits(this);
 
 			this.setState('menu');
 
@@ -208,24 +209,6 @@ lychee.define('game.Main').requires([
 
 		getOffset: function(reset) {
 			return this.__offset;
-		},
-
-		set: function(key, value) {
-
-			if (this.settings[key] !== undefined) {
-
-				if (value === null) {
-					value = this.defaults[key];
-				}
-
-				this.settings[key] = value;
-
-				return true;
-
-			}
-
-			return false;
-
 		}
 
 	};

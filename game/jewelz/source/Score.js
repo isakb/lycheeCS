@@ -18,7 +18,13 @@ lychee.define('game.Score').includes([
 	Class.prototype = {
 
 		get: function(key) {
-			return this.__data[key] || null;
+
+			if (key === undefined) {
+				return this.__data;
+			} else {
+				return this.__data[key] || null;
+			}
+
 		},
 
 		set: function(key, value) {
