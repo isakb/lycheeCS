@@ -74,15 +74,11 @@ lychee.define('lychee.ui.Graph').includes([
 
 			if (this.__renderer !== null) {
 
-				this.__renderer.clear();
-
 				this.__renderNode(
 					this.__tree,
 					this.__offset.x,
 					this.__offset.y
 				);
-
-				this.__renderer.flush();
 
 			}
 

@@ -90,6 +90,13 @@ lychee.define('lychee.game.Graph').exports(function(lychee) {
 		 * PUBLIC API
 		 */
 
+		reset: function() {
+
+			this.__dirty = false;
+			this.__tree = new _Node(null, null);
+
+		},
+
 		add: function(entity, parent) {
 
 			entity = entity !== null ? entity : null;
@@ -183,6 +190,8 @@ lychee.define('lychee.game.Graph').exports(function(lychee) {
 		},
 
 		__getNodeByEntity: function(entity, node) {
+
+			if (entity === null) return null;
 
 			if (node == null) {
 				node = this.__tree;
