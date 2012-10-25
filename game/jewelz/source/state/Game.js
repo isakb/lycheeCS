@@ -158,7 +158,10 @@ lychee.define('game.state.Game').requires([
 
 				var min = this.game.settings.play.hits;
 				var jewelz = this.__game.touch(position.x, position.y);
-				if (jewelz.length >= min) {
+				if (jewelz !== null) {
+
+					this.__game.setHint(false);
+
 
 					if (this.game.settings.sound === true) {
 						this.__jukebox.play('success');

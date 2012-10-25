@@ -15,13 +15,16 @@ lychee.define('game.scene.Game').requires([
 		this.__offset   = { x: 0, y: 0 };
 		this.__size     = { x: 5, y: 5 };
 
-		this.__cache  = {};
-		this.__grid   = [];
-		this.__locked = false;
-		this.__tween  = 300;
-		this.__width  = 0;
-		this.__height = 0;
-		this.__tile   = 0;
+		this.__cache   = {};
+		this.__grid    = [];
+		this.__hint    = null;
+		this.__locked  = false;
+		this.__minHits = 1;
+		this.__tween   = 300;
+		this.__width   = 0;
+		this.__height  = 0;
+		this.__tile    = 0;
+		this.__visible = false; // hint
 
 		lychee.game.Graph.call(this);
 
@@ -41,9 +44,12 @@ lychee.define('game.scene.Game').requires([
 
 			lychee.game.Graph.prototype.reset.call(this);
 
-			this.__width  = data.width;
-			this.__height = data.height;
-			this.__tile   = data.tile;
+			this.setHint(false);
+
+			this.__width   = data.width;
+			this.__height  = data.height;
+			this.__tile    = data.tile;
+			this.__minHits = data.hits;
 
 			this.__size.x = (this.__width / this.__tile) | 0;
 			this.__size.y = (this.__height / this.__tile) | 0;
@@ -155,8 +161,9 @@ lychee.define('game.scene.Game').requires([
 					entity.getState()
 				);
 
-
-				return hitmap;
+				if (hitmap.length >= this.__minHits) {
+					return hitmap;
+				}
 
 			}
 
@@ -175,13 +182,14 @@ lychee.define('game.scene.Game').requires([
 
 				var entities = [];
 
+
 				for (var j = 0, l = jewelz.length; j < l; j++) {
 
 					this.__cache.x = jewelz[j].getPosition().x;
 
 					// Entities are positioned via center of gravity
-					var x = (jewelz[j].getPosition().x / this.__tile) - 0.5;
-					var y = (jewelz[j].getPosition().y / this.__tile) - 0.5;
+					var x = ((jewelz[j].getPosition().x / this.__tile) - 0.5) | 0;
+					var y = ((jewelz[j].getPosition().y / this.__tile) - 0.5) | 0;
 
 					jewelz[j].setState('destroy');
 					jewelz[j].setPosition(this.__cache);
@@ -192,23 +200,46 @@ lychee.define('game.scene.Game').requires([
 				}
 
 
-				this.__loop.timeout(0, function() {
+				// This unlocks the Game Scene again
+				this.__refreshGrid(entities);
+				this.__refreshHint();
 
-					// This unlocks the Game Scene again
-					this.__refreshGrid(entities);
-
-					entities = null;
-					jewelz   = null;
-
-				}, this);
+				entities = null;
+				jewelz   = null;
 
 			}
 
 		},
 
-		setHint: function(active) {
+		setHint: function(visible) {
 
-lychee.debug === true && console.log('setting hint', active);
+			visible = visible === true ? true : false;
+
+			this.__visible = visible;
+
+
+			if (this.__hint === null) return;
+
+			if (this.__visible === true) {
+
+				for (var h = 0, l = this.__hint.length; h < l; h++) {
+
+					this.__hint[h].setEffect(200, lychee.game.Entity.EFFECT.wobble, {
+						x: 3,
+						y: 1
+					}, undefined, true);
+
+				}
+
+			} else {
+
+				for (var h = 0, l = this.__hint.length; h < l; h++) {
+					this.__hint[h].clearEffect();
+				}
+
+				this.__hint = null;
+
+			}
 
 		},
 
@@ -238,10 +269,115 @@ lychee.debug === true && console.log('setting hint', active);
 
 		__refreshGrid: function(entities) {
 
+			if (Object.prototype.toString.call(entities) !== '[object Array]') {
+				return;
+			}
 
-lychee.debug === true && console.log('refreshing grid', entities);
 
-			this.__locked = false;
+			var tile  = this.__tile;
+			var tween = this.__tween;
+
+			for (var y = (this.__size.y - 1); y >= 0; y--) {
+
+				var refresh = false;
+
+				for (var x = 0; x < this.__size.x; x++) {
+
+					if (this.__grid[x][y] === null) {
+
+						var replacement = this.__getEntityByGrid(x, y - 1);
+						if (replacement !== null) {
+
+							replacement.setTween(tween, {
+								y: y * tile + tile / 2
+							}, lychee.game.Entity.TWEEN.bounceEaseOut);
+
+
+	 						this.__grid[x][y] = this.__grid[x][y - 1];
+							this.__grid[x][y - 1] = null;
+
+						} else if (y === 0 && entities.length > 0) {
+
+							// PS: Fuck you, guy who designed the splice API.
+							replacement = entities.splice(0, 1)[0];
+							replacement.setState(replacement.getRandomState());
+
+							this.__cache.x = x * tile + tile / 2;
+							this.__cache.y = -1 * tile;
+
+							replacement.setPosition(this.__cache);
+							replacement.setTween(tween, {
+								y: y * tile + tile / 2
+							}, lychee.game.Entity.TWEEN.bounceEaseOut);
+
+
+							this.__grid[x][y] = replacement;
+
+						}
+
+					}
+
+				}
+
+			}
+
+
+			if (entities.length > 0) {
+				this.__refreshGrid(entities);
+			} else {
+				this.__loop.timeout(tween, function() {
+					this.__locked = false;
+				}, this);
+			}
+
+		},
+
+		__refreshHint: function() {
+
+			if (this.__hint !== null) return;
+
+
+			for (var x = 0; x < this.__size.x; x++) {
+
+				for (var y = 0; y < this.__size.y; y++) {
+
+					var entity = this.__getEntityByGrid(x, y);
+					if (entity !== null) {
+
+						var hitmap = this.__hitJewelz(
+							x,
+							y,
+							entity.getState()
+						);
+
+
+						if (hitmap.length >= this.__minHits) {
+							this.__hint = hitmap;
+							return;
+						}
+
+					}
+
+				}
+
+			}
+
+
+
+			if (this.__hint === null) {
+
+				var startX = (Math.random() * (this.__size.x - this.__minHits - 1)) | 0;
+				var y      = (Math.random() * (this.__size.y - 1)) | 0;
+				var state = this.__getEntityByGrid(startX, y).getState();
+
+
+				for (var x = startX; x < startX + this.__minHits; x++) {
+					this.__getEntityByGrid(x, y).setState(state);
+				}
+
+				this.__refreshHint();
+
+			}
 
 		},
 

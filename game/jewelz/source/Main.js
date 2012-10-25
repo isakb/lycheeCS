@@ -39,7 +39,7 @@ lychee.define('game.Main').requires([
 				hits: 3,
 				intro: 5000,
 				hint: 2000,
-				time: 100000
+				time: 60000
 			},
 			renderFps: 60,
 			updateFps: 60,
@@ -143,6 +143,7 @@ lychee.define('game.Main').requires([
 			this.settings.game = {};
 			this.settings.game.width = Math.floor(this.settings.width / this.settings.tile) * 0.8 * this.settings.tile;
 			this.settings.game.height = this.settings.height;
+			this.settings.game.hits = this.settings.play.hits;
 			this.settings.game.tile = this.settings.tile;
 			this.settings.game.position = {
 				x: this.settings.game.width / 2,
