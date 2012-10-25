@@ -148,6 +148,8 @@ lychee.define('game.state.Game').requires([
 
 		__processTouch: function(position, delta) {
 
+			if (this.__locked === true) return;
+
 			var gameOffset = this.game.getOffset();
 
 			position.x -= gameOffset.x;
