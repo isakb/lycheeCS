@@ -6,7 +6,9 @@
 
 		"state": {
 			"Credits": [ "js" ],
-			"Game": [ "js" ],
+			"GameBlast": [ "js" ],
+			"GameBoard": [ "js" ],
+			"GamePuzzle": [ "js" ],
 			"Menu": [ "js" ],
 			"Result": [ "js" ]
 		},
@@ -16,7 +18,8 @@
 		},
 
 		"scene": {
-			"Game": [ "js" ],
+			"GameBlast": [ "js" ],
+			"GameBoard": [ "js" ],
 			"Overlay": [ "js" ],
 			"UI": [ "js" ]
 		},

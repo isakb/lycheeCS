@@ -77,7 +77,7 @@ lychee.define('game.state.Menu').requires([
 			});
 
 			entity.bind('touch', function(entity) {
-				this.game.setState('game');
+				this.__scene.scrollTo(this.__newgame);
 			}, this);
 
 			this.__scene.add(entity, this.__welcome);
@@ -113,6 +113,99 @@ lychee.define('game.state.Menu').requires([
 			}, this);
 
 			this.__scene.add(entity, this.__welcome);
+
+
+			this.__newgame = this.__scene.add(new lychee.ui.Tile({
+				width: this.game.settings.width,
+				height: this.game.settings.height,
+				color: '#448',
+				position: {
+					x: hwidth,
+					y: -hheight * 3
+				}
+			}), null);
+
+
+			entity = new lychee.ui.Text({
+				text: 'New Game',
+				font: this.game.fonts.headline,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: -hheight + 80
+				}
+			});
+
+			entity.bind('touch', function(entity) {
+				this.__scene.scrollTo(this.__welcome);
+			}, this);
+
+			this.__scene.add(entity, this.__newgame);
+
+			entity = new lychee.ui.Text({
+				text: 'Classical Board',
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: -24
+				}
+			});
+
+			entity.bind('touch', function(entity) {
+				this.game.setState('gameboard');
+			}, this);
+
+			this.__scene.add(entity, this.__newgame);
+
+			entity = new lychee.ui.Text({
+				text: 'Puzzle Game',
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 24
+				}
+			});
+
+			entity.bind('touch', function(entity) {
+				this.game.setState('gamepuzzle');
+			}, this);
+
+			this.__scene.add(entity, this.__newgame);
+
+
+// TODO: Remove this notification
+
+			this.__scene.add(new lychee.ui.Text({
+				text: '(coming soon)',
+				font: this.game.fonts.small,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 52
+				}
+			}), this.__newgame);
+
+// End of TODO
+
+
+			entity = new lychee.ui.Text({
+				text: 'Blast Game',
+				font: this.game.fonts.normal,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					// y: 72
+					y: 96
+				}
+			});
+
+			entity.bind('touch', function(entity) {
+				this.game.setState('gameblast');
+			}, this);
+
+			this.__scene.add(entity, this.__newgame);
 
 
 			this.__settings = this.__scene.add(new lychee.ui.Tile({

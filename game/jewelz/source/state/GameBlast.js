@@ -1,6 +1,6 @@
 
-lychee.define('game.state.Game').requires([
-	'game.scene.Game',
+lychee.define('game.state.GameBlast').requires([
+	'game.scene.GameBlast',
 	'game.scene.Overlay',
 	'game.scene.UI'
 ]).includes([
@@ -28,7 +28,7 @@ lychee.define('game.state.Game').requires([
 
 		reset: function() {
 
-			this.__game    = new game.scene.Game(this.game, this.game.settings.game);
+			this.__game    = new game.scene.GameBlast(this.game, this.game.settings.game);
 			this.__overlay = new game.scene.Overlay(this.game, this.game.settings.game);
 			this.__ui      = new game.scene.UI(this.game, this.game.settings.ui);
 

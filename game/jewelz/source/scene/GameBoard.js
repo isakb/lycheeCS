@@ -1,5 +1,5 @@
 
-lychee.define('game.scene.Game').requires([
+lychee.define('game.scene.GameBoard').requires([
 	'game.entity.Jewel'
 ]).includes([
 	'lychee.game.Graph'

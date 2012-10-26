@@ -5,7 +5,9 @@ lychee.define('game.Main').requires([
 	'game.Jukebox',
 	'game.Renderer',
 	'game.state.Credits',
-	'game.state.Game',
+	'game.state.GameBlast',
+	'game.state.GameBoard',
+	'game.state.GamePuzzle',
 	'game.state.Menu',
 	'game.state.Result',
 	'game.DeviceSpecificHacks'
@@ -39,7 +41,7 @@ lychee.define('game.Main').requires([
 				hits: 3,
 				intro: 5000,
 				hint: 2000,
-				time: 60000
+				time: 10000 // TODO: Set back to 60 seconds
 			},
 			renderFps: 60,
 			updateFps: 60,
@@ -197,10 +199,12 @@ lychee.define('game.Main').requires([
 			});
 
 
-			this.states.game    = new game.state.Game(this);
-			this.states.result  = new game.state.Result(this);
-			this.states.menu    = new game.state.Menu(this);
-			this.states.credits = new game.state.Credits(this);
+			this.states.gameboard  = new game.state.GameBoard(this);
+			this.states.gamepuzzle = new game.state.GamePuzzle(this);
+			this.states.gameblast  = new game.state.GameBlast(this);
+			this.states.result     = new game.state.Result(this);
+			this.states.menu       = new game.state.Menu(this);
+			this.states.credits    = new game.state.Credits(this);
 
 			this.setState('menu');
 
