@@ -39,9 +39,9 @@ lychee.define('tool.FontGenerator').tags({
 			spritemap: Class.SPRITEMAP.x
 		},
 
-		__updateFont: function() {
+		__updateFont: function(font, style, size) {
 
-			this.__ctx.font = this.settings.style + ' ' + this.settings.size + 'px ' + '"' + this.settings.font + '"';
+			this.__ctx.font = style + ' ' + size + 'px ' + '"' + font + '"';
 			this.__ctx.textBaseline = 'top';
 
 		},
@@ -50,28 +50,29 @@ lychee.define('tool.FontGenerator').tags({
 			this.__ctx.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
 		},
 
-		__render: function(charset, widthMap, offsetY) {
+		__render: function(charset, widthMap, spacing, offsetY, color) {
 
+			spacing = typeof spacing === 'number' ? spacing : 0;
 			offsetY = typeof offsetY === 'number' ? offsetY : 0;
 
-			this.__ctx.fillStyle = this.settings.color;
+			this.__ctx.fillStyle = color;
 
-			for (var c = 0, margin = this.settings.spacing; c < charset.length; c++) {
+			for (var c = 0, margin = spacing; c < charset.length; c++) {
 				this.__ctx.fillText(charset[c], margin, offsetY);
-				margin += widthMap[c] + this.settings.spacing * 2;
+				margin += widthMap[c] + spacing * 2;
 			}
 
 		},
 
-		__renderOutline: function(charset, widthMap, offsetY) {
+		__renderOutline: function(charset, widthMap, outline, spacing, offsetY, color) {
 
 			offsetY = typeof offsetY === 'number' ? offsetY : 0;
+			outline = typeof outline === 'number' ? outline : 0;
 
-			this.__ctx.fillStyle = this.settings.outlineColor;
+			this.__ctx.fillStyle = color;
 
-			var outline = this.settings.outline;
 
-			for (var c = 0, margin = this.settings.spacing; c < charset.length; c++) {
+			for (var c = 0, margin = spacing; c < charset.length; c++) {
 
 				for (var x = -1 * outline; x <= outline; x++) {
 					for (var y = -1 * outline; y <= outline; y++) {
@@ -79,13 +80,13 @@ lychee.define('tool.FontGenerator').tags({
 					}
 				}
 
-				margin += widthMap[c] + this.settings.spacing * 2;
+				margin += widthMap[c] + spacing * 2;
 
 			}
 
 		},
 
-		__getBaseline: function(charset, widthMap) {
+		__getBaseline: function(charset, widthMap, spacing) {
 
 			var width = this.__canvas.width,
 				height = this.__canvas.height;
@@ -94,7 +95,7 @@ lychee.define('tool.FontGenerator').tags({
 				data = this.__ctx.getImageData(0, 0, width, height);
 
 
-			for (var c = 0, margin = this.settings.spacing; c < charset.length; c++) {
+			for (var c = 0, margin = spacing; c < charset.length; c++) {
 
 				var baseline = height;
 
@@ -116,7 +117,7 @@ lychee.define('tool.FontGenerator').tags({
 
 				baselines.push(baseline);
 
-				margin += widthMap[c] + this.settings.spacing * 2;
+				margin += widthMap[c] + spacing * 2;
 
 			}
 
@@ -150,13 +151,6 @@ lychee.define('tool.FontGenerator').tags({
 
 
 			return currentBaseline;
-
-
-			/*
-			for (var c = 0; c < charset.length; c++) {
-				console.log(charset[c], baselines[c]);
-			}
-			*/
 
 		},
 
@@ -216,46 +210,46 @@ lychee.define('tool.FontGenerator').tags({
 
 		},
 
-		export: function(settings) {
+		export: function(data) {
 
-			this.settings = lychee.extend({}, this.defaults, settings);
+			var settings = lychee.extend({}, this.defaults, data);
 
 			var charset = [];
-			for (var c = this.settings.firstChar; c < this.settings.lastChar; c++) {
+			for (var c = settings.firstChar; c < settings.lastChar; c++) {
 				charset.push(String.fromCharCode(c));
 			}
 
 
-			this.__updateFont();
+			this.__updateFont(settings.font, settings.style, settings.size);
 
 
 			// 1. Measure the approximate the canvas dimensions
-			var width = this.settings.spacing,
+			var width = settings.spacing,
 				widthMap = [];
 
 			for (var i = 0; i < charset.length; i++) {
 
 				var m = this.__ctx.measureText(charset[i]);
-				var charWidth = Math.max(1, Math.ceil(m.width)) + this.settings.outline * 2;
+				var charWidth = Math.max(1, Math.ceil(m.width)) + settings.outline * 2;
 
 				widthMap.push(charWidth);
-				width += charWidth + this.settings.spacing * 2;
+				width += charWidth + settings.spacing * 2;
 
 			}
 
 
 			// 2. Render it the first time to find out character heights
 			this.__canvas.width = width;
-			this.__canvas.height = this.settings.size * 3;
-			this.__updateFont();
+			this.__canvas.height = settings.size * 3;
+			this.__updateFont(settings.font, settings.style, settings.size);
 
 			this.__clear();
 
-			if (this.settings.outline > 0) {
-				this.__renderOutline(charset, widthMap, this.settings.size);
+			if (settings.outline > 0) {
+				this.__renderOutline(charset, widthMap, settings.outline, settings.spacing, settings.size, settings.outlineColor);
 			}
 
-			this.__render(charset, widthMap, this.settings.size);
+			this.__render(charset, widthMap, settings.spacing, settings.size, settings.color);
 
 
 			// 3. Rerender everything if we know that the font size differed from the actual height
@@ -264,21 +258,21 @@ lychee.define('tool.FontGenerator').tags({
 
 				var height = this.__canvas.height;
 				this.__canvas.height = height - margin.top - (height - margin.bottom);
-				this.__updateFont();
+				this.__updateFont(settings.font, settings.style, settings.size);
 
 				this.__clear();
 
-				if (this.settings.outline > 0) {
-					this.__renderOutline(charset, widthMap, this.settings.size - margin.top);
+				if (settings.outline > 0) {
+					this.__renderOutline(charset, widthMap, settings.outline, settings.spacing, settings.size - margin.top, settings.outlineColor);
 				}
 
-				this.__render(charset, widthMap, this.settings.size - margin.top);
+				this.__render(charset, widthMap, settings.spacing, settings.size - margin.top, settings.color);
 
 			}
 
 
 			// 4. Detect the Baseline
-			var baseline = this.__getBaseline(charset, widthMap);
+			var baseline = this.__getBaseline(charset, widthMap, settings.spacing);
 
 
 			// 5. Generate Image and Settings for Spriting
@@ -286,48 +280,52 @@ lychee.define('tool.FontGenerator').tags({
 			sprite.src = this.__canvas.toDataURL('image/png');
 
 
-			var settings = {
+			var exported = {
 				baseline: baseline,
 				charset: charset.join(''),
 				kerning: 0,
-				spacing: this.settings.spacing
+				spacing: settings.spacing
 			};
 
 
 			// 6. Sprite the Font now
 			var that = this;
 			sprite.onload = function() {
-				that.__sprite(this, that.__canvas.width, that.__canvas.height, settings, widthMap);
+
+				that.__sprite(this, that.__canvas.width, that.__canvas.height, exported, settings, widthMap);
+
+				settings = null;
+
 			};
 
 		},
 
 
-		__sprite: function(sprite, width, height, settings, widthMap) {
+		__sprite: function(sprite, width, height, exported, settings, widthMap) {
 
-			switch (this.settings.spritemap) {
+			switch (settings.spritemap) {
 
 				case Class.SPRITEMAP.none:
 
 					var images = [];
-					var outline = this.settings.outline;
+					var outline = settings.outline;
 
-					for (var w = 0, margin = this.settings.spacing, l = widthMap.length; w < l; w++) {
+					for (var w = 0, margin = settings.spacing, l = widthMap.length; w < l; w++) {
 
 						var frameWidth = widthMap[w];
 
-						this.__canvas.width = frameWidth + this.settings.spacing * 2;
+						this.__canvas.width = frameWidth + settings.spacing * 2;
 						this.__canvas.height = height;
 
 						this.__ctx.drawImage(
 							sprite,
-							margin - this.settings.spacing,
+							margin - settings.spacing,
 							0,
-							frameWidth + this.settings.spacing * 2,
+							frameWidth + settings.spacing * 2,
 							height,
 							0,
 							0,
-							frameWidth + this.settings.spacing * 2,
+							frameWidth + settings.spacing * 2,
 							height
 						);
 
@@ -337,7 +335,7 @@ lychee.define('tool.FontGenerator').tags({
 
 						images.push(image);
 
-						margin += frameWidth + this.settings.spacing * 2;
+						margin += frameWidth + settings.spacing * 2;
 
 					}
 
@@ -345,7 +343,7 @@ lychee.define('tool.FontGenerator').tags({
 					this.trigger('ready', [{
 						sprite: sprite,
 						images: images,
-						settings: JSON.stringify(settings)
+						settings: JSON.stringify(exported)
 					}]);
 
 				break;
@@ -353,10 +351,10 @@ lychee.define('tool.FontGenerator').tags({
 
 				case Class.SPRITEMAP.x:
 
-					settings.map = widthMap;
+					exported.map = widthMap;
 
 
-					var offset = this.settings.spacing;
+					var offset = settings.spacing;
 					for (var w = 0, l = widthMap.length; w < l; w++) {
 
 						var frame = {
@@ -367,7 +365,7 @@ lychee.define('tool.FontGenerator').tags({
 						};
 
 
-						offset += frame.width + this.settings.spacing * 2;
+						offset += frame.width + settings.spacing * 2;
 
 
 						if (lychee.debug === true) {
@@ -386,7 +384,7 @@ lychee.define('tool.FontGenerator').tags({
 
 					this.trigger('ready', [{
 						sprite: sprite,
-						settings: JSON.stringify(settings)
+						settings: JSON.stringify(exported)
 					}]);
 
 				break;
@@ -400,15 +398,15 @@ lychee.define('tool.FontGenerator').tags({
 
 					// 2. Determination of sprite height && generation of spritemap
 					var spriteMap = [];
-					var srcOffsetX = this.settings.spacing;
+					var srcOffsetX = settings.spacing;
 					var offsetX = 0;
 					var offsetY = 0;
 					for (var w = 0, l = widthMap.length; w < l; w++) {
 
 						var frame = {
-							width: widthMap[w] + this.settings.spacing * 2,
+							width: widthMap[w] + settings.spacing * 2,
 							height: height,
-							sx: srcOffsetX - this.settings.spacing,
+							sx: srcOffsetX - settings.spacing,
 							sy: 0,
 							dx: offsetX,
 							dy: offsetY
@@ -433,7 +431,7 @@ lychee.define('tool.FontGenerator').tags({
 
 						var nextFrameWidth = 0;
 						if (widthMap[w + 1] !== undefined) {
-							nextFrameWidth = widthMap[w + 1] + this.settings.spacing * 2;
+							nextFrameWidth = widthMap[w + 1] + settings.spacing * 2;
 						}
 
 
@@ -488,9 +486,9 @@ lychee.define('tool.FontGenerator').tags({
 						var frame = spriteMap[s];
 
 						widthMap.push({
-							width: frame.width - this.settings.spacing * 2,
+							width: frame.width - settings.spacing * 2,
 							height: frame.height,
-							x: frame.dx + this.settings.spacing,
+							x: frame.dx + settings.spacing,
 							y: frame.dy
 						});
 
@@ -509,7 +507,7 @@ lychee.define('tool.FontGenerator').tags({
 							this.__ctx.strokeStyle = 'blue';
 							this.__ctx.strokeRect(map.x, map.y, map.width, map.height);
 							this.__ctx.strokeStyle = 'red';
-							this.__ctx.strokeRect(map.x - this.settings.spacing, map.y, map.width + this.settings.spacing * 2, map.height);
+							this.__ctx.strokeRect(map.x - settings.spacing, map.y, map.width + settings.spacing * 2, map.height);
 
 						}
 
@@ -520,13 +518,13 @@ lychee.define('tool.FontGenerator').tags({
 					}
 
 
-					settings.map = widthMap;
+					exported.map = widthMap;
 
 
 					this.trigger('ready', [{
 						sprite: sprite,
 						settings: JSON.stringify(
-							settings,
+							exported,
 							null,
 							'\t'
 						)
