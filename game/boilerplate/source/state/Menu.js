@@ -228,9 +228,13 @@ lychee.define('game.state.Menu').requires([
 
 		render: function(clock, delta) {
 
+			this.__renderer.clear();
+
 			if (this.__scene !== null) {
 				this.__scene.render(clock, delta);
 			}
+
+			this.__renderer.flush();
 
 		},
 
