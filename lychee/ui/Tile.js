@@ -5,7 +5,7 @@ lychee.define('lychee.ui.Tile').includes([
 
 	var Class = function(settings) {
 
-		settings.color = settings.color || '#000';
+		settings.color = settings.color || '#000000';
 
 		this.color = settings.color;
 
