@@ -4,7 +4,9 @@
 	"tree": {
 
 		"Font": [ "js", "css" ],
-		"FontGenerator": [ "js" ]
+		"FontGenerator": [ "js" ],
+		"UI": [ "js", "css" ],
+		"UIGenerator": [ "js" ]
 
 	}
 }
