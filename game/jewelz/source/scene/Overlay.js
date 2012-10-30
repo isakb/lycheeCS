@@ -26,7 +26,7 @@ lychee.define('game.scene.Overlay').includes([
 			if (this.__root === null) {
 
 				this.__root = this.add(new lychee.ui.Tile({
-					color: '#222',
+					color: '#222222',
 					width: data.width,
 					height: data.height,
 					position: {

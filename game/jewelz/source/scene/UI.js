@@ -39,7 +39,7 @@ lychee.define('game.scene.UI').requires([
 				this.__entities = {};
 
 				this.__root = this.add(new lychee.ui.Tile({
-					color: '#333',
+					color: '#333333',
 					width: data.width,
 					height: data.height,
 					position: {

@@ -39,7 +39,7 @@ lychee.define('game.state.Menu').requires([
 			this.__welcome = this.__scene.add(new lychee.ui.Tile({
 				width: this.game.settings.width,
 				height: this.game.settings.height,
-				color: '#222',
+				color: '#222222',
 				position: {
 					x: hwidth,
 					y: hheight
@@ -118,7 +118,7 @@ lychee.define('game.state.Menu').requires([
 			this.__newgame = this.__scene.add(new lychee.ui.Tile({
 				width: this.game.settings.width,
 				height: this.game.settings.height,
-				color: '#448',
+				color: '#444488',
 				position: {
 					x: hwidth,
 					y: -hheight * 3
@@ -211,7 +211,7 @@ lychee.define('game.state.Menu').requires([
 			this.__settings = this.__scene.add(new lychee.ui.Tile({
 				width: this.game.settings.width,
 				height: this.game.settings.height,
-				color: '#448',
+				color: '#444488',
 				position: {
 					x: hwidth * 3,
 					y: hheight
@@ -336,9 +336,13 @@ lychee.define('game.state.Menu').requires([
 
 		render: function(clock, delta) {
 
+			this.__renderer.clear();
+
 			if (this.__scene !== null) {
 				this.__scene.render(clock, delta);
 			}
+
+			this.__renderer.flush();
 
 		},
 

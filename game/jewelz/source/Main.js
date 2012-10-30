@@ -186,7 +186,7 @@ lychee.define('game.Main').requires([
 				true
 			);
 
-			this.renderer.setBackground("#222");
+			this.renderer.setBackground("#222222");
 
 			this.jukebox = new game.Jukebox(this);
 
