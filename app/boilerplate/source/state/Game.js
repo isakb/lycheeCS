@@ -159,11 +159,11 @@ lychee.define('game.state.Game').requires([
 			var entity = this.__scene.getEntityByPosition(position.x, position.y, null, true);
 			if (entity !== null && entity.hasEvent('touch')) {
 				entity.trigger('touch', [ entity ]);
-				return false;
+				return true;
 			}
 
 
-			return true;
+			return false;
 
 		},
 
