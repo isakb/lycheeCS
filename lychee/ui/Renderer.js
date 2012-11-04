@@ -99,6 +99,8 @@ lychee.define('lychee.ui.Renderer').requires([
 
 		renderUITile: function(entity, offsetX, offsetY) {
 
+			if (entity.color === null) return;
+
 			offsetX = offsetX || 0;
 			offsetY = offsetY || 0;
 
