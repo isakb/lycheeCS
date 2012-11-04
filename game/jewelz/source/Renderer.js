@@ -11,6 +11,22 @@ lychee.define('game.Renderer').includes([
 
 	Class.prototype = {
 
+		renderDeco: function(entity) {
+
+			var map = entity.getMap();
+			var pos = entity.getPosition();
+			var image = entity.getImage();
+
+
+			this.drawSprite(
+				pos.x - entity.width / 2,
+				pos.y - entity.height / 2,
+				image,
+				map
+			);
+
+		},
+
 		renderJewel: function(entity) {
 
 			var map = entity.getMap();

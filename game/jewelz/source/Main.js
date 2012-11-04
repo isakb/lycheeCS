@@ -41,7 +41,7 @@ lychee.define('game.Main').requires([
 				hits: 3,
 				intro: 5000,
 				hint: 2000,
-				time: 10000 // TODO: Set back to 60 seconds
+				time: 120000 // TODO: Set back to 60 seconds
 			},
 			renderFps: 60,
 			updateFps: 60,
@@ -59,8 +59,11 @@ lychee.define('game.Main').requires([
 				base + '/img/font_48_white.png',
 				base + '/img/font_32_white.png',
 				base + '/img/font_16_white.png',
+				base + '/img/deco_64.png',
+				base + '/json/deco_64.json',
 				base + '/img/jewel_64.png',
-				base + '/json/jewel_64.json'
+				base + '/json/jewel_64.json',
+				base + '/json/map_01.json'
 			];
 
 
@@ -97,10 +100,16 @@ lychee.define('game.Main').requires([
 
 
 				this.config = {
-					jewel: assets[urls[4]]
+					deco:  assets[urls[4]],
+					jewel: assets[urls[6]]
 				};
 
-				this.config.jewel.image = assets[urls[3]];
+				this.config.deco.image  = assets[urls[3]];
+				this.config.jewel.image = assets[urls[5]];
+
+				this.config.maps = {
+					'01': assets[urls[7]]
+				};
 
 
 				this.init();
@@ -134,22 +143,23 @@ lychee.define('game.Main').requires([
 
 
 			this.settings.ui = {};
-			this.settings.ui.width  = Math.floor(this.settings.width / this.settings.tile) * 0.2 * this.settings.tile;
+			this.settings.ui.width  = (Math.floor(this.settings.width / this.settings.tile) * 0.2 * this.settings.tile) | 0;
 			this.settings.ui.height = this.settings.height;
+			this.settings.ui.tile = this.settings.tile;
 			this.settings.ui.position = {
-				x: this.settings.width - this.settings.ui.width / 2,
-				y: this.settings.height / 2
+				x: (this.settings.width - this.settings.ui.width / 2) | 0,
+				y: (this.settings.height / 2) | 0
 			};
 
 
 			this.settings.game = {};
-			this.settings.game.width = Math.floor(this.settings.width / this.settings.tile) * 0.8 * this.settings.tile;
+			this.settings.game.width = (Math.floor(this.settings.width / this.settings.tile) * 0.8 * this.settings.tile) | 0;
 			this.settings.game.height = this.settings.height;
 			this.settings.game.hits = this.settings.play.hits;
 			this.settings.game.tile = this.settings.tile;
 			this.settings.game.position = {
-				x: this.settings.game.width / 2,
-				y: this.settings.game.height / 2
+				x: (this.settings.game.width / 2) | 0,
+				y: (this.settings.game.height / 2) | 0
 			};
 
 
@@ -167,7 +177,9 @@ lychee.define('game.Main').requires([
 			if (this.states.menu !== undefined) {
 
 				this.states.menu.reset();
-				this.states.game.reset();
+				this.states.gameboard.reset();
+				this.states.gamepuzzle.reset();
+				this.states.gameblast.reset();
 				this.states.credits.reset();
 				this.states.result.reset();
 

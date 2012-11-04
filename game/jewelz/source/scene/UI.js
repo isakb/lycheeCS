@@ -9,6 +9,7 @@ lychee.define('game.scene.UI').requires([
 
 		this.game = game;
 
+		this.__background = [];
 		this.__loop = game.loop;
 		this.__root = null;
 
@@ -39,7 +40,7 @@ lychee.define('game.scene.UI').requires([
 				this.__entities = {};
 
 				this.__root = this.add(new lychee.ui.Tile({
-					color: '#333333',
+					color: null,
 					width: data.width,
 					height: data.height,
 					position: {
@@ -90,6 +91,46 @@ lychee.define('game.scene.UI').requires([
 
 			}
 
+
+			this.__background = [];
+
+
+			var sizeX = Math.round(data.width / data.tile);
+			var sizeY = Math.round(data.height / data.tile);
+
+			var state = 'default';
+
+			for (var x = 0; x <= sizeX; x++) {
+				for (var y = 0; y <= sizeY; y++) {
+
+					if (x % 2 === 0) {
+						state = 'sand-c';
+					} else {
+						state = 'sand-d';
+					}
+
+					if (x % 2 === 0 && y % 2 === 0) {
+						state = 'sand-a';
+					} else if (y % 2 === 0) {
+						state = 'sand-b';
+					}
+
+					var entity = new game.entity.Deco({
+						image: this.game.config.deco.image,
+						states: this.game.config.deco.states,
+						state: state,
+						map: this.game.config.deco.map,
+						position: {
+							x: x * data.tile + data.position.x - data.width / 2,
+							y: y * data.tile + data.position.y - data.height / 2
+						}
+					});
+
+					this.__background.push(entity);
+
+				}
+			}
+
 		},
 
 		enter: function() {
@@ -104,6 +145,23 @@ lychee.define('game.scene.UI').requires([
 			this.score.unbind('update', this.__updateScore);
 		},
 
+		render: function(clock, delta) {
+
+			if (this.__renderer !== null) {
+
+				for (var b = 0, bl = this.__background.length; b < bl; b++) {
+					this.__renderer.renderDeco(this.__background[b]);
+				}
+
+				this.__renderNode(
+					this.__tree,
+					this.__offset.x,
+					this.__offset.y
+				);
+
+			}
+
+		},
 
 
 		/*

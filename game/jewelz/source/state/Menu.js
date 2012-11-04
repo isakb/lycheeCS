@@ -169,7 +169,7 @@ lychee.define('game.state.Menu').requires([
 			});
 
 			entity.bind('touch', function(entity) {
-				this.game.setState('gamepuzzle');
+//				this.game.setState('gamepuzzle');
 			}, this);
 
 			this.__scene.add(entity, this.__newgame);
@@ -202,7 +202,7 @@ lychee.define('game.state.Menu').requires([
 			});
 
 			entity.bind('touch', function(entity) {
-				this.game.setState('gameblast');
+				this.game.setState('gameblast', this.game.config.maps['01']);
 			}, this);
 
 			this.__scene.add(entity, this.__newgame);

@@ -17,7 +17,6 @@ lychee.define('game.state.GameBlast').requires([
 		this.__renderer = this.game.renderer;
 
 		this.__clock = 0;
-		this.__hintTimeout = null;
 
 		this.reset();
 
@@ -34,12 +33,12 @@ lychee.define('game.state.GameBlast').requires([
 
 		},
 
-		enter: function() {
+		enter: function(data) {
 
 			lychee.game.State.prototype.enter.call(this);
 
 
-			this.__game.enter();
+			this.__game.enter(data);
 			this.__overlay.enter();
 			this.__ui.enter();
 
@@ -104,15 +103,6 @@ lychee.define('game.state.GameBlast').requires([
 			}
 
 
-			if (
-				this.__hintTimeout !== null
-				&& this.__hintTimeout < clock
-			) {
-				this.__game.setHint(true);
-				this.__hintTimeout = null;
-			}
-
-
 			this.__clock = clock;
 
 		},
@@ -154,39 +144,6 @@ lychee.define('game.state.GameBlast').requires([
 				&& position.y < dimensions.height
 			) {
 
-				this.__hintTimeout = this.__clock + this.game.settings.play.hint;
-
-				var min = this.game.settings.play.hits;
-				var jewelz = this.__game.touch(position.x, position.y);
-				if (jewelz !== null) {
-
-					this.__game.setHint(false);
-
-
-					if (this.game.settings.sound === true) {
-						this.__jukebox.play('success');
-					}
-
-
-					var time = (jewelz.length - min) * 1000;
-					var points = jewelz.length * 100;
-					for (var j = 0, l = jewelz.length; j < l; j++) {
-						points += (jewelz.length - j) * 200;
-					}
-
-					this.__ui.score.add('time',   time);
-					this.__ui.score.add('points', points);
-
-
-					this.__game.destroyJewelz(jewelz);
-
-				} else {
-
-					if (this.game.settings.sound === true) {
-						this.__jukebox.play('fail');
-					}
-
-				}
 
 			}
 

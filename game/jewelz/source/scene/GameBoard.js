@@ -7,6 +7,8 @@ lychee.define('game.scene.GameBoard').requires([
 
 	var Class = function(game, settings) {
 
+		this.game = game;
+
 		this.__loop = game.loop;
 		this.__renderer = game.renderer;
 
@@ -18,6 +20,9 @@ lychee.define('game.scene.GameBoard').requires([
 		this.__cache   = {};
 		this.__grid    = [];
 		this.__hint    = null;
+		this.__layers = {
+			background: []
+		};
 		this.__locked  = false;
 		this.__minHits = 1;
 		this.__tween   = 300;
@@ -68,6 +73,52 @@ lychee.define('game.scene.GameBoard').requires([
 			}
 
 
+			this.__layers.background = [];
+
+
+			var tile   = this.__tile;
+			var image  = this.game.config.deco.image;
+			var states = this.game.config.deco.states;
+			var map    = this.game.config.deco.map;
+
+
+			var state = 'default';
+
+			for (var x = 0; x < this.__size.x; x++) {
+
+				for (var y = 0; y < this.__size.y; y++) {
+
+					if (x % 2 === 0) {
+						state = 'mud-c';
+					} else {
+						state = 'mud-d';
+					}
+
+					if (x % 2 === 0 && y % 2 === 0) {
+						state = 'mud-a';
+					} else if (y % 2 === 0) {
+						state = 'mud-b';
+					}
+
+
+					var entity = new game.entity.Deco({
+						position: {
+							x: x * tile,
+							y: y * tile
+						},
+						image: image,
+						states: states,
+						state: state,
+						map: map
+					});
+
+
+					this.__layers.background.push(entity);
+
+				}
+
+			}
+
 		},
 
 		enter: function() {
@@ -90,6 +141,7 @@ lychee.define('game.scene.GameBoard').requires([
 					if (this.__grid[x][y] !== null) {
 
 						entity = this.__grid[x][y];
+						entity.clearEffect();
 						entity.setPosition(this.__cache);
 						entity.sync(null, true);
 
@@ -119,6 +171,8 @@ lychee.define('game.scene.GameBoard').requires([
 				}
 			}
 
+			this.__hint = null;
+
 		},
 
 		leave: function() {
@@ -128,11 +182,17 @@ lychee.define('game.scene.GameBoard').requires([
 		render: function(clock, delta) {
 
 			if (this.__renderer !== null) {
+
+				for (var b = 0, bl = this.__layers.background.length; b < bl; b++) {
+					this.__renderer.renderDeco(this.__layers.background[b]);
+				}
+
 				this.__renderNode(
 					this.__tree,
 					this.__offset.x,
 					this.__offset.y
 				);
+
 			}
 
 		},
