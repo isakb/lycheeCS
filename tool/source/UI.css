@@ -58,6 +58,15 @@
 	border-top: 1px solid #fff;
 }
 
+#ui-tool .ui-navi textarea {
+	width: 98%;
+	height: 230px;
+	border: 2px solid #222;
+	border-radius: 5px;
+	color: #fff;
+	background: #444;
+}
+
 #ui-tool .ui-viewport {
 	display: inline-block;
 	width: 62%;

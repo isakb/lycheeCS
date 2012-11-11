@@ -10,14 +10,14 @@ lychee.define('ui.Textarea').includes([
 		callback = callback instanceof Function ? callback : function(){};
 		scope = scope !== undefined ? scope : global;
 
+		var that = this;
+
 
 		this.__element = document.createElement('textarea');
 		this.__element.onblur = function() {
-			callback.call(scope);
+			callback.call(scope, that.__element.value);
 		};
 
-
-		var that = this;
 
 		this.__element.onselect = function() {
 

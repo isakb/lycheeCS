@@ -17,18 +17,45 @@ lychee.define('tool.UI').requires([
 		this.settings = lychee.extend({}, this.defaults, settings);
 
 		this.__exportFlag = false;
+		this.__templates = {
+			button: '',
+			input:  ''
+		};
 
 		this.__generator = new tool.UIGenerator(null);
 		this.__generator.bind('ready', this.__render, this);
 		this.__generator.bind('ready', this.__export, this);
 
-
 		this.__lightbox = new ui.Lightbox('ui-lightbox', 'Exported UI Entity');
 		ui.Main.get('main').add(this.__lightbox);
 
 
-		this.__initUI();
-		this.__refresh();
+		var templates = [
+			'./asset/ui/button.css'
+		];
+
+
+		this.__preloader = new lychee.Preloader();
+
+		this.__preloader.bind('ready', function(assets) {
+
+			this.__templates.button = assets[templates[0]];
+
+			this.__initUI();
+			this.__refresh();
+
+		}, this);
+
+		this.__preloader.bind('error', function(urls) {
+
+			if (lychee.debug === true) {
+				console.warn('Preloader error for these urls: ', urls);
+			}
+
+		}, this);
+
+
+		this.__preloader.load(templates, null, 'txt');
 
 	};
 
@@ -37,7 +64,9 @@ lychee.define('tool.UI').requires([
 
 		defaults: {
 
-			type: 'button'
+			type: 'button',
+			width: 100,
+			height: 100
 
 		},
 
@@ -68,6 +97,16 @@ lychee.define('tool.UI').requires([
 			navi.add('Type', select);
 
 
+			navi.add('Width', new ui.Input('number', this.settings.width, function(value) {
+				this.settings.width = value;
+				this.__refresh();
+			}, this));
+
+			navi.add('Height', new ui.Input('number', this.settings.height, function(value) {
+				this.settings.height = value;
+				this.__refresh();
+			}, this));
+
 			navi.add('Debug Mode', new ui.Radios([ 'on', 'off' ], 'off', function(value) {
 
 				if (value === 'on') {
@@ -85,6 +124,18 @@ lychee.define('tool.UI').requires([
 
 			}, this));
 
+			this.__textarea = new ui.Textarea(this.__templates.button, function(value) {
+
+				var rulesets = this.__parse(value);
+
+				// TODO: Make UIGenerator compatible with multiple layers
+				this.settings.rules = rulesets.background;
+				this.__refresh();
+
+			}, this);
+
+			navi.add(null, this.__textarea);
+
 
 			var actions = document.createElement('div');
 			actions.className = 'ui-actions';
@@ -100,6 +151,69 @@ lychee.define('tool.UI').requires([
 			}, this).addTo(actions);
 
 			navi.add(null, actions);
+
+		},
+
+
+
+		/*
+		 * PRIVATE API
+		 */
+
+		__parse: function(code) {
+
+			var lines = code.split('\n');
+
+
+			var cache   = { 'default': {} };
+			var ruleset = cache['default'];
+
+			for (var l = 0, ll = lines.length; l < ll; l++) {
+
+				var line = lines[l].replace(/^\s+/,'').replace(/\s+$/,'');
+
+				if (line === '') continue;
+
+
+				if (line.substr(0,1) === '#') {
+
+					var id = line.replace(/\{/,'').replace(/\s+$/,'').substr(1);
+					cache[id] = {};
+					ruleset = cache[id];
+
+					continue;
+
+				} else if (line === '}') {
+
+					continue;
+
+				} else {
+
+					var simple = line.match(/([A-Za-z0-9\-]+)\:\s([A-Za-z0-9\#\s]+)\;/);
+					var parameters = line.match(/([A-Za-z0-9\-]+)\:\s([A-Za-z0-9]+)\((([0-9\s?\.?]+\,?){1,4})\)\;/);
+
+					if (simple) {
+						ruleset[simple[1]] = simple[2];
+					} else if (parameters) {
+						ruleset[parameters[1]] = parameters[2] + '(' + parameters[3] + ')';
+					} else if (line.substr(0,5) === '-css-') {
+
+						var dotpos = line.indexOf(':');
+						var property = line.substr(5, dotpos - 5);
+						var value = line.substr(dotpos + 1).replace(/\;/,'').replace(/^\s+/,'').replace(/\s+$/,'');
+
+						ruleset[property] = value;
+
+					} else {
+						console.warn('Could not interpret line: ', line);
+					}
+
+				}
+
+			}
+
+
+			return cache;
 
 		},
 
@@ -120,8 +234,8 @@ lychee.define('tool.UI').requires([
 			viewport.clear();
 
 
-			if (data.sprite) {
-				viewport.add(data.sprite);
+			if (data.png !== null) {
+				viewport.add(data.png);
 			}
 
 		},
