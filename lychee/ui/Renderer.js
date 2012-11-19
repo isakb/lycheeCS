@@ -38,6 +38,7 @@ lychee.define('lychee.ui.Renderer').requires([
 
 			var pos = entity.getPosition();
 
+
 			var background = entity.getBackground();
 			if (background !== null) {
 
@@ -48,6 +49,7 @@ lychee.define('lychee.ui.Renderer').requires([
 				);
 
 			}
+
 
 			var label = entity.getLabel();
 			if (label !== null) {
@@ -87,7 +89,9 @@ lychee.define('lychee.ui.Renderer').requires([
 			offsetX = offsetX || 0;
 			offsetY = offsetY || 0;
 
+
 			var pos = entity.getPosition();
+
 			this.drawText(
 				pos.x + offsetX - entity.width / 2,
 				pos.y + offsetY - entity.height / 2,
@@ -104,7 +108,9 @@ lychee.define('lychee.ui.Renderer').requires([
 			offsetX = offsetX || 0;
 			offsetY = offsetY || 0;
 
+
 			var pos = entity.getPosition();
+
 			this.drawBox(
 				pos.x + offsetX - entity.width / 2,
 				pos.y + offsetY - entity.height / 2,

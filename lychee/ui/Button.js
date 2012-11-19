@@ -10,22 +10,42 @@ lychee.define('lychee.ui.Button').requires([
 
 		var settings = lychee.extend({}, data);
 
-
 		this.__background = null;
 		this.__label = null;
 
-		if (
-			typeof settings.background === 'object'
-			&& settings.background instanceof lychee.ui.Sprite
-		) {
-			this.__background = settings.background;
-		}
+		settings.width = 0;
+		settings.height = 0;
+
 
 		if (
-			typeof settings.label === 'object'
-			&& settings.label instanceof lychee.ui.Text
+			settings.background != null
 		) {
+
+			this.__background = settings.background;
+
+			if (settings.background.width > settings.width) {
+				settings.width = settings.background.width;
+			}
+
+			if (settings.background.height > settings.height) {
+				settings.height = settings.background.height;
+			}
+
+		}
+
+
+		if (settings.label != null) {
+
 			this.__label = settings.label;
+
+			if (settings.label.width > settings.width) {
+				settings.width = settings.label.width;
+			}
+
+			if (settings.label.height > settings.height) {
+				settings.height = settings.label.height;
+			}
+
 		}
 
 
@@ -44,6 +64,18 @@ lychee.define('lychee.ui.Button').requires([
 
 		getLabel: function() {
 			return this.__label;
+		},
+
+		update: function(clock, delta) {
+
+			if (this.__label !== null) {
+				this.__label.update(clock, delta);
+			}
+
+			if (this.__background !== null) {
+				this.__background.update(clock, delta);
+			}
+
 		}
 
 	};
