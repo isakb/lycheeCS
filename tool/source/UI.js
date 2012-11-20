@@ -12,18 +12,23 @@ lychee.define('tool.UI').requires([
 ]).exports(function(lychee, global) {
 
 
-	var Class = function(settings) {
+	var Class = function(data) {
 
-		this.settings = lychee.extend({}, this.defaults, settings);
+		this.rulesets = null;
+		this.settings = lychee.extend({}, this.defaults, data);
 
 		this.__exportFlag = false;
+		this.__state = 'default';
 		this.__templates = {
 			button: '',
 			input:  ''
 		};
 
+
+		this.__init();
+
+
 		this.__generator = new tool.UIGenerator(null);
-		this.__generator.bind('ready', this.__render, this);
 		this.__generator.bind('ready', this.__export, this);
 
 		this.__lightbox = new ui.Lightbox('ui-lightbox', 'Exported UI Entity');
@@ -42,6 +47,9 @@ lychee.define('tool.UI').requires([
 			this.__templates.button = assets[templates[0]];
 
 			this.__initUI();
+
+
+			this.rulesets = this.__parse(this.__textarea.get());
 			this.__refresh();
 
 		}, this);
@@ -65,8 +73,8 @@ lychee.define('tool.UI').requires([
 		defaults: {
 
 			type: 'button',
-			width: 100,
-			height: 100
+			width: 300,
+			height: 200
 
 		},
 
@@ -75,6 +83,34 @@ lychee.define('tool.UI').requires([
 		/*
 		 * PRIVATE API
 		 */
+
+		__init: function() {
+
+			this.__canvas = document.createElement('canvas');
+			this.__context = this.__canvas.getContext('2d');
+
+
+			var that = this;
+
+			this.__canvas.onmousedown = function() {
+				that.__state = 'touch';
+				that.__render();
+			};
+			this.__canvas.onmouseup = function() {
+				that.__state = 'default';
+				that.__render();
+			};
+			this.__canvas.onmouseleave = function() {
+				that.__state = 'default';
+				that.__render();
+			};
+
+
+			var viewport = ui.Main.get('viewport');
+			viewport.add(this.__canvas);
+
+		},
+
 		__initUI: function() {
 
 			var select = null;
@@ -126,10 +162,9 @@ lychee.define('tool.UI').requires([
 
 			this.__textarea = new ui.Textarea(this.__templates.button, function(value) {
 
-				var rulesets = this.__parse(value);
+				this.rulesets = null;
+				this.rulesets = this.__parse(value);
 
-				// TODO: Make UIGenerator compatible with multiple layers
-				this.settings.rules = rulesets.background;
 				this.__refresh();
 
 			}, this);
@@ -162,12 +197,17 @@ lychee.define('tool.UI').requires([
 
 		__parse: function(code) {
 
+
+			var cache   = {
+				'background':       {},
+				'background:touch': {},
+				'label':            {},
+				'label:touch':      {}
+			};
+
+
+			var ruleset = cache['label'];
 			var lines = code.split('\n');
-
-
-			var cache   = { 'default': {} };
-			var ruleset = cache['default'];
-
 			for (var l = 0, ll = lines.length; l < ll; l++) {
 
 				var line = lines[l].replace(/^\s+/,'').replace(/\s+$/,'');
@@ -189,7 +229,7 @@ lychee.define('tool.UI').requires([
 
 				} else {
 
-					var simple = line.match(/([A-Za-z0-9\-]+)\:\s([A-Za-z0-9\#\s]+)\;/);
+					var simple = line.match(/([A-Za-z0-9\-]+)\:\s([A-Za-z0-9\#%\s]+)\;/);
 					var parameters = line.match(/([A-Za-z0-9\-]+)\:\s([A-Za-z0-9]+)\((([0-9\s?\.?]+\,?){1,4})\)\;/);
 
 					if (simple) {
@@ -213,6 +253,26 @@ lychee.define('tool.UI').requires([
 			}
 
 
+			for (var id in cache) {
+
+				if (id.match(/:/)) {
+
+					var defaults = id.split(':')[0];
+					if (cache[defaults]) {
+
+						for (var property in cache[defaults]) {
+							if (cache[id][property] === undefined) {
+								cache[id][property] = cache[defaults][property];
+							}
+						}
+
+					}
+
+				}
+
+			}
+
+
 			return cache;
 
 		},
@@ -223,24 +283,61 @@ lychee.define('tool.UI').requires([
 
 			ui.Main.get('log').clear();
 
-			this.__generator.export(this.settings);
+			this.__generator.export(this.settings, this.rulesets);
 
 		},
 
-		__render: function(data) {
+		__render: function() {
 
-			var viewport = ui.Main.get('viewport');
+			this.__canvas.width = this.settings.width;
+			this.__canvas.height = this.settings.height;
 
-			viewport.clear();
+			this.__context.clearRect(0, 0, this.settings.width, this.settings.height);
+
+			this.__renderLayer('background');
+			this.__renderLayer('label');
+
+		},
+
+		__renderLayer: function(layer) {
 
 
-			if (data.png !== null) {
-				viewport.add(data.png);
+			for (var id in this.__data) {
+
+				var state   = id.match(/:/) ? id.split(':')[1] : 'default';
+				var layerId = id.match(/:/) ? id.split(':')[0] : id;
+				var image   = this.__data[id].png !== null ? this.__data[id].png : this.__data[id].svg;
+
+
+				if (
+					layerId === layer
+					&& image !== null
+					&& state === this.__state
+				) {
+
+					var x = (this.settings.width - image.width) / 2;
+					var y = (this.settings.height - image.height) / 2;
+
+
+					this.__context.drawImage(
+						image,
+						x,
+						y
+					);
+
+				}
+
 			}
 
 		},
 
 		__export: function(data) {
+
+			this.__data = data;
+
+
+			this.__render();
+
 
 			if (this.__exportFlag === true) {
 
