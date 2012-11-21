@@ -87,3 +87,10 @@
 	width: 100%;
 	min-height: 16em;
 }
+
+#ui-tool .ui-viewport > canvas {
+	display: block;
+	background: #000;
+	border: 1px solid #fff;
+	margin: 0 auto;
+}
