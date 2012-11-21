@@ -27,6 +27,11 @@ lychee.define('lychee.game.Main').requires([
 		},
 
 		load: function() {
+
+			// Default behaviour:
+			// Directly initialize, load no assets
+			this.init();
+
 		},
 
 		init: function() {

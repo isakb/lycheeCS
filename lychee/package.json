@@ -58,6 +58,8 @@
 
 		"physics": {
 			"Particle": [ "js" ],
+			"ParticleEmitter": [ "js" ],
+			"ParticleMagnet": [ "js" ],
 			"Vector": [ "js" ]
 		},
 

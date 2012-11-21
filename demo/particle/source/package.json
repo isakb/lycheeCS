@@ -1,0 +1,16 @@
+{
+	"tags": {},
+
+	"tree": {
+
+		"state": {
+			"Game": [ "js" ]
+		},
+
+		"DeviceSpecificHacks": [ "js" ],
+		"Graph": [ "js" ],
+		"Main": [ "js", "css" ],
+		"Renderer": [ "js" ]
+
+	}
+}

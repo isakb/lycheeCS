@@ -1,24 +1,26 @@
 
-lychee.define('lychee.physics.Particle').requires([
-	'lychee.physics.Vector'
-]).exports(function(lychee, global) {
-
-	var _physics = lychee.physics;
+lychee.define('lychee.physics.Particle').exports(function(lychee, global) {
 
 	var Class = function(data) {
 
 		var settings = lychee.extend({}, this.defaults, data);
 
-		this.__invertedMass = null;
+
+		this.__force = { x: 0, y: 0, z: 0 };
+		this.__position = { x: 0, y: 0, z: 0 };
+		this.__velocity = { x: 0, y: 0, z: 0 };
+
+		this.__damping = 1;
+		this.__inverseMass = null;
 
 
-		this.setPosition(settings.position);
-		this.setAcceleration(settings.acceleration);
-		this.setVelocity(settings.velocity);
-		this.setForce(settings.force);
+		settings.force !== null    && this.setForce(settings.force);
+		settings.mass !== null     && this.setMass(settings.mass);
+		settings.position !== null && this.setPosition(settings.position);
+		settings.velocity !== null && this.setVelocity(settings.velocity);
 
-		this.setDamping(settings.damping);
-		this.setMass(settings.mass);
+
+		settings = null;
 
 	};
 
@@ -26,79 +28,99 @@ lychee.define('lychee.physics.Particle').requires([
 	Class.prototype = {
 
 		defaults: {
-			damping: 0,
-
-			position: {
-				x: 0, y: 0, z: 0
-			},
-			acceleration: {
-				x: 0, y: 0, z: 0
-			},
-			force: {
-				x: 0, y: 0, z: 0
-			},
-			velocity: {
-				x: 0, y: 0, z: 0
-			}
+			force: null,
+			mass: null,
+			position: null,
+			velocity: null
 		},
+
+
+		/*
+		 * PUBLIC API
+		 */
 
 		update: function(clock, delta) {
 
-			if (this.__inverseMass === null)  return;
-
-			var dt = delta / 1000;
-			if (dt > 0) {
-
-				this.position.x += this.velocity.x * dt;
-				this.position.y += this.velocity.y * dt;
-				this.position.z += this.velocity.z * dt;
+			// Skip if our physical mass is Infinity
+			if (this.__inverseMass === null) return;
 
 
-				this.velocity.x += (this.acceleration.x + this.force.x * this.__inverseMass) * dt;
-				this.velocity.y += (this.acceleration.y + this.force.y * this.__inverseMass) * dt;
-				this.velocity.z += (this.acceleration.z + this.force.z * this.__inverseMass) * dt;
+			var t = delta / 1000;
+			if (t > 0) {
+
+				this.__position.x += this.__velocity.x * t;
+				this.__position.y += this.__velocity.y * t;
+				this.__position.z += this.__velocity.z * t;
 
 
-				var damping = Math.pow(this.damping, dt);
-
-				this.velocity.x *= damping;
-				this.velocity.y *= damping;
-				this.velocity.z *= damping;
+				this.__velocity.x += (this.__force.x * this.__inverseMass) * t;
+				this.__velocity.y += (this.__force.y * this.__inverseMass) * t;
+				this.__velocity.z += (this.__force.z * this.__inverseMass) * t;
 
 
-				this.force.clear();
+				// This is a Math.pow(this.__damping, t) in bitwise arithmetic
+				// var damping = (this.__damping << delta) / 1000;
+
+				// this.__velocity.x *= damping;
+				// this.__velocity.y *= damping;
+				// this.__velocity.z *= damping;
 
 			}
 
 		},
 
-		getAcceleration: function() {
-			return this.acceleration;
-		},
 
-		setAcceleration: function(acceleration) {
-			return this.__setPropertyVector('acceleration', acceleration);
-		},
+
+		/*
+		 * GETTERS AND SETTERS
+		 */
 
 		getDamping: function() {
-			return this.damping;
+			return this.__damping;
 		},
 
 		setDamping: function(damping) {
 
-			damping = typeof damping === 'number' ? damping : 1;
+			damping = typeof damping === 'number' ? damping : null;
 
-			this.damping = damping;
+			if (damping !== null) {
+				this.__damping = damping;
+				return true;
+			}
 
-			return true;
+
+			return false;
+
+		},
+
+		getForce: function() {
+			return this.__force;
+		},
+
+		setForce: function(force) {
+
+			if (Object.prototype.toString.call(force) === '[object Object]') {
+
+				this.__force.x = typeof force.x === 'number' ? force.x : this.__force.x;
+				this.__force.y = typeof force.y === 'number' ? force.y : this.__force.y;
+				this.__force.z = typeof force.z === 'number' ? force.z : this.__force.z;
+
+
+				return true;
+
+			}
+
+
+			return false;
 
 		},
 
 		getMass: function() {
 
-			if (this.__invertedMass !== null) {
-				return (1 / this.__invertedMass);
+			if (this.__inverseMass !== null) {
+				return (1 / this.__inverseMass);
 			}
+
 
 			return Infinity;
 
@@ -107,40 +129,54 @@ lychee.define('lychee.physics.Particle').requires([
 		setMass: function(mass) {
 
 			if (mass !== 0) {
-				this.__invertedMass = 1 / mass;
+				this.__inverseMass = 1 / mass;
+				return true;
 			}
+
+
+			return false;
 
 		},
 
 		getPosition: function() {
-			return this.position;
+			return this.__position;
 		},
 
 		setPosition: function(position) {
-			return this.__setPropertyVector('position', position);
-		},
 
-		getVelocity: function() {
-			return this.velocity;
-		},
+			if (Object.prototype.toString.call(position) === '[object Object]') {
 
-		setVelocity: function(velocity) {
-			return this.__setPropertyVector('velocity', velocity);
-		},
+				this.__position.x = typeof position.x === 'number' ? position.x : this.__position.x;
+				this.__position.y = typeof position.y === 'number' ? position.y : this.__position.y;
+				this.__position.z = typeof position.z === 'number' ? position.z : this.__position.z;
 
-		__setPropertyVector(property, data) {
-
-			if (Object.prototype.toString.call(data) === '[object Object]') {
-
-				this[property] = new _Vector(
-					typeof data.x === 'number' ? data.x : 0,
-					typeof data.y === 'number' ? data.y : 0,
-					typeof data.z === 'number' ? data.z : 0
-				);
 
 				return true;
 
 			}
+
+
+			return false;
+
+		},
+
+		getVelocity: function() {
+			return this.__velocity;
+		},
+
+		setVelocity: function(velocity) {
+
+			if (Object.prototype.toString.call(velocity) === '[object Object]') {
+
+				this.__velocity.x = typeof velocity.x === 'number' ? velocity.x : this.__velocity.x;
+				this.__velocity.y = typeof velocity.y === 'number' ? velocity.y : this.__velocity.y;
+				this.__velocity.z = typeof velocity.z === 'number' ? velocity.z : this.__velocity.z;
+
+
+				return true;
+
+			}
+
 
 			return false;
 

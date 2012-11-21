@@ -635,9 +635,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			var effect = null;
 			if (duration !== null && Object.prototype.toString.call(data) === '[object Object]') {
 
-				if (
-					data.callback instanceof Function
-				) {
+				if (data.callback instanceof Function) {
 
 					var position = this.getPosition();
 
