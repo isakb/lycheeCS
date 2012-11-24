@@ -19,8 +19,6 @@ lychee.define('game.Renderer').includes([
 
 			var pos = entity.getPosition();
 
-console.log(pos.x, pos.y);
-
 			this.drawCircle(
 				pos.x + offsetX,
 				pos.y + offsetY,
