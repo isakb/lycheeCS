@@ -519,6 +519,24 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 					return true;
 				}
 
+			} else if (
+				shapeA === Class.SHAPE.rectangle
+				&& shapeB === Class.SHAPE.circle
+			) {
+
+				var radius = entity.radius;
+				var halfWidth = this.width / 2;
+				var halfHeight = this.height / 2;
+
+				if (
+					(posA.x + radius > posB.x - halfWidth)
+					&& (posA.x - radius < posB.x + halfWidth)
+					&& (posA.y + radius > posB.y - halfHeight)
+					&& (posA.y - radius < posB.y + halfHeight)
+				) {
+					return true;
+				}
+
 			}
 
 
