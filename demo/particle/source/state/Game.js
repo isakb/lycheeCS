@@ -51,7 +51,7 @@ lychee.define('game.state.Game').requires([
 				}
 			}, this.__graph);
 
-			this.__emitter.setSpawn(500, 1, {
+			this.__emitter.setSpawn(250, 1, {
 				callback: function(spawn, delta, id) {
 
 					spawn.settings.velocity.x = Math.sin(1/10 * id * 2 * Math.PI) * spawn.settings.defaults.velocity.x;
