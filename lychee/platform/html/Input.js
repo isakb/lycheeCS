@@ -131,7 +131,7 @@ lychee.define('Input').tags({
 			if (supportsKeyboard === true) {
 
 				document.addEventListener('keydown', function(event) {
-					that.__processKey(event.keyCode, event.ctrlKey, event.altKey, event.shiftKey);
+					that.__processKey(event.keyCode, event.ctrlKey, event.altKey, event.shiftKey, event);
 				}, true);
 
 			}
@@ -293,7 +293,7 @@ lychee.define('Input').tags({
 
 		},
 
-		__processKey: function(code, ctrl, alt, shift) {
+		__processKey: function(code, ctrl, alt, shift, event) {
 
 			// Don't fire unknown keys
 			if (this.KEYMAP[code] === undefined) {
@@ -349,8 +349,8 @@ lychee.define('Input').tags({
 
 
 			// allow both bind('key') and bind('ctrl-a')
-			this.trigger('key', [ key, name, delta ]);
-			this.trigger(name, [ delta ]);
+			this.trigger('key', [ key, name, delta, event]);
+			this.trigger(name, [ delta, event]);
 
 
 			this.__last.key = Date.now();
