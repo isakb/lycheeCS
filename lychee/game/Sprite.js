@@ -41,15 +41,21 @@ lychee.define('lychee.game.Sprite').includes([
 			var result = lychee.game.Entity.prototype.setState.call(this, id);
 			if (result === true) {
 
-				var w = this.__map[this.getState()].width;
-				var h = this.__map[this.getState()].height;
+				var map = this.__map[this.getState()] || null;
+				if (map !== null) {
 
-				if (w !== undefined && typeof w === 'number') {
-					this.width = w;
-				}
+					if (map.width !== undefined && typeof map.width === 'number') {
+						this.width = map.width;
+					}
 
-				if (h !== undefined && typeof h === 'number') {
-					this.height = h;
+					if (map.height !== undefined && typeof map.height === 'number') {
+						this.height = map.height;
+					}
+
+					if (map.radius !== undefined && typeof map.radius === 'number') {
+						this.radius = map.radius;
+					}
+
 				}
 
 			}
@@ -88,3 +94,4 @@ lychee.define('lychee.game.Sprite').includes([
 	return Class;
 
 });
+
