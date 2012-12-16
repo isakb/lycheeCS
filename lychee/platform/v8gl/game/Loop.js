@@ -5,7 +5,11 @@ lychee.define('lychee.game.Loop').tags({
 	'lychee.Events'
 ]).supports(function(lychee, global) {
 
-	if (global.setInterval && global.glut && global.glut.displayFunc) {
+	if (
+		typeof setInterval === 'function'
+		&& global.glut !== undefined
+		&& typeof global.glut.displayFunc === 'function'
+	) {
 		return true;
 	}
 

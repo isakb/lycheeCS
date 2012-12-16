@@ -3,7 +3,7 @@ lychee.define('lychee.game.Loop').includes([
 	'lychee.Events'
 ]).supports(function(lychee, global) {
 
-	if (global.setInterval) {
+	if (typeof setInterval === 'function') {
 		return true;
 	}
 
