@@ -1,11 +1,25 @@
 
 lychee.define('lychee.game.Loop').includes([
 	'lychee.Events'
-]).exports(function(lychee, global) {
+]).supports(function(lychee, global) {
+
+	if (global.setInterval) {
+		return true;
+	}
+
+	return false;
+
+}).exports(function(lychee, global) {
 
 	var _globalIntervalId = null,
 		_timeoutId = 0,
 		_intervalId = 0;
+
+
+	if (lychee.debug === true) {
+		console.log('lychee.game.Loop: Supported interval methods are setInterval()');
+	}
+
 
 	var Class = function(data) {
 
@@ -26,16 +40,20 @@ lychee.define('lychee.game.Loop').includes([
 
 	Class.prototype = {
 
+		/*
+		 * PUBLIC API
+		 */
+
 		reset: function(updateFps, renderFps) {
 
-			updateFps = typeof updateFps === 'number' ? updateFps : null;
-			renderFps = typeof renderFps === 'number' ? renderFps : null;
+			updateFps = typeof updateFps === 'number' ? updateFps : 0;
+			renderFps = typeof renderFps === 'number' ? renderFps : 0;
 
 
-			if (
-				updateFps === null || renderFps === null
-				|| updateFps < 1 || renderFps < 1
-			) {
+			if (updateFps < 0) updateFps = 0;
+			if (renderFps < 0) renderFps = 0;
+
+			if (updateFps === 0 && renderFps === 0) {
 				return false;
 			}
 
@@ -46,10 +64,11 @@ lychee.define('lychee.game.Loop').includes([
 				render: 0
 			};
 
-			this.__ms = {
-				update: 1000 / updateFps,
-				render: 1000 / renderFps
-			};
+
+			this.__ms = {};
+
+			if (updateFps > 0) this.__ms.update = 1000 / updateFps;
+			if (renderFps > 0) this.__ms.render = 1000 / updateFps;
 
 
 			this.__updateFps = updateFps;
@@ -148,7 +167,6 @@ lychee.define('lychee.game.Loop').includes([
 				this.__clock.render = clock;
 			}
 
-
 		},
 
 		_updateLoop: function(clock) {
@@ -157,10 +175,7 @@ lychee.define('lychee.game.Loop').includes([
 
 
 			var delta = clock - this.__clock.update;
-			if (
-				delta >= this.__ms.update
-				|| this.__ms.min === this.__ms.update
-			) {
+			if (delta >= this.__ms.update) {
 				this.trigger('update', [ clock, delta ]);
 				this.__clock.update = clock;
 			}
@@ -212,18 +227,52 @@ lychee.define('lychee.game.Loop').includes([
 			}
 
 
-			this.__ms.min = this.__ms.update < this.__ms.render ? this.__ms.update : this.__ms.render;
+			this.__ms.min = 1000;
+
+			if (this.__ms.update !== undefined) {
+				this.__ms.min = Math.min(this.__ms.min, this.__ms.update);
+			}
+
+			if (this.__ms.render !== undefined) {
+				this.__ms.min = Math.min(this.__ms.min, this.__ms.render);
+			}
+
 
 			var that = this;
 
-			_globalIntervalId = global.setInterval(function() {
 
-				var clock = Date.now() - that.__clock.start;
-				that._updateLoop(clock);
-				that._renderLoop(clock);
+			// Don't use unnecessary checks,
+			// there are three different cases
+			if (
+				this.__ms.update !== undefined
+				&& this.__ms.render !== undefined
+			) {
 
+				_globalIntervalId = global.setInterval(function() {
+					var clock = Date.now() - that.__clock.start;
+					that._updateLoop(clock);
+					that._renderLoop(clock);
+				}, this.__ms.min);
 
-			}, this.__ms.min);
+			} else if (
+				this.__ms.update !== undefined
+			) {
+
+				_globalIntervalId = global.setInterval(function() {
+					var clock = Date.now() - that.__clock.start;
+					that._updateLoop(clock);
+				}, this.__ms.min);
+
+			} else if (
+				this.__ms.render !== undefined
+			) {
+
+				_globalIntervalId = global.setInterval(function() {
+					var clock = Date.now() - that.__clock.start;
+					that._renderLoop(clock);
+				}, this.__ms.min);
+
+			}
 
 		}
 
