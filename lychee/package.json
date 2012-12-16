@@ -26,6 +26,12 @@
 
 			},
 
+			"nodejs": {
+
+				"Preloader": [ "js" ]
+
+			},
+
 			"v8gl": {
 
 				"game": {
