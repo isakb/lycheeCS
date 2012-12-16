@@ -33,7 +33,7 @@ lychee.define('lychee.game.Loop').tags({
 		lychee.Events.call(this, 'loop');
 
 
-		this.reset(settings.updateFps, settings.renderFps);
+		this.reset(settings.update, settings.render);
 
 		settings = null;
 
@@ -41,12 +41,6 @@ lychee.define('lychee.game.Loop').tags({
 
 
 	Class.prototype = {
-
-		defaults: {
-			context: null,
-			renderFps: 60,
-			updateFps: 60
-		},
 
 		reset: function(updateFps, renderFps) {
 
