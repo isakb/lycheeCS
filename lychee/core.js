@@ -1,5 +1,7 @@
-// Why? Asynchronous loading, Builder can be faster -.-
-if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
+
+if (typeof global !== 'undefined') {
+	global.lychee = {};
+} else {
 	this.lychee = {};
 }
 
@@ -255,7 +257,53 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 	};
 
+})(lychee, this);
 
-})(this.lychee, this);
 
+
+/*
+ *
+ * POLYFILLS FOR CRAPPY ENVIRONMENTS
+ *
+ *
+ * This is apparently only for
+ * Internet Explorer and NodeJS
+ *
+ * Thanks for being 2 lazy 2 implement
+ * the Console API, bitches! :)
+ *
+ */
+
+if (typeof console === 'undefined') {
+	console = {};
+}
+
+
+(function(global) {
+
+	if (global.console.log === undefined) {
+		global.console.log = function() {}; // stub!
+	}
+
+	if (global.console.error === undefined) {
+		global.console.error = global.console.log;
+	}
+
+	if (global.console.warn === undefined) {
+		global.console.warn = global.console.log;
+	}
+
+	if (global.console.group === undefined) {
+		global.console.group = function(title) {
+			console.log('~ ~ ~ ' + title + '~ ~ ~');
+		};
+	}
+
+	if (global.console.groupEnd === undefined) {
+		global.console.groupEnd = function() {
+			console.log('~ ~ ~ ~ ~ ~');
+		};
+	}
+
+})(typeof global !== 'undefined' ? global : this);
 

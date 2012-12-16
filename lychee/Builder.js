@@ -1,10 +1,13 @@
-// Why? Asynchronous loading, Builder can be faster -.-
-if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
-	this.lychee = {};
-}
-
 
 (function(lychee, global) {
+
+	// Asynchronous loading, this file
+	// can be ready before lycheeJS core.
+
+	if (lychee === undefined) {
+		global.lychee = lychee = {};
+	}
+
 
 	lychee.Builder = function() {
 
@@ -900,6 +903,5 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 	};
 
-})(this.lychee, this);
-
+})(lychee, typeof global !== 'undefined' ? global : this);
 
