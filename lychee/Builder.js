@@ -469,21 +469,56 @@
 						// e.g. lychee/parser/ASTScope.js > lychee.ASTScope
 						} else if (filtered[id] === undefined && all[a].substr(-1 * path.length) === path) {
 
-							if (filtered[id] === undefined) {
-								filtered[id] = [ all[a] ];
-							} else {
+							// 2.2.1 validate folder against other tags
+							var isInvalid = false;
+							for (var tag in this.__tags) {
 
-								var alreadyInFiltered = false;
+								for (var otherValue in config.tags[tag]) {
 
-								for (var f = 0, fl = filtered[id].length; f < fl; f++) {
-									if (filtered[id][f] === all[a]) {
-										alreadyInFiltered = true;
-										break;
+									for (var v = 0, l = this.__tags[tag].length; v < l; v++) {
+
+										var value = this.__tags[tag][v];
+										if (value !== otherValue) {
+
+											var folder = config.tags[tag][otherValue];
+											if (all[a].substr(0, folder.length) === folder) {
+												isInvalid = true;
+												break;
+											}
+
+										}
+
 									}
+
+									if (isInvalid === true) break;
+
 								}
 
-								if (alreadyInFiltered === false) {
-									filtered[id].push(all[a]);
+								if (isInvalid === true) break;
+
+							}
+
+
+							// 2.2.2 If the folder is validated, check if it was already set
+							if (isInvalid === false) {
+
+								if (filtered[id] === undefined) {
+									filtered[id] = [ all[a] ];
+								} else if (filtered[id] !== undefined) {
+
+									var alreadyInFiltered = false;
+
+									for (var f = 0, fl = filtered[id].length; f < fl; f++) {
+										if (filtered[id][f] === all[a]) {
+											alreadyInFiltered = true;
+											break;
+										}
+									}
+
+									if (alreadyInFiltered === false) {
+										filtered[id].push(all[a]);
+									}
+
 								}
 
 							}
