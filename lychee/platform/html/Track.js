@@ -133,6 +133,12 @@ lychee.define('Track').tags({
 				formats: []
 			},
 
+
+
+			/*
+			 * PRIVATE API
+			 */
+
 			__init: function(url) {
 
 				// Shared context = more performance
@@ -174,6 +180,7 @@ lychee.define('Track').tags({
 			/*
 			 * PUBLIC API
 			 */
+
 			play: function(loop) {
 
 				loop = loop === true ? true : false;
@@ -228,6 +235,7 @@ lychee.define('Track').tags({
 			// a setTimeout() way of doing this, but it caused
 			// several timing problems due to different behaviours
 			// of timeouts if a Page/Tab is hidden
+
 			pause: function() {
 				this.__wasLoopingBeforePause = this.__isLooping;
 				this.stop();
@@ -332,6 +340,7 @@ lychee.define('Track').tags({
 			/*
 			 * PRIVATE API
 			 */
+
 			__init: function(url) {
 
 				this.__audio = new Audio(url);
@@ -390,6 +399,7 @@ lychee.define('Track').tags({
 			/*
 			 * PUBLIC API
 			 */
+
 			play: function(loop) {
 
 				loop = loop === true ? true : false;
