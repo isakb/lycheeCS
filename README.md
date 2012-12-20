@@ -62,7 +62,6 @@ gives you an overview of what is currently being implemented.
 - bleeding-edgre freeglut integration
 - Completion of GLSL bindings, Shader and Buffer data types
 - OpenAL/OpenSL bindings
-
 - Rewrite Android build template
 - Rewrite Windows Metro build template (via VisualStudio project)
 - Add support for packaging in Debian/Ubuntu build template
