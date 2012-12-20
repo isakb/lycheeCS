@@ -8,13 +8,14 @@ complete environment for prototyping and deployment
 of HTML5 Canvas or WebGL based games inside the Web Browser.
 
 Its architecture is **independent of the environment** which
-means it will run on any JavaScript environment, such as
-V8, Node, Spidermonkey etc. The only requirement for such a
-platform is a lychee.Preloader.
+means it will run on any theoretical JavaScript environment.
 
-If you want to support a different platform like NodeJS, you
-are invited to take a look at the [lychee.Preloader API Docs](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html)
-and - if you have a client-side environment - at the [lychee.Renderer API Docs](http://martens.ms/lycheeJS/docs/api-lychee-Renderer.html)
+The only requirement for such a platform is a
+[lychee.Preloader](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html).
+
+If you want to support a new client-side environment, you will
+have to implement a [lychee.Renderer](http://martens.ms/lycheeJS/docs/api-lychee-Renderer.html)
+and a [lychee.Input](http://martens.ms/lycheeJS/docs/api-lychee-Input.html).
 
 
 # lycheeJS-ADK (App Development Kit)
@@ -43,35 +44,28 @@ availability.
 
 # Roadmap
 
-**v0.5 (September 2012) lycheeJS-ADK**
+The Roadmap is work in progress and may not be up to date, but it 
+gives you an overview of what is currently being implemented.
 
-- Completion of OpenGLSL bindings, Shader and Buffer data types
+
+**v0.6 lycheeJS**
+
+- lychee.Input for platform:nodejs
+- lychee.Track and lychee.Jukebox for platform:v8gl
+- lychee.Renderer: 3D vertices and shape integration and Rasterizer (canvas buffer renderer) for platform:html
+- lychee.physics.ParticleMagnet needs to be implemented
+- (planned to be pushed): lychee.physics.softbody namespace
+
+
+**v0.6 lycheeJS-ADK**
+
+- bleeding-edgre freeglut integration
+- Completion of GLSL bindings, Shader and Buffer data types
 - OpenAL/OpenSL bindings
-- cutting-edge freeglut integration
-- Android NDK integration for V8GL and ADK shell script, using simple Java wrapper for V8GL process.
 
-
-**v0.6 (October 2012) lycheeJS-ADK**
-
-- Packaging: Debian/Ubuntu (DEB)
-- Packaging: Windows Metro (via VisualStudio project)
-- Packaging: Android (APK)
-- Packaging: Mac OSX (APP)
-
-**v0.6 (October 2012) lycheeJS**
-
-- v8gl: lychee.Track and lychee.Jukebox
-- v8gl: lychee.Input: Multi-Touch integration
-- v8gl: lychee.Viewport: orientationchange, resize, pageshow and pagehide
-
-**v0.7 (November 2012) lycheeJS-adk**
-
-- Multi-Thread API, synchronized with freeglut's glut.timerFunc callstack.
-- Nothing else planned (yet).
-
-**v0.7 (November 2012) lycheeJS**
-
-- Nothing planned (yet).
+- Rewrite Android build template
+- Rewrite Windows Metro build template (via VisualStudio project)
+- Add support for packaging in Debian/Ubuntu build template
 
 
 # License
@@ -89,7 +83,7 @@ and grab the code, dude!
 # Examples and Game Boilerplate
 
 There is the [Game Boilerplate](http://martens.ms/lycheeJS/game/boilerplate)
-and the [Jewelz Clone](http://martens.ms/lycheeJS/game/jewelz) that show you
+and the [Jewelz Game](http://martens.ms/lycheeJS/game/jewelz) that show you
 how to develop a real cross-platform game and best practices in high-performance
 JavaScript code.
 
