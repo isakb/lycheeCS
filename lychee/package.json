@@ -4,8 +4,8 @@
 
 		"platform": {
 
-			"html": "platform/html",
-			"v8gl": "platform/v8gl",
+			"html":  "platform/html",
+			"v8gl":  "platform/v8gl",
 			"webgl": "platform/webgl"
 
 		}
@@ -20,15 +20,12 @@
 
 				"Input": [ "js" ],
 				"Jukebox": [ "js" ],
-				"Preloader": [ "js" ],
 				"Renderer": [ "js" ],
 				"Track": [ "js" ]
 
 			},
 
 			"nodejs": {
-
-				"Preloader": [ "js" ]
 
 			},
 
@@ -40,7 +37,6 @@
 
 				"Input": [ "js" ],
 				"Jukebox": [ "js" ],
-				"Preloader": [ "js" ],
 				"Renderer": [ "js" ],
 				"Track": [ "js" ]
 
