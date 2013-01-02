@@ -5,10 +5,14 @@ lychee.define('Renderer').tags({
 	'lychee.Font'
 ]).supports(function(lychee, global) {
 
-	if (global.document && global.document.createElement) {
+	if (
+		global.document
+		&& typeof global.document.createElement === 'function'
+		&& typeof global.CanvasRenderingContext2D === 'function'
+	) {
 
 		var canvas = global.document.createElement('canvas');
-		if (canvas.getContext && canvas.getContext('2d')) {
+		if (typeof canvas.getContext === 'function') {
 			return true;
 		}
 
