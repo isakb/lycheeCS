@@ -41,10 +41,10 @@ lychee.define('game.Main').requires([
 				hits: 3,
 				intro: 5000,
 				hint: 2000,
-				time: 120000 // TODO: Set back to 60 seconds
+				time: 60000
 			},
-			renderFps: 60,
-			updateFps: 60,
+			renderFps: 40,
+			updateFps: 40,
 			width: 896,
 			height: 384,
 			tile: 64
@@ -206,8 +206,11 @@ lychee.define('game.Main').requires([
 
 
 			this.input = new lychee.Input({
-				delay: 0,
-				fireModifiers: true
+				delay:        0,
+				fireKey:      false,
+				fireModifier: false,
+				fireTouch:    true,
+				fireSwipe:    false
 			});
 
 

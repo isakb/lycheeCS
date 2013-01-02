@@ -125,7 +125,7 @@ lychee.define('game.state.GameBlast').requires([
 
 		},
 
-		__processTouch: function(position, delta) {
+		__processTouch: function(id, position, delta) {
 
 			if (this.__locked === true) return;
 

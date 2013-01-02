@@ -55,7 +55,7 @@ lychee.define('game.state.GamePuzzle').requires([
 
 		},
 
-		__processTouch: function(position, delta) {
+		__processTouch: function(id, position, delta) {
 
 			if (this.__locked === true) return;
 

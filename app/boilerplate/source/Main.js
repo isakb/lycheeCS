@@ -29,7 +29,7 @@ lychee.define('game.Main').requires([
 		defaults: {
 			title: 'boilerplate',
 			base: './asset',
-			fullscreen: false,
+			fullscreen: true,
 			renderFps: 60,
 			updateFps: 60,
 			width: 896,
@@ -142,9 +142,11 @@ lychee.define('game.Main').requires([
 
 
 			this.input = new lychee.Input({
-				delay: 0,
-				fireModifiers: true,
-				fireSwipe: true
+				delay:        0,
+				fireModifier: false,
+				fireKey:      false,
+				fireTouch:    true,
+				fireSwipe:    true
 			});
 
 

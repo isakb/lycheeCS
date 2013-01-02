@@ -142,8 +142,11 @@ lychee.define('game.Main').requires([
 			this.jukebox = new game.Jukebox(this);
 
 			this.input = new lychee.Input({
-				delay: 0,
-				fireModifiers: true
+				delay:        0,
+				fireModifier: false,
+				fireKey:      false,
+				fireTouch:    true,
+				fireSwipe:    false
 			});
 
 

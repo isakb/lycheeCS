@@ -143,6 +143,9 @@ lychee.define('game.state.Menu').requires([
 				entity.set('Fullscreen: ' + (this.game.settings.fullscreen === true ? 'On' : 'Off'));
 
 				this.game.reset();
+
+				// relayout both states
+				this.game.states.game.reset();
 				this.reset();
 
 				this.__scene.scrollTo(this.__settings);
@@ -191,7 +194,6 @@ lychee.define('game.state.Menu').requires([
 
 			this.__scene.add(entity, this.__settings);
 
-
 		},
 
 		enter: function() {
@@ -238,7 +240,7 @@ lychee.define('game.state.Menu').requires([
 
 		},
 
-		__processTouch: function(position, delta) {
+		__processTouch: function(id, position, delta) {
 
 			if (this.__locked === true) return;
 

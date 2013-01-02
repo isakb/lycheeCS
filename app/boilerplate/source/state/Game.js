@@ -146,7 +146,7 @@ lychee.define('game.state.Game').requires([
 
 		},
 
-		__processTouch: function(position, delta) {
+		__processTouch: function(id, position, delta) {
 
 			if (this.__locked === true) return;
 
@@ -167,7 +167,7 @@ lychee.define('game.state.Game').requires([
 
 		},
 
-		__processSwipe: function(type, position, delta) {
+		__processSwipe: function(id, type, position, delta, swipe) {
 
 			if (this.__locked === true) return;
 
