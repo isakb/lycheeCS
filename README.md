@@ -1,21 +1,32 @@
 
-# lycheeJS (v0.5)
+# lycheeJS (v0.6 pre-release)
 
 Web Documentation: [http://martens.ms/lycheeJS](http://martens.ms/lycheeJS)
 
 lycheeJS is a JavaScript Game library that offers a
-complete environment for prototyping and deployment
-of HTML5 Canvas or WebGL based games inside the Web Browser.
+complete solution for prototyping and deployment
+of HTML5 Canvas, WebGL or native OpenGL(ES) based
+games inside the Web Browser or native environments.
 
-Its architecture is **independent of the environment** which
-means it will run on any theoretical JavaScript environment.
 
-The only requirement for such a platform is a
-[lychee.Preloader](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html).
+## Other (yet unsupported) JavaScript runtimes
 
-If you want to support a new client-side environment, you will
+**Its architecture is independent of the environment which
+means it will run on any theoretical JavaScript environment.**
+
+The only requirement for such a platform is a fully implemented
+[lychee.Preloader](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html)
+API.
+
+As the lychee.Preloader itself is inside the core, you only need
+to implement the [lychee.Preloader.\_load](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html#lychee-Preloader-_load)
+method.
+
+For fully supporting a client-side environment, you will also
 have to implement a [lychee.Renderer](http://martens.ms/lycheeJS/docs/api-lychee-Renderer.html)
-and a [lychee.Input](http://martens.ms/lycheeJS/docs/api-lychee-Input.html).
+and a [lychee.Input](http://martens.ms/lycheeJS/docs/api-lychee-Input.html),
+but these are fully optional and only necessary if you are using
+them inside your Game or App.
 
 
 # lycheeJS-ADK (App Development Kit)
@@ -31,7 +42,32 @@ integration is the platform/v8gl inside the lycheeJS Game library.
 
 # Limitations
 
-At the time this was written (August 2012), iOS based platforms
+## NodeJS
+
+As NodeJS is a TTY-environment by default, there are some limitations.
+You can implement an ASCII Renderer in theory, but that's up to you :)
+
+- lychee.Input: Only **fireKey** can be used, other input methods are not supported.
+- lychee.Renderer: It draws simply nothing and is an emulation layer.
+- lychee.Jukebox: It plays nothing and is an emulation layer.
+
+
+## Native Shipping / V8GL
+
+The V8GL environment is the custom environment that I provide and
+allows you to ship games to other platforms natively. It is part
+of the **lycheeJS-ADK** project and its support for missing
+features will improve with it. As this project is currently only
+programmed by myself (you are invited to join development!), there
+are some limitations:
+
+- lychee.Input: Bleeding-edge freeglut has currently no Multi-Touch support.
+- lychee.Jukebox: The V8GL environment has currently no support for audio playback via OpenSL/OpenAL.
+
+
+## iOS
+
+At the time this was written (November 2012), iOS based platforms
 are only deliverable natively using a WebView (WebKit) implementation,
 because custom JIT runtimes are not allowed. Blame Apple for not
 offering a high-performance alternative, not me.
@@ -50,33 +86,25 @@ gives you an overview of what is currently being implemented.
 
 **v0.6 lycheeJS**
 
-- lychee.Input for platform:nodejs
-- lychee.Track and lychee.Jukebox for platform:v8gl
-- lychee.Renderer: 3D vertices and shape integration and Rasterizer (canvas buffer renderer) for platform:html
 - lychee.physics.ParticleMagnet needs to be implemented
+- Particle Demo needs to be updated with multi-touch support
+- lychee.Renderer: 3D vertices and shape integration and Rasterizer (canvas buffer renderer) for platform:html
 - (planned to be pushed): lychee.physics.softbody namespace
 
 
 **v0.6 lycheeJS-ADK**
 
-- bleeding-edgre freeglut integration
+- bleeding-edge freeglut integration
 - Completion of GLSL bindings, Shader and Buffer data types
 - OpenAL/OpenSL bindings
 - Rewrite Android build template
 - Rewrite Windows Metro build template (via VisualStudio project)
-- Add support for packaging in Debian/Ubuntu build template
+- Add support for packaging in linux build template
 
 
 # License
 
 The lycheeJS framework is licensed under MIT License.
-
-
-# Features
-
-I'm not a marketing guy, so I don't give a shit on
-selling you stuff. it's open source, grab the demos
-and grab the code, dude!
 
 
 # Examples and Game Boilerplate
