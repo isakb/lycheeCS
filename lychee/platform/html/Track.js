@@ -251,12 +251,7 @@ lychee.define('Track').tags({
 					this.__gain.gain.value = 0;
 					this.__isMuted = true;
 
-					return true;
-
 				}
-
-
-				return false;
 
 			},
 
@@ -267,27 +262,7 @@ lychee.define('Track').tags({
 					this.__gain.gain.value = this.__unmuteVolume || 1;
 					this.__isMuted = false;
 
-					return true;
-
 				}
-
-
-				return false;
-
-			},
-
-			getVolume: function() {
-				return this.__gain.gain.value;
-			},
-
-			setVolume: function(volume) {
-
-				var newVolume = Math.min(Math.max(0, volume), 1);
-				this.__gain.gain.value = newVolume;
-
-
-				// Actually can't fail by spec, hugh?
-				return true;
 
 			},
 
@@ -306,7 +281,6 @@ lychee.define('Track').tags({
 					this.__isIdle = true;
 				}
 
-
 				return this.__isIdle;
 
 			},
@@ -317,6 +291,17 @@ lychee.define('Track').tags({
 
 			isReady: function() {
 				return this.isIdle() && this.__isReady;
+			},
+
+			getVolume: function() {
+				return this.__gain.gain.value;
+			},
+
+			setVolume: function(volume) {
+
+				var newVolume = Math.min(Math.max(0, volume), 1);
+				this.__gain.gain.value = newVolume;
+
 			}
 
 		};
@@ -442,12 +427,7 @@ lychee.define('Track').tags({
 					this.__audio.volume = 0;
 					this.__isMuted = true;
 
-					return true;
-
 				}
-
-
-				return false;
 
 			},
 
@@ -458,30 +438,7 @@ lychee.define('Track').tags({
 					this.__audio.volume = this.__unmuteVolume || 1;
 					this.__isMuted = false;
 
-					return true;
-
 				}
-
-
-				return false;
-
-			},
-
-			getVolume: function() {
-				return this.__audio.volume;
-			},
-
-			setVolume: function(volume) {
-
-				var newVolume = Math.min(Math.max(0, volume), 1);
-				this.__audio.volume = newVolume;
-
-				if (newVolume === volume) {
-					return true;
-				}
-
-
-				return false;
 
 			},
 
@@ -515,6 +472,17 @@ lychee.define('Track').tags({
 
 			isReady: function() {
 				return this.isIdle() && this.__isReady === true;
+			},
+
+			getVolume: function() {
+				return this.__audio.volume;
+			},
+
+			setVolume: function(volume) {
+
+				var newVolume = Math.min(Math.max(0, volume), 1);
+				this.__audio.volume = newVolume;
+
 			}
 
 		};

@@ -68,10 +68,7 @@ lychee.define('Track').tags({
 
 			if (this.__isMuted === false) {
 				this.__isMuted = true;
-				return true;
 			}
-
-			return false;
 
 		},
 
@@ -79,19 +76,8 @@ lychee.define('Track').tags({
 
 			if (this.__isMuted === true) {
 				this.__isMuted = false;
-				return true;
 			}
 
-			return false;
-
-		},
-
-		getVolume: function() {
-			return 0;
-		},
-
-		setVolume: function(volume) {
-			return true;
 		},
 
 		clone: function() {
@@ -113,7 +99,13 @@ lychee.define('Track').tags({
 
 		isReady: function() {
 			return this.isIdle() && this.__isReady === true;
-		}
+		},
+
+		getVolume: function() {
+			return 0;
+		},
+
+		setVolume: function(volume) {}
 
 	};
 

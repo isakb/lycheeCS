@@ -49,12 +49,6 @@ lychee.define('Track').tags({
 		unmute: function() {
 		},
 
-		getVolume: function() {
-		},
-
-		setVolume: function(volume) {
-		},
-
 		clone: function() {
 		},
 
@@ -65,6 +59,12 @@ lychee.define('Track').tags({
 		},
 
 		isReady: function() {
+		},
+
+		getVolume: function() {
+		},
+
+		setVolume: function(volume) {
 		}
 
 	};
