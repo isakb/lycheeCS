@@ -64,7 +64,6 @@ lychee.define('Track').tags({
 	}
 
 
-
 	var _supportedFormats = [];
 	for (var ext in _codecs) {
 		if (_codecs[ext] !== false) {
@@ -75,7 +74,6 @@ lychee.define('Track').tags({
 	if (lychee.debug === true) {
 		console.log("lychee.Track: Supported media formats are " + _supportedFormats.join(', '));
 	}
-
 
 
 	var Class = function(id, settings, isReady) {
@@ -308,6 +306,7 @@ lychee.define('Track').tags({
 					this.__isIdle = true;
 				}
 
+
 				return this.__isIdle;
 
 			},
@@ -447,6 +446,7 @@ lychee.define('Track').tags({
 
 				}
 
+
 				return false;
 
 			},
@@ -461,6 +461,7 @@ lychee.define('Track').tags({
 					return true;
 
 				}
+
 
 				return false;
 
@@ -478,6 +479,7 @@ lychee.define('Track').tags({
 				if (newVolume === volume) {
 					return true;
 				}
+
 
 				return false;
 

@@ -6,49 +6,56 @@ lychee.define('game.DeviceSpecificHacks').exports(function(lychee, global) {
 
 	var Callback = function() {
 
-		if (global.navigator.appName === 'V8GL') {
+		if (typeof global.navigator !== 'undefined') {
 
-			this.settings.fullscreen = true;
-			this.settings.music = false;
-			this.settings.sound = false;
+			if (global.navigator.appName === 'V8GL') {
 
-			_alreadyBound = true;
+				this.settings.fullscreen = true;
+				this.settings.music = false;
+				this.settings.sound = false;
 
-			return;
+				_alreadyBound = true;
 
-		} else if (global.navigator.userAgent.match(/iPad/)) {
+				return;
 
-			this.settings.fullscreen = true;
-			this.settings.music = false;
-			this.settings.sound = true;
+			} else if (global.navigator.userAgent.match(/iPad/)) {
 
-		} else if (global.navigator.userAgent.match(/Android/)) {
+				this.settings.fullscreen = true;
+				this.settings.music = false;
+				this.settings.sound = true;
 
-
-			// FIXME: What to do then? Crappy Android behaviours...
-			if (_orientation !== 0) {
-
-				var startHeight = global.innerHeight;
-
-				// Maximize the documentElement's height to scroll away the URL bar
-				document.documentElement.style.minHeight = '5000px';
+			} else if (global.navigator.userAgent.match(/Android/)) {
 
 
-				global.scrollTo(0, 1);
+				// FIXME: What to do then? Crappy Android behaviours...
+				if (_orientation !== 0) {
 
-				global.setTimeout(function() {
-					document.documentElement.style.minHeight = global.innerHeight + 'px';
-				}, 500);
+					var startHeight = global.innerHeight;
+
+					// Maximize the documentElement's height to scroll away the URL bar
+					document.documentElement.style.minHeight = '5000px';
+
+
+					global.scrollTo(0, 1);
+
+					global.setTimeout(function() {
+						document.documentElement.style.minHeight = global.innerHeight + 'px';
+					}, 500);
+
+				}
+
+
+				this.settings.fullscreen = true;
 
 			}
-
-
-			this.settings.fullscreen = true;
 
 		}
 
 
-		if (_alreadyBound === false) {
+		if (
+			typeof global.addEventListener === 'function'
+			&& _alreadyBound === false
+		) {
 
 			var that = this;
 

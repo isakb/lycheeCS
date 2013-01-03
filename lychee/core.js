@@ -257,7 +257,7 @@ if (typeof global !== 'undefined') {
 
 	};
 
-})(lychee, this);
+})(lychee, typeof global !== 'undefined' ? global : this);
 
 
 

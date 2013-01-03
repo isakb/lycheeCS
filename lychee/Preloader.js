@@ -277,5 +277,5 @@
 
 	lychee.Preloader = Class;
 
-})(this.lychee, this);
+})(lychee, typeof global !== 'undefined' ? global : this);
 

@@ -197,17 +197,16 @@ lychee.define('game.Main').requires([
 				this.settings.height,
 				true
 			);
-
 			this.renderer.setBackground("#222222");
-
-			this.jukebox = new game.Jukebox(this);
 
 			this.reset();
 
 
+			this.jukebox = new game.Jukebox(this);
+
 			this.input = new lychee.Input({
 				delay:        0,
-				fireKey:      false,
+				fireKey:      false, // change to true for NodeJS support
 				fireModifier: false,
 				fireTouch:    true,
 				fireSwipe:    false

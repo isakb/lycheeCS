@@ -128,13 +128,11 @@ lychee.define('game.Main').requires([
 			lychee.game.Main.prototype.init.call(this);
 
 			this.renderer = new game.Renderer(this.settings.title);
-
 			this.renderer.reset(
 				this.settings.width,
 				this.settings.height,
 				true
 			);
-
 			this.renderer.setBackground("#222222");
 
 
@@ -144,17 +142,14 @@ lychee.define('game.Main').requires([
 			this.input = new lychee.Input({
 				delay:        0,
 				fireModifier: false,
-				fireKey:      false,
+				fireKey:      false, // change to true for NodeJS support
 				fireTouch:    true,
 				fireSwipe:    true
 			});
 
 
-			this.states = {
-				game:    new game.state.Game(this),
-				menu:    new game.state.Menu(this)
-			};
-
+			this.states.game = new game.state.Game(this);
+			this.states.menu = new game.state.Menu(this);
 
 			this.setState('menu');
 
