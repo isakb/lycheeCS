@@ -6,7 +6,7 @@ lychee.define('Input').tags({
 ]).supports(function(lychee, global) {
 
 	if (
-		process
+		typeof process !== 'undefined'
 		&& process.stdin
 		&& typeof process.stdin.on === 'function'
 	) {
