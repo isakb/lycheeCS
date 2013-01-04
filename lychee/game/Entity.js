@@ -12,6 +12,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		this.__collision = null;
 		this.__effect = null;
 		this.__position = { x: 0, y: 0, z: 0 };
+		this.__velocity = { x: 0, y: 0, z: 0 };
 		this.__shape = null;
 		this.__state = 'default';
 		this.__tween = null;
@@ -359,6 +360,19 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			}
 
 
+			if (this.__velocity.x !== 0) {
+				this.__position.x += this.__velocity.x * dt;
+			}
+
+			if (this.__velocity.y !== 0) {
+				this.__position.y += this.__velocity.y * dt;
+			}
+
+			if (this.__velocity.z !== 0) {
+				this.__position.z += this.__velocity.z * dt;
+			}
+
+
 			if (this.__effect !== null && (this.__clock <= this.__effect.start + this.__effect.duration)) {
 
 				t = (this.__clock - this.__effect.start) / this.__effect.duration;
@@ -447,6 +461,25 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			this.__position.x = typeof position.x === 'number' ? position.x : this.__position.x;
 			this.__position.y = typeof position.y === 'number' ? position.y : this.__position.y;
 			this.__position.z = typeof position.z === 'number' ? position.z : this.__position.z;
+
+			return true;
+
+		},
+
+		getVelocity: function() {
+			return this.__velocity;
+		},
+
+		setVelocity: function(velocity) {
+
+			if (Object.prototype.toString.call(velocity) !== '[object Object]') {
+				return false;
+			}
+
+
+			this.__velocity.x = typeof velocity.x === 'number' ? velocity.x : this.__velocity.x;
+			this.__velocity.y = typeof velocity.y === 'number' ? velocity.y : this.__velocity.y;
+			this.__velocity.z = typeof velocity.z === 'number' ? velocity.z : this.__velocity.z;
 
 			return true;
 
