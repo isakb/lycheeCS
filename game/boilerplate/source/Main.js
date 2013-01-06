@@ -2,6 +2,7 @@
 lychee.define('game.Main').requires([
 	'lychee.Font',
 	'lychee.Input',
+	'lychee.Viewport',
 	'game.Jukebox',
 	'game.Renderer',
 	'game.state.Game',
@@ -32,7 +33,7 @@ lychee.define('game.Main').requires([
 			base: './asset',
 			sound: true,
 			music: true,
-			fullscreen: false,
+			fullscreen: true,
 			renderFps: 60,
 			updateFps: 60,
 			width: 896,
@@ -132,6 +133,47 @@ lychee.define('game.Main').requires([
 				true
 			);
 			this.renderer.setBackground("#222222");
+
+
+			this.viewport = new lychee.Viewport({
+				fireReshape: true
+			});
+			this.viewport.bind('reshape', function(orientation, rotation, width, height) {
+
+				// We don't need the width / height inside here.
+				this.reset();
+
+
+				for (var id in this.states) {
+					this.states[id].reset();
+				}
+
+				var state = this.getState();
+				state.leave && state.leave();
+				state.enter && state.enter();
+
+			}, this);
+			this.viewport.bind('hide', function() {
+
+				if (
+					this.jukebox
+					&& this.jukebox.isPlaying('music') === true
+				) {
+					this.jukebox.stop('music');
+				}
+
+			}, this);
+			this.viewport.bind('show', function() {
+
+				if (
+					this.jukebox
+					&& this.jukebox.isPlaying('music')
+				) {
+					this.jukebox.play('music');
+				}
+
+			}, this);
+
 
 			this.reset();
 

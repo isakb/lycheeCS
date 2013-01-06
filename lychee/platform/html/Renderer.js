@@ -103,7 +103,13 @@ lychee.define('Renderer').tags({
 
 			if (this.__state !== 'running') return;
 
-			this.__ctx.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+			// Some mobile devices have weird issues on rotations with clearRect()
+			// Seems to be if the renderbuffer got bigger after rotation
+			// this.__ctx.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+
+			// fillRect() renders correctly
+			this.__ctx.fillStyle = this.__background;
+			this.__ctx.fillRect(0, 0, this.__canvas.width, this.__canvas.height);
 
 		},
 
