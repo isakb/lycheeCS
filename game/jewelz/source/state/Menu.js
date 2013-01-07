@@ -56,16 +56,6 @@ lychee.define('game.state.Menu').requires([
 				}
 			}), this.__welcome);
 
-			this.__scene.add(new lychee.ui.Text({
-				text: 'powered by lycheeJS',
-				font: this.game.fonts.small,
-				layout: {
-					position: 'absolute',
-					x: 0,
-					y: hheight - 30
-				}
-			}), this.__welcome);
-
 			entity = new lychee.ui.Text({
 				text: 'New Game',
 				font: this.game.fonts.normal,
@@ -159,45 +149,12 @@ lychee.define('game.state.Menu').requires([
 			this.__scene.add(entity, this.__newgame);
 
 			entity = new lychee.ui.Text({
-				text: 'Puzzle Game',
-				font: this.game.fonts.normal,
-				layout: {
-					position: 'absolute',
-					x: 0,
-					y: 24
-				}
-			});
-
-			entity.bind('touch', function(entity) {
-//				this.game.setState('gamepuzzle');
-			}, this);
-
-			this.__scene.add(entity, this.__newgame);
-
-
-// TODO: Remove this notification
-
-			this.__scene.add(new lychee.ui.Text({
-				text: '(coming soon)',
-				font: this.game.fonts.small,
-				layout: {
-					position: 'absolute',
-					x: 0,
-					y: 52
-				}
-			}), this.__newgame);
-
-// End of TODO
-
-
-			entity = new lychee.ui.Text({
 				text: 'Blast Game',
 				font: this.game.fonts.normal,
 				layout: {
 					position: 'absolute',
 					x: 0,
-					// y: 72
-					y: 96
+					y: 72
 				}
 			});
 
@@ -206,6 +163,18 @@ lychee.define('game.state.Menu').requires([
 			}, this);
 
 			this.__scene.add(entity, this.__newgame);
+
+
+			this.__scene.add(new lychee.ui.Text({
+				text: '(coming soon)',
+				font: this.game.fonts.small,
+				layout: {
+					position: 'absolute',
+					x: 0,
+					y: 72 + 36
+				}
+			}), this.__newgame);
+
 
 
 			this.__settings = this.__scene.add(new lychee.ui.Tile({
@@ -341,6 +310,14 @@ lychee.define('game.state.Menu').requires([
 			if (this.__scene !== null) {
 				this.__scene.render(clock, delta);
 			}
+
+			this.__renderer.drawText(
+				'center',
+				this.game.settings.height - 30,
+				'powered by lycheeJS',
+				this.game.fonts.small,
+				null
+			);
 
 			this.__renderer.flush();
 

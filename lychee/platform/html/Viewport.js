@@ -24,6 +24,7 @@ lychee.define('Viewport').tags({
 		orientationchange: null,
 		resize:            0
 	};
+	var _active = true;
 
 
 	var _instances = [];
@@ -74,18 +75,30 @@ lychee.define('Viewport').tags({
 
 		},
 
-		pageshow: function() {
+		focus: function() {
 
-			for (var i = 0, l = _instances.length; i < l; i++) {
-				_instances[i].__processShow();
+			if (_active === false) {
+
+				for (var i = 0, l = _instances.length; i < l; i++) {
+					_instances[i].__processShow();
+				}
+
+				_active = true;
+
 			}
 
 		},
 
-		pagehide: function() {
+		blur: function() {
 
-			for (var i = 0, l = _instances.length; i < l; i++) {
-				_instances[i].__processHide();
+			if (_active === true) {
+
+				for (var i = 0, l = _instances.length; i < l; i++) {
+					_instances[i].__processHide();
+				}
+
+				_active = false;
+
 			}
 
 		}
@@ -102,14 +115,14 @@ lychee.define('Viewport').tags({
 			global.addEventListener('orientationchange', _listeners.orientationchange, true);
 		}
 
-		if (typeof global.onpageshow !== 'undefined') {
-			methods.push('pageshow');
-			global.addEventListener('pageshow', _listeners.pageshow, true);
+		if (typeof global.onfocus !== 'undefined') {
+			methods.push('focus');
+			global.addEventListener('focus', _listeners.focus, true);
 		}
 
-		if (typeof global.onpagehide !== 'undefined') {
-			methods.push('pagehide');
-			global.addEventListener('pagehide', _listeners.pagehide, true);
+		if (typeof global.onblur !== 'undefined') {
+			methods.push('blur');
+			global.addEventListener('blur', _listeners.blur, true);
 		}
 
 

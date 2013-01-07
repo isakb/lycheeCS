@@ -169,7 +169,7 @@ lychee.define('game.state.Credits').includes([
 
 			this.__renderer.drawText(
 				'center',
-				this.game.settings.height - 40,
+				this.game.settings.height - 30,
 				'powered by lycheeJS',
 				this.game.fonts.small,
 				null

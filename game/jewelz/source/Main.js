@@ -8,7 +8,6 @@ lychee.define('game.Main').requires([
 	'game.state.Credits',
 	'game.state.GameBlast',
 	'game.state.GameBoard',
-	'game.state.GamePuzzle',
 	'game.state.Menu',
 	'game.state.Result',
 	'game.DeviceSpecificHacks'
@@ -174,18 +173,6 @@ lychee.define('game.Main').requires([
 
 			this.__offset = env.offset; // Linked
 
-
-			if (this.states.menu !== undefined) {
-
-				this.states.menu.reset();
-				this.states.gameboard.reset();
-				this.states.gamepuzzle.reset();
-				this.states.gameblast.reset();
-				this.states.credits.reset();
-				this.states.result.reset();
-
-			}
-
 		},
 
 		init: function() {
@@ -209,6 +196,10 @@ lychee.define('game.Main').requires([
 				// We don't need the width / height inside here.
 				this.reset();
 
+				for (var id in this.states) {
+					this.states[id].reset();
+				}
+
 				var state = this.getState();
 				state.leave && state.leave();
 				state.enter && state.enter();
@@ -223,6 +214,8 @@ lychee.define('game.Main').requires([
 					this.jukebox.stop('music');
 				}
 
+				this.stop();
+
 			}, this);
 			this.viewport.bind('show', function() {
 
@@ -232,6 +225,8 @@ lychee.define('game.Main').requires([
 				) {
 					this.jukebox.play('music');
 				}
+
+				this.start();
 
 			}, this);
 
@@ -251,7 +246,6 @@ lychee.define('game.Main').requires([
 
 
 			this.states.gameboard  = new game.state.GameBoard(this);
-			this.states.gamepuzzle = new game.state.GamePuzzle(this);
 			this.states.gameblast  = new game.state.GameBlast(this);
 			this.states.result     = new game.state.Result(this);
 			this.states.menu       = new game.state.Menu(this);
