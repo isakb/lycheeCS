@@ -45,7 +45,8 @@
 				"Input": [ "js" ],
 				"Jukebox": [ "js" ],
 				"Renderer": [ "js" ],
-				"Track": [ "js" ]
+				"Track": [ "js" ],
+				"Viewport": [ "js" ]
 
 			},
 
