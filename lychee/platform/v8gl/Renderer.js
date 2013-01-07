@@ -65,18 +65,15 @@ lychee.define('Renderer').tags({
 			if (width !== this.__width || height !== this.__height) {
 
 				if (this.__window !== null) {
-					// Delete previous window
-					glut.destroyWindow(this.__window);
+					glut.reshapeWindow(width, height);
 				} else {
-					// Delete the default window
-					glut.destroyWindow(1);
+					glut.initWindowSize(width, height);
+					this.__window = glut.createWindow(this.__id);
 				}
 
-				glut.initWindowSize(width, height);
 
 				this.__width = width;
 				this.__height = height;
-				this.__window = glut.createWindow(this.__id);
 
 				glut.positionWindow(0, 0);
 
