@@ -11,10 +11,6 @@ lychee.define('game.DeviceSpecificHacks').exports(function(lychee, global) {
 				this.settings.music = false;
 				this.settings.sound = false;
 
-				_alreadyBound = true;
-
-				return;
-
 			} else if (global.navigator.userAgent.match(/iPad/)) {
 
 				this.settings.fullscreen = true;

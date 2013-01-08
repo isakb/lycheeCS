@@ -101,11 +101,21 @@ lychee.define('game.Main').requires([
 
 		},
 
-		reset: function() {
+		reset: function(width, height) {
 
 			game.DeviceSpecificHacks.call(this);
 
+
 			var env = this.renderer.getEnvironment();
+
+			if (
+				typeof width === 'number'
+				&& typeof height === 'number'
+			) {
+				env.screen.width  = width;
+				env.screen.height = height;
+			}
+
 
 			if (this.settings.fullscreen === true) {
 				this.settings.width = env.screen.width;
@@ -135,14 +145,10 @@ lychee.define('game.Main').requires([
 			this.renderer.setBackground("#222222");
 
 
-			this.viewport = new lychee.Viewport({
-				fireReshape: true
-			});
+			this.viewport = new lychee.Viewport();
 			this.viewport.bind('reshape', function(orientation, rotation, width, height) {
 
-				// We don't need the width / height inside here.
-				this.reset();
-
+				this.reset(width, height);
 
 				for (var id in this.states) {
 					this.states[id].reset();

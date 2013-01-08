@@ -1,6 +1,7 @@
 
 lychee.define('game.Main').requires([
 	'lychee.Input',
+	'lychee.Viewport',
 	'game.Graph',
 	'game.Renderer',
 	'game.state.Game',
@@ -40,11 +41,21 @@ lychee.define('game.Main').requires([
 
 		},
 
-		reset: function() {
+		reset: function(width, height) {
 
 			game.DeviceSpecificHacks.call(this);
 
+
 			var env = this.renderer.getEnvironment();
+
+			if (
+				typeof width === 'number'
+				&& typeof height === 'number'
+			) {
+				env.screen.width  = width;
+				env.screen.height = height;
+			}
+
 
 			if (this.settings.fullscreen === true) {
 				this.settings.width = env.screen.width;
@@ -66,27 +77,44 @@ lychee.define('game.Main').requires([
 			lychee.game.Main.prototype.init.call(this);
 
 			this.renderer = new game.Renderer('game');
-
 			this.renderer.reset(
 				this.settings.width,
 				this.settings.height,
 				true
 			);
-
 			this.renderer.setBackground("#222222");
+
+
+			this.viewport = new lychee.Viewport();
+			this.viewport.bind('reshape', function(orientation, rotation, width, height) {
+
+				this.reset(width, height);
+
+				for (var id in this.states) {
+					this.states[id].reset();
+				}
+
+				var state = this.getState();
+				state.leave && state.leave();
+				state.enter && state.enter();
+
+			}, this);
 
 
 			this.reset();
 
 
 			this.input = new lychee.Input({
-				delay: 0,
-				fireModifiers: true
+				delay:        0,
+				fireKey:      false,
+				fireModifier: false,
+				fireTouch:    true,
+				fireSwipe:    true
 			});
 
 
 			this.states = {
-				game:    new game.state.Game(this)
+				game: new game.state.Game(this)
 			};
 
 

@@ -197,9 +197,7 @@ lychee.define('game.Main').requires([
 			this.renderer.setBackground("#222222");
 
 
-			this.viewport = new lychee.Viewport({
-				fireReshape: true
-			});
+			this.viewport = new lychee.Viewport();
 			this.viewport.bind('reshape', function(orientation, rotation, width, height) {
 
 				this.reset(width, height);

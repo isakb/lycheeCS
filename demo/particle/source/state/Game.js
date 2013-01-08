@@ -18,6 +18,8 @@ lychee.define('game.state.Game').requires([
 		this.__emitter = null;
 		this.__locked = false;
 
+		this.__particles = [];
+
 		this.reset();
 
 	};
@@ -29,20 +31,14 @@ lychee.define('game.state.Game').requires([
 
 		},
 
-		enter: function() {
-
-			lychee.game.State.prototype.enter.call(this);
-
-			this.__locked = true;
-
+/*
+		__createEmitter: function() {
 
 			var width = this.game.settings.width;
 			var height = this.game.settings.height;
 
 
-			this.__graph = new game.Graph(this.game);
-
-			this.__emitter = new lychee.physics.ParticleEmitter({
+			var emitter = new lychee.physics.ParticleEmitter({
 				angle: 90,
 				position: {
 					x: width / 2,
@@ -51,7 +47,7 @@ lychee.define('game.state.Game').requires([
 				}
 			}, this.__graph);
 
-			this.__emitter.setSpawn(250, 1, {
+			emitter.setSpawn(1000, 1, {
 				callback: function(spawn, delta, id) {
 
 					spawn.settings.velocity.x = Math.sin(1/10 * id * 2 * Math.PI) * spawn.settings.defaults.velocity.x;
@@ -71,10 +67,38 @@ lychee.define('game.state.Game').requires([
 			});
 
 
-			this.__locked = false;
+			return emitter;
+
+		},
+*/
+
+		__createParticle: function() {
+
+			var particle = new lychee.physics.Particle({
+				position: {
+					x: 0, y: 0, z: 0
+				}
+			});
+
+
+			this.__graph.add(particle);
+
+
+			return particle;
+
+		},
+
+		enter: function() {
+
+			lychee.game.State.prototype.enter.call(this);
+
+
+			this.__graph = new game.Graph(this.game);
+			this.__particles = [];
 
 
 			this.__input.bind('touch', this.__processTouch, this);
+			this.__input.bind('swipe', this.__processSwipe, this);
 			this.__renderer.start();
 
 		},
@@ -83,6 +107,7 @@ lychee.define('game.state.Game').requires([
 
 			this.__renderer.stop();
 			this.__input.unbind('touch', this.__processTouch);
+			this.__input.unbind('swipe', this.__processSwipe);
 
 			this.__emitter = null;
 			this.__graph = null;
@@ -94,7 +119,10 @@ lychee.define('game.state.Game').requires([
 
 		update: function(clock, delta) {
 
-			this.__emitter.update(clock, delta);
+			for (var p = 0, l = this.__particles.length; p < l; p++) {
+				this.__particles[p].update(clock, delta);
+			}
+
 			this.__graph.update(clock, delta);
 
 			this.__clock = clock;
@@ -109,7 +137,7 @@ lychee.define('game.state.Game').requires([
 
 		},
 
-		__processTouch: function(position, delta) {
+		__processTouch: function(id, position, delta) {
 
 			if (this.__locked === true) return;
 
@@ -119,8 +147,29 @@ lychee.define('game.state.Game').requires([
 			position.y -= offset.y;
 
 
-			if (this.__emitter !== null) {
-				this.__emitter.setPosition(position);
+			if (this.__particles[id] === undefined) {
+				this.__particles[id] = this.__createParticle();
+			}
+
+
+			if (this.__particles[id] !== undefined) {
+				this.__particles[id].setPosition(position);
+			}
+
+		},
+
+		__processSwipe: function(id, state, position, delta, swipe) {
+
+			if (this.__locked === true) return;
+
+			var offset = this.game.getOffset();
+
+			position.x -= offset.x;
+			position.y -= offset.y;
+
+
+			if (state === 'move' && this.__particles[id] !== undefined) {
+				this.__particles[id].setPosition(position);
 			}
 
 		}
