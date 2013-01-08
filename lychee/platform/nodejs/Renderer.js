@@ -3,8 +3,15 @@ lychee.define('Renderer').tags({
 	platform: 'nodejs'
 }).supports(function(lychee, global) {
 
-	// This is a stub implementation, so it does simply nothing
-	return true;
+	if (
+		typeof process !== 'undefined'
+		&& process.stdout
+	) {
+		return true
+	}
+
+
+	return false;
 
 }).exports(function(lychee, global) {
 

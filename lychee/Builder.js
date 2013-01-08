@@ -35,8 +35,9 @@
 		this.__clock = 0;
 
 
+		// This stuff here can't timeout on slow internet connections!
 		this.__preloader = new lychee.Preloader({
-			timeout: 2000
+			timeout: Infinity
 		});
 
 		this.__preloader.bind('ready', this.__load, this);
@@ -147,7 +148,7 @@
 
 		},
 
-		__unload: function(mappings) {
+		__unload: function(assets, mappings) {
 
 			for (var url in mappings) {
 
@@ -213,7 +214,7 @@
 			} else if (packageId !== null && classId !== null) {
 
 				// Wait for next __refresh() if package config wasn't loaded yet
-				if (this.__packages[packageId] === undefined) return;
+				if (this.__packages[packageId] == null) return;
 
 
 				if (this.__classes[packageId + '.' + classId] === undefined) {

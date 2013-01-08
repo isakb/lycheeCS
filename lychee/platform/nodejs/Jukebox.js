@@ -5,8 +5,14 @@ lychee.define('Jukebox').tags({
 	'lychee.Track'
 ]).supports(function(lychee, global) {
 
-	// This is a stub implementation, so it does simply nothing
-	return true;
+	if (
+		typeof process !== 'undefined'
+	) {
+		return true;
+	}
+
+
+	return false;
 
 }).exports(function(lychee, global) {
 

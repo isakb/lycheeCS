@@ -3,8 +3,14 @@ lychee.define('Track').tags({
 	platform: 'nodejs'
 }).supports(function(lychee, global) {
 
-	// This is a stub implementation, so it does simply nothing
-	return true;
+	if (
+		typeof process !== 'undefined'
+	) {
+		return true;
+	}
+
+
+	return false;
 
 }).exports(function(lychee, global) {
 

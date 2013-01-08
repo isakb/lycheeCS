@@ -43,14 +43,12 @@
 					if (instance.__fired[url] === undefined) {
 
 						if (instance.__pending[url] === false) {
-
 							ready[url] = _cache[url] || null;
-							map[url] = instance.__map[url] || null;
-
 						} else {
 							errors[url] = null;
 						}
 
+						map[url] = instance.__map[url] || null;
 						instance.__fired[url] = true;
 
 					}
@@ -59,7 +57,7 @@
 
 
 				if (Object.keys(errors).length > 0) {
-					instance.trigger('error', [ errors ]);
+					instance.trigger('error', [ errors, map ]);
 				}
 
 
@@ -270,6 +268,9 @@
 
 		_load: function(url, type, _cache) {
 			throw "lychee.Preloader: You need to include the platform-specific bootstrap.js to load other files.";
+		},
+
+		_progress: function(url, _cache) {
 		}
 
 	};

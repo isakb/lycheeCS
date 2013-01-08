@@ -5,7 +5,6 @@
 
 		var that = this;
 
-
 		// 1. JavaScript
 		if (type === 'js') {
 
@@ -16,6 +15,7 @@
 			script.onload = function() {
 				that.__pending[url] = false;
 				_cache[url] = '';
+				that._progress(url, _cache);
 			};
 			script.src = url;
 
@@ -43,6 +43,7 @@
 
 					that.__pending[url] = false;
 					_cache[url] = data;
+					that._progress(url, _cache);
 
 				}
 
@@ -60,6 +61,7 @@
 			img.onload = function() {
 				that.__pending[url] = false;
 				_cache[url] = this;
+				that._progress(url, _cache);
 			};
 			img.src = url;
 
@@ -92,6 +94,7 @@
 
 					that.__pending[url] = false;
 					_cache[url] = data;
+					that._progress(url, _cache);
 
 				}
 
