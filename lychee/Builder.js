@@ -52,6 +52,7 @@
 		 * Loading Stuff
 		 *
 		 */
+
 		__load: function(assets, mappings) {
 
 			var refresh = false;
@@ -289,6 +290,7 @@
 		 * Parsing Stuff
 		 *
 		 */
+
 		__getAllIdsFromTree: function(tree, prefix, ids) {
 
 			prefix = typeof prefix === 'string' ? prefix : '';
@@ -689,6 +691,7 @@
 		 * Building Stuff
 		 *
 		 */
+
 		build: function(env, callback, scope) {
 
 			if (lychee.debug === true) {
@@ -862,9 +865,8 @@
 		 * Code Merging Stuff
 		 *
 		 */
-		getCode: function() {
 
-			var base = lychee.getEnvironment().bases.lychee;
+		generate: function(env) {
 
 			var code = '';
 			var namespaces = {
@@ -875,6 +877,7 @@
 
 			var b, l, reference, lyDefBlock;
 
+			// 1. Preparation of Namespaces
 			for (b = 0, l = this.__buildOrder.length; b < l; b++) {
 
 				reference = this.__buildOrder[b];
@@ -884,7 +887,7 @@
 
 			}
 
-
+			// 2. Definition Blocks (exports)
 			for (b = 0, l = this.__buildOrder.length; b < l; b++) {
 
 				reference = this.__buildOrder[b];
@@ -895,6 +898,73 @@
 			}
 
 
+			// 3. Inheritation (includes)
+			code += "(function(map, global) {                                \n";
+			code += "                                                        \n";
+			code += "  var _get = function(path) {                           \n";
+			code += "                                                        \n";
+			code += "    var node = global;                                  \n";
+			code += "    var tmp = path.split('.');                          \n";
+			code += "                                                        \n";
+			code += "    var t = 0;                                          \n";
+			code += "    while(t < tmp.length) {                             \n";
+			code += "      node = node[tmp[t++]];                            \n";
+			code += "    }                                                   \n";
+			code += "                                                        \n";
+			code += "    return node;                                        \n";
+			code += "                                                        \n";
+			code += "  };                                                    \n";
+			code += "                                                        \n";
+			code += "                                                        \n";
+			code += "  for (var name in map) {                               \n";
+			code += "                                                        \n";
+			code += "    var ref = _get(name);                               \n";
+			code += "    var proto = {};                                     \n";
+			code += "    for (var prop in ref.prototype) {                   \n";
+			code += "      proto[prop] = ref.prototype[prop];                \n";
+			code += "    }                                                   \n";
+			code += "                                                        \n";
+			code += "    ref.prototype = {};                                 \n";
+			code += "                                                        \n";
+			code += "    var args = [ ref.prototype ];                       \n";
+			code += "                                                        \n";
+			code += "    for (var i = 0, l = map[name].length; i < l; i++) { \n";
+			code += "      args.push(_get(map[name][i]).prototype);          \n";
+			code += "    }                                                   \n";
+			code += "                                                        \n";
+			code += "    args.push(proto);                                   \n";
+			code += "                                                        \n";
+			code += "    lychee.extend.apply(lychee, args);                  \n";
+			code += "                                                        \n";
+			code += "  }                                                     \n";
+			code += "                                                        \n";
+			code += "})({                                                    \n";
+
+			for (b = 0, l = this.__buildOrder.length; b < l; b++) {
+
+				reference = this.__buildOrder[b];
+				lyDefBlock = this.__tree[reference];
+
+				if (lyDefBlock._includes.length) {
+
+					code += '\t\'' + reference + '\': [\'';
+					code += lyDefBlock._includes.join('\',\'');
+					code += '\']';
+
+					if (b < l - 1) {
+						code += ',\n';
+					} else {
+						code += '\n';
+					}
+
+				}
+
+			}
+
+			code += "}, this);                                               \n";
+
+
+			// 4. Initialization
 			code += '(' + this.__buildCallback + ')(this.lychee, this);';
 
 			return code;
@@ -928,14 +998,27 @@
 	};
 
 
+	var _builder = null;
+
 	lychee.build = function(callback, scope) {
 
-		var builder = new lychee.Builder();
-		var env = lychee.getEnvironment();
+		_builder = new lychee.Builder();
+		_builder.build(lychee.getEnvironment(), callback, scope);
 
-		builder.build(env, callback, scope);
+	};
 
-		return builder;
+	lychee.generate = function(callback, scope) {
+
+		callback = callback instanceof Function ? callback : function() {};
+		scope = scope !== undefined ? scope : global;
+
+		if (_builder === null) {
+			_builder = new lychee.Builder();
+		}
+
+		var code = _builder.generate(lychee.getEnvironment());
+
+		callback.call(scope, code);
 
 	};
 
