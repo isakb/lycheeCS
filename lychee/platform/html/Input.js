@@ -12,6 +12,7 @@ lychee.define('Input').tags({
 		return true;
 	}
 
+
 	return false;
 
 }).exports(function(lychee, global) {

@@ -9,6 +9,7 @@ lychee.define('Viewport').tags({
 		return true;
 	}
 
+
 	return false;
 
 }).exports(function(lychee, global) {
@@ -74,7 +75,7 @@ lychee.define('Viewport').tags({
 	})();
 
 
-	var Class = function(data) {
+	var Class = function() {
 
 		this.__orientation = null; // Unsupported by freeglut
 		this.__width = 0;
@@ -105,8 +106,8 @@ lychee.define('Viewport').tags({
 				this.trigger('reshape', [
 					'landscape',
 					'landscape',
-					width,
-					height
+					this.__width,
+					this.__height
 				]);
 
 			} else {
@@ -114,8 +115,8 @@ lychee.define('Viewport').tags({
 				this.trigger('reshape', [
 					'portrait',
 					'portrait',
-					width,
-					height
+					this.__width,
+					this.__height
 				]);
 
 			}

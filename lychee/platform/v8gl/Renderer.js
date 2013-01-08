@@ -9,6 +9,7 @@ lychee.define('Renderer').tags({
 		return true;
 	}
 
+
 	return false;
 
 }).exports(function(lychee, global) {

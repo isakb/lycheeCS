@@ -185,15 +185,15 @@ lychee.define('Viewport').tags({
 					this.trigger('reshape', [
 						'landscape',
 						'landscape',
-						width,
-						height
+						this.__width,
+						this.__height
 					]);
 				} else {
 					this.trigger('reshape', [
 						'portrait',
 						'portrait',
-						width,
-						height
+						this.__width,
+						this.__height
 					]);
 				}
 
@@ -211,15 +211,15 @@ lychee.define('Viewport').tags({
 					this.trigger('reshape', [
 						'portrait',
 						'landscape',
-						width,
-						height
+						this.__width,
+						this.__height
 					]);
 				} else {
 					this.trigger('reshape', [
 						'landscape',
 						'portrait',
-						width,
-						height
+						this.__width,
+						this.__height
 					]);
 				}
 
@@ -237,15 +237,15 @@ lychee.define('Viewport').tags({
 					this.trigger('reshape', [
 						'portrait',
 						'landscape',
-						width,
-						height
+						this.__width,
+						this.__height
 					]);
 				} else {
 					this.trigger('reshape', [
 						'landscape',
 						'portrait',
-						width,
-						height
+						this.__width,
+						this.__height
 					]);
 				}
 
