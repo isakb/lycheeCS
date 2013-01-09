@@ -301,7 +301,8 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 		update: function(clock, delta) {
 
 
-			// Sync clocks initially (if Entity was created before loop started)
+			// 1. Sync clocks initially
+			// (if Entity was created before loop started)
 			if (this.__clock === null) {
 				this.sync(clock);
 			}
@@ -309,10 +310,12 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 			var t = 0;
 			var dt = delta / 1000;
+			var cache = this.__cache.position;
 
+
+			// 2. Tweening
 			if (this.__tween !== null && (this.__clock <= this.__tween.start + this.__tween.duration)) {
 
-				var cache = this.__cache.position;
 				t = (this.__clock - this.__tween.start) / this.__tween.duration;
 
 
@@ -360,19 +363,35 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			}
 
 
-			if (this.__velocity.x !== 0) {
-				this.__position.x += this.__velocity.x * dt;
+			// 3. Velocities
+			if (
+				this.__velocity.x !== 0
+				|| this.__velocity.y !== 0
+				|| this.__velocity.z !== 0
+			) {
+
+				cache.x = this.__position.x;
+				cache.y = this.__position.y;
+				cache.z = this.__position.z;
+
+				if (this.__velocity.x !== 0) {
+					cache.x += this.__velocity.x * dt;
+				}
+
+				if (this.__velocity.y !== 0) {
+					cache.y += this.__velocity.y * dt;
+				}
+
+				if (this.__velocity.z !== 0) {
+					cache.z += this.__velocity.z * dt;
+				}
+
+				this.setPosition(cache);
+
 			}
 
-			if (this.__velocity.y !== 0) {
-				this.__position.y += this.__velocity.y * dt;
-			}
 
-			if (this.__velocity.z !== 0) {
-				this.__position.z += this.__velocity.z * dt;
-			}
-
-
+			// 4. Effects
 			if (this.__effect !== null && (this.__clock <= this.__effect.start + this.__effect.duration)) {
 
 				t = (this.__clock - this.__effect.start) / this.__effect.duration;
@@ -389,6 +408,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			}
 
 
+			// 5. Animation (Interpolation)
 			if (this.__animation !== null && (this.__clock <= this.__animation.start + this.__animation.duration)) {
 
 				t = (this.__clock - this.__animation.start) / this.__animation.duration;
