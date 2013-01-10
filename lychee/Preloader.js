@@ -251,8 +251,8 @@
 
 		get: function(url) {
 
-			if (_cache.resource[url] !== undefined) {
-				return _cache.resource[url];
+			if (_cache[url] !== undefined) {
+				return _cache[url];
 			}
 
 
