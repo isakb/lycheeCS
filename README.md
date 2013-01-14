@@ -1,5 +1,5 @@
 
-# lycheeJS (v0.6 pre-release)
+# lycheeJS (v0.6)
 
 Web Documentation: [http://martens.ms/lycheeJS](http://martens.ms/lycheeJS)
 
@@ -11,7 +11,7 @@ games inside the Web Browser or native environments.
 
 ## Other (yet unsupported) JavaScript runtimes
 
-**Its architecture is independent of the environment which
+**The lycheeJS architecture is independent of the environment which
 means it will run on any theoretical JavaScript environment.**
 
 The only requirement for such a platform is a fully implemented
@@ -40,19 +40,17 @@ bindings as the target environment. The equivalent environment
 integration is the platform/v8gl inside the lycheeJS Game library.
 
 
-# Limitations
-
-## NodeJS
+# Limitations for NodeJS
 
 As NodeJS is a TTY-environment by default, there are some limitations.
 You can implement an ASCII Renderer in theory, but that's up to you :)
 
 - lychee.Input: Only **fireKey** can be used, other input methods are not supported.
 - lychee.Renderer: It draws simply nothing and is an emulation layer.
-- lychee.Jukebox: It plays nothing and is an emulation layer.
+- lychee.Jukebox: It plays simply nothing and is an emulation layer.
 
 
-## Native Shipping / V8GL
+# Limitations for Native Shipping / V8GL
 
 The V8GL environment is the custom environment that I provide and
 allows you to ship games to other platforms natively. It is part
@@ -65,7 +63,7 @@ are some limitations:
 - lychee.Jukebox: The V8GL environment has currently no support for audio playback via OpenSL/OpenAL.
 
 
-## iOS
+# Limitations for iOS
 
 At the time this was written (November 2012), iOS based platforms
 are only deliverable natively using a WebView (WebKit) implementation,
@@ -76,30 +74,6 @@ Sound issues on iOS 5 and earlier versions are known due to Apple's
 crappy implementation using iTunes in the background. These issues
 are gone with iOS6+ due to the WebKitAudioContext (WebAudio API)
 availability.
-
-
-# Roadmap
-
-The Roadmap is work in progress and may not be up to date, but it 
-gives you an overview of what is currently being implemented.
-
-
-**v0.6 lycheeJS**
-
-- lychee.physics.ParticleMagnet needs to be implemented
-- Particle Demo needs to be updated with multi-touch support
-- lychee.Renderer: 3D vertices and shape integration and Rasterizer (canvas buffer renderer) for platform:html
-- (planned to be pushed): lychee.physics.softbody namespace
-
-
-**v0.6 lycheeJS-ADK**
-
-- bleeding-edge freeglut integration
-- Completion of GLSL bindings, Shader and Buffer data types
-- OpenAL/OpenSL bindings
-- Rewrite Android build template
-- Rewrite Windows Metro build template (via VisualStudio project)
-- Add support for packaging in linux build template
 
 
 # License
