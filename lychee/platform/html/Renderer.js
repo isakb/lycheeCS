@@ -6,7 +6,7 @@ lychee.define('Renderer').tags({
 ]).supports(function(lychee, global) {
 
 	if (
-		global.document
+		typeof global.document !== 'undefined'
 		&& typeof global.document.createElement === 'function'
 		&& typeof global.CanvasRenderingContext2D === 'function'
 	) {
