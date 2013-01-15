@@ -67,6 +67,12 @@
 			"Jukebox": [ "js" ]
 		},
 
+		"math": {
+			"Vector3": [ "js" ],
+			"Vector4": [ "js" ],
+			"Matrix4": [ "js" ]
+		},
+
 		"physics": {
 			"Particle": [ "js" ],
 			"ParticleEmitter": [ "js" ],
