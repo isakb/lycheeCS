@@ -352,6 +352,102 @@ lychee.define('lychee.math.Matrix4').exports(function(lychee, global) {
 			d[10] = a02 * r20 + a12 * r21 + a22 * r22;
 			d[11] = a03 * r20 + a13 * r21 + a23 * r22;
 
+		},
+
+		scale: function(vector) {
+
+			var x = vector._data[0];
+			var y = vector._data[1];
+			var z = vector._data[2];
+
+			d[0] *= x; d[4] *= y;  d[8] *= z;
+			d[1] *= x; d[5] *= y;  d[9] *= z;
+			d[2] *= x; d[6] *= y; d[10] *= z;
+			d[3] *= x; d[7] *= y; d[11] *= z;
+
+		},
+
+		frustum: function(left, right, bottom, top, near, far) {
+
+			var rl = 1 / (right - left);
+			var tb = 1 / (top - bottom);
+			var nf = 1 / (near - far);
+
+			var d = this._data;
+
+
+			d[0]  = (near * 2) * rl;
+			d[1]  = 0;
+			d[2]  = 0;
+			d[3]  = 0;
+			d[4]  = 0;
+			d[5]  = (near * 2) * tb;
+			d[6]  = 0;
+			d[7]  = 0;
+			d[8]  = (right + left) * rl;
+			d[9]  = (top + bottom) * tb;
+			d[10] = (far + near) * nf;
+			d[11] = -1;
+			d[12] = 0;
+			d[13] = 0;
+			d[14] = (far * near * 2) * nf;
+			d[15] = 0;
+
+		},
+
+		perspective: function(fovy, aspect, near, far) {
+
+			var f  = 1.0 / Math.tan(fovy / 2);
+			var nf = 1 / (near - far);
+
+			var d = this._data;
+
+
+			d[0] = f / aspect;
+			d[1] = 0;
+			d[2] = 0;
+			d[3] = 0;
+			d[4] = 0;
+			d[5] = f;
+			d[6] = 0;
+			d[7] = 0;
+			d[8] = 0;
+			d[9] = 0;
+			d[10] = (far + near) * nf;
+			d[11] = -1;
+			d[12] = 0;
+			d[13] = 0;
+			d[14] = (2 * far * near) * nf;
+			d[15] = 0;
+
+		},
+
+		ortho: function(left, right, bottom, top, near, far) {
+
+			var lr = 1 / (left - right);
+			var bt = 1 / (bottom - top);
+			var nf = 1 / (near - far);
+
+			var d = this._data;
+
+
+			d[0] = -2 * lr;
+			d[1] = 0;
+			d[2] = 0;
+			d[3] = 0;
+			d[4] = 0;
+			d[5] = -2 * bt;
+			d[6] = 0;
+			d[7] = 0;
+			d[8] = 0;
+			d[9] = 0;
+			d[10] = 2 * nf;
+			d[11] = 0;
+			d[12] = (left + right) * lr;
+			d[13] = (top + bottom) * bt;
+			d[14] = (far + near) * nf;
+			d[15] = 1;
+
 		}
 
 	};
