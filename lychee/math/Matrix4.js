@@ -302,8 +302,8 @@ lychee.define('lychee.math.Matrix4').exports(function(lychee, global) {
 			}
 
 
-			var len = Math.sqrt(x * x + y * y + z * z);
-			if (Math.abs(len) < Class.PRECISION) {
+			var length = Math.sqrt(x * x + y * y + z * z);
+			if (Math.abs(length) < Class.PRECISION) {
 				return;
 			}
 
@@ -313,9 +313,9 @@ lychee.define('lychee.math.Matrix4').exports(function(lychee, global) {
 			var t   = 1 - cos;
 
 
-			x *= (1 / len);
-			y *= (1 / len);
-			z *= (1 / len);
+			x *= (1 / length);
+			y *= (1 / length);
+			z *= (1 / length);
 
 
 			var d = this._data;
@@ -446,6 +446,93 @@ lychee.define('lychee.math.Matrix4').exports(function(lychee, global) {
 			d[12] = (left + right) * lr;
 			d[13] = (top + bottom) * bt;
 			d[14] = (far + near) * nf;
+			d[15] = 1;
+
+		},
+
+		lookAt: function(eyex, eyey, eyez, centerx, centery, centerz, upx, upy, upz) {
+
+			var len;
+
+
+			var z0 = eyex - centerx;
+			var z1 = eyey - centery;
+			var z2 = eyez - centerz;
+
+			if (
+				Math.abs(z0) < Class.PRECISION
+				&& Math.abs(z1) < Class.PRECISION
+				&& Math.abs(z2) < Class.PRECISION
+			) {
+				return;
+			}
+
+
+			var len = 1 / Math.sqrt(z0*z0 + z1*z1 + z2*z2);
+			z0 *= len;
+			z1 *= len;
+			z2 *= len;
+
+
+			var x0 = upy * z2 - upz * z1;
+			var x1 = upz * z0 - upx * z2;
+			var x2 = upx * z1 - upy * z0;
+ 
+			len = Math.sqrt(x0*x0 + x1*x1 + x2*x2);
+			if (len === 0) {
+
+				x0 = 0;
+				x1 = 0;
+				x2 = 0;
+
+			} else {
+
+				len = 1 / len;
+				x0 *= len;
+				x1 *= len;
+				x2 *= len;
+
+			}
+
+
+			var y0 = z1 * x2 - z2 * x1;
+			var y1 = z2 * x0 - z0 * x2;
+			var y2 = z0 * x1 - z1 * x0;
+
+			len = Math.sqrt(y0*y0 + y1*y1 + y2*y2);
+			if (len === 0) {
+
+				y0 = 0;
+				y1 = 0;
+				y2 = 0;
+
+			} else {
+
+				len = 1 / len;
+				y0 *= len;
+				y1 *= len;
+				y2 *= len;
+
+			}
+
+
+			var d = this._data;
+
+			d[0]  = x0;
+			d[1]  = y0;
+			d[2]  = z0;
+			d[3]  = 0;
+			d[4]  = x1;
+			d[5]  = y1;
+			d[6]  = z1;
+			d[7]  = 0;
+			d[8]  = x2;
+			d[9]  = y2;
+			d[10] = z2;
+			d[11] = 0;
+			d[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+			d[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+			d[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
 			d[15] = 1;
 
 		}
