@@ -5,10 +5,20 @@ lychee.define('Renderer').tags({
 	'lychee.Font'
 ]).supports(function(lychee, global) {
 
+	/*
+	 * Hint for check against undefined:
+	 *
+	 * typeof CanvasRenderingContext2D is:
+	 * > function in Chrome, Firefox, IE10
+	 * > object in Safari, Safari Mobile
+	 *
+	 */
+
+
 	if (
 		typeof global.document !== 'undefined'
 		&& typeof global.document.createElement === 'function'
-		&& typeof global.CanvasRenderingContext2D === 'function'
+		&& typeof global.CanvasRenderingContext2D !== 'undefined'
 	) {
 
 		var canvas = global.document.createElement('canvas');
