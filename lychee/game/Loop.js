@@ -27,6 +27,7 @@ lychee.define('lychee.game.Loop').includes([
 
 		this.__timeouts = {};
 		this.__intervals = {};
+		this.__state = 'running';
 
 		lychee.Events.call(this, 'loop');
 
@@ -148,6 +149,10 @@ lychee.define('lychee.game.Loop').includes([
 				}
 			};
 
+		},
+
+		isRunning: function() {
+			return this.__state === 'running';
 		},
 
 
