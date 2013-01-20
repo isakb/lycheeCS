@@ -68,23 +68,16 @@
 		},
 
 		"math": {
+			"Matrix4": [ "js" ],
+			"Quaternion": [ "js" ],
 			"Vector3": [ "js" ],
-			"Vector4": [ "js" ],
-			"Matrix4": [ "js" ]
+			"Vector4": [ "js" ]
 		},
 
 		"physics": {
 			"Particle": [ "js" ],
 			"ParticleEmitter": [ "js" ],
-			"ParticleMagnet": [ "js" ],
-			"Vector": [ "js" ]
-		},
-
-		"parser": {
-			"ASTScope": [ "js" ],
-			"ASTWalker": [ "js" ],
-			"Tokenizer": [ "js" ],
-			"Parser": [ "js" ]
+			"ParticleMagnet": [ "js" ]
 		},
 
 		"ui": {
