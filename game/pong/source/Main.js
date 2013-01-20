@@ -29,7 +29,7 @@ lychee.define('game.Main').requires([
 	Class.prototype = {
 
 		defaults: {
-			title: 'boilerplate',
+			title: 'Pong Game',
 			base: './asset',
 			sound: true,
 			music: true,
