@@ -217,14 +217,13 @@ lychee.define('Renderer').tags({
 		},
 
 		// points, x1, y1, [ ... x(a), y(a) ... ], [ color, background, lineWidth ]
-		drawPolygon: function() {
+		drawPolygon: function(points, x1, y1) {
 
 			if (this.__state !== 'running') return;
 
 
 			var l = arguments.length;
 
-			var points = arguments[0];
 			if (points > 3) {
 
 				var optargs = l - (points * 2) - 1;
@@ -251,9 +250,6 @@ lychee.define('Renderer').tags({
 
 				}
 
-
-				var x1 = arguments[1];
-				var y1 = arguments[2];
 
 				this.__ctx.beginPath();
 				this.__ctx.moveTo(x1, y1);
