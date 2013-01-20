@@ -187,6 +187,124 @@ lychee.define('Renderer').tags({
 		 * Drawing API
 		 */
 
+		drawTriangle: function(x1, y1, x2, y2, x3, y3, color, background, lineWidth) {
+
+			if (this.__state !== 'running') return;
+
+			color = typeof color === 'string' ? color : '#000';
+			background = background === true ? true : false;
+			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
+
+
+			this.__ctx.beginPath();
+			this.__ctx.moveTo(x1, y1);
+			this.__ctx.lineTo(x2, y2);
+			this.__ctx.lineTo(x3, y3);
+			this.__ctx.lineTo(x1, y1);
+
+
+			if (background === false) {
+				this.__ctx.lineWidth   = lineWidth;
+				this.__ctx.strokeStyle = color;
+				this.__ctx.stroke();
+			} else {
+				this.__ctx.fillStyle   = color;
+				this.__ctx.fill();
+			}
+
+			this.__ctx.closePath();
+
+		},
+
+		// x1, y1, [ ... x(a), y(a) ... ], [ color, background, lineWidth ]
+		drawPolygon: function() {
+
+			if (this.__state !== 'running') return;
+
+
+			var l = arguments.length;
+			if (l > 4) {
+
+				var to_l1 = typeof arguments[l - 1];
+				var to_l2 = typeof arguments[l - 2];
+				var to_l3 = typeof arguments[l - 3];
+
+				var color      = '#000';
+				var background = false;
+				var lineWidth  = 1;
+				var optargs    = 0;
+
+
+				// color, background, lineWidth
+				if (
+					to_l1 === 'number'
+					&& to_l2 === 'boolean'
+					&& to_l3 === 'string'
+				) {
+					optargs    = 3;
+					color      = arguments[l - 3];
+					background = arguments[l - 2];
+					lineWidth  = arguments[l - 1];
+
+				// color, background
+				} else if (
+					to_l1 === 'boolean'
+					&& to_l2 === 'string'
+				) {
+					optargs    = 2;
+					color      = arguments[l - 2];
+					background = arguments[l - 1];
+
+				// color
+				} else if (
+					to_l1 === 'string'
+				) {
+					optargs    = 1;
+					color      = arguments[l - 1];
+				}
+
+
+				// x1, y1, x2, y2 (minimum amount)
+				if (
+					(l - optargs) % 2 === 0
+					&& (l - optargs) >= 4
+				) {
+
+					// x1, y1
+					this.__ctx.beginPath();
+					this.__ctx.moveTo(arguments[0], arguments[1]);
+
+
+					// x(a), y(a)
+					var a = 2;
+					do {
+
+						this.__ctx.lineTo(arguments[a], arguments[a + 1]);
+						a += 2;
+
+					} while( a < l - optargs);
+
+
+					this.__ctx.lineTo(arguments[0], arguments[1]);
+
+
+					if (background === false) {
+						this.__ctx.lineWidth   = lineWidth;
+						this.__ctx.strokeStyle = color;
+						this.__ctx.stroke();
+					} else {
+						this.__ctx.fillStyle = color;
+						this.__ctx.fill();
+					}
+
+					this.__ctx.closePath();
+
+				}
+
+			}
+
+		},
+
 		drawBox: function(x1, y1, x2, y2, color, background, lineWidth) {
 
 			if (this.__state !== 'running') return;
@@ -197,11 +315,11 @@ lychee.define('Renderer').tags({
 
 
 			if (background === false) {
-				this.__ctx.lineWidth = lineWidth;
+				this.__ctx.lineWidth   = lineWidth;
 				this.__ctx.strokeStyle = color;
 				this.__ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
 			} else {
-				this.__ctx.fillStyle = color;
+				this.__ctx.fillStyle   = color;
 				this.__ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
 			}
 
@@ -227,11 +345,11 @@ lychee.define('Renderer').tags({
 			);
 
 			if (background === false) {
-				this.__ctx.lineWidth = lineWidth;
+				this.__ctx.lineWidth   = lineWidth;
 				this.__ctx.strokeStyle = color;
 				this.__ctx.stroke();
 			} else {
-				this.__ctx.fillStyle = color;
+				this.__ctx.fillStyle   = color;
 				this.__ctx.fill();
 			}
 
@@ -251,7 +369,7 @@ lychee.define('Renderer').tags({
 			this.__ctx.moveTo(x1, y1);
 			this.__ctx.lineTo(x2, y2);
 
-			this.__ctx.lineWidth = lineWidth;
+			this.__ctx.lineWidth   = lineWidth;
 			this.__ctx.strokeStyle = color;
 			this.__ctx.stroke();
 
