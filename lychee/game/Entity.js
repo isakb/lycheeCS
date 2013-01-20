@@ -703,39 +703,38 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			loop = loop === true ? true : false;
 
 
-			var effect = null;
-			if (duration !== null && Object.prototype.toString.call(data) === '[object Object]') {
+			if (
+				duration !== null
+				&& Object.prototype.toString.call(data) === '[object Object]'
+				&& data.callback instanceof Function
+			) {
 
-				if (data.callback instanceof Function) {
+				var position = this.getPosition();
 
-					var position = this.getPosition();
-
-					effect = {
-						start: this.__clock,
-						callback: data.callback,
-						clear: data.clear || null,
-						duration: duration,
-						scope: scope,
-						loop: loop,
-						origin: {
-							x: position.x,
-							y: position.y,
-							z: position.z
-						}
-					};
-
-					if (Object.prototype.toString.call(data.defaults) === '[object Object]') {
-						effect.settings = lychee.extend({}, data.defaults, settings);
-					} else {
-						effect.settings = settings;
+				var effect = {
+					start: this.__clock,
+					callback: data.callback,
+					clear: data.clear || null,
+					duration: duration,
+					scope: scope,
+					loop: loop,
+					origin: {
+						x: position.x,
+						y: position.y,
+						z: position.z
 					}
+				};
 
+				if (Object.prototype.toString.call(data.defaults) === '[object Object]') {
+					effect.settings = lychee.extend({}, data.defaults, settings);
+				} else {
+					effect.settings = settings;
 				}
 
+
+				this.__effect = effect;
+
 			}
-
-
-			this.__effect = effect;
 
 		},
 
