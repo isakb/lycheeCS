@@ -86,14 +86,17 @@ lychee.define('Renderer').tags({
 			}
 
 
-			this.__width = width;
+			var canvas = this.__canvas;
+
+
+			this.__width  = width;
 			this.__height = height;
 
-			this.__canvas.width = width;
-			this.__canvas.height = height;
+			canvas.width  = width;
+			canvas.height = height;
 
-			this.__canvas.style.width = width + 'px';
-			this.__canvas.style.height = height + 'px';
+			canvas.style.width  = width  + 'px';
+			canvas.style.height = height + 'px';
 
 
 			this.__updateEnvironment();
@@ -119,8 +122,12 @@ lychee.define('Renderer').tags({
 			// this.__ctx.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
 
 			// fillRect() renders correctly
-			this.__ctx.fillStyle = this.__background;
-			this.__ctx.fillRect(0, 0, this.__canvas.width, this.__canvas.height);
+
+			var ctx = this.__ctx;
+			var canvas = this.__canvas;
+
+			ctx.fillStyle = this.__background;
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		},
 
@@ -145,14 +152,17 @@ lychee.define('Renderer').tags({
 
 		__updateEnvironment: function() {
 
-			this.__environment.screen.width = global.innerWidth;
-			this.__environment.screen.height = global.innerHeight;
+			var env = this.__environment;
 
-			this.__environment.offset.x = this.__canvas.offsetLeft;
-			this.__environment.offset.y = this.__canvas.offsetTop;
 
-			this.__environment.width = this.__width;
-			this.__environment.height = this.__height;
+			env.screen.width = global.innerWidth;
+			env.screen.height = global.innerHeight;
+
+			env.offset.x = this.__canvas.offsetLeft;
+			env.offset.y = this.__canvas.offsetTop;
+
+			env.width  = this.__width;
+			env.height = this.__height;
 
 		},
 
@@ -196,23 +206,26 @@ lychee.define('Renderer').tags({
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
 
-			this.__ctx.beginPath();
-			this.__ctx.moveTo(x1, y1);
-			this.__ctx.lineTo(x2, y2);
-			this.__ctx.lineTo(x3, y3);
-			this.__ctx.lineTo(x1, y1);
+			var ctx = this.__ctx;
+
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
+			ctx.lineTo(x3, y3);
+			ctx.lineTo(x1, y1);
 
 
 			if (background === false) {
-				this.__ctx.lineWidth   = lineWidth;
-				this.__ctx.strokeStyle = color;
-				this.__ctx.stroke();
+				ctx.lineWidth   = lineWidth;
+				ctx.strokeStyle = color;
+				ctx.stroke();
 			} else {
-				this.__ctx.fillStyle   = color;
-				this.__ctx.fill();
+				ctx.fillStyle   = color;
+				ctx.fill();
 			}
 
-			this.__ctx.closePath();
+			ctx.closePath();
 
 		},
 
@@ -251,30 +264,33 @@ lychee.define('Renderer').tags({
 				}
 
 
-				this.__ctx.beginPath();
-				this.__ctx.moveTo(x1, y1);
+				var ctx = this.__ctx;
+
+
+				ctx.beginPath();
+				ctx.moveTo(x1, y1);
 
 				for (var p = 1; p < points; p++) {
 
-					this.__ctx.lineTo(
+					ctx.lineTo(
 						arguments[1 + p * 2],
 						arguments[1 + p * 2 + 1]
 					);
 
 				}
 
-				this.__ctx.lineTo(x1, y1);
+				ctx.lineTo(x1, y1);
 
 				if (background === false) {
-					this.__ctx.lineWidth   = lineWidth;
-					this.__ctx.strokeStyle = color;
-					this.__ctx.stroke();
+					ctx.lineWidth   = lineWidth;
+					ctx.strokeStyle = color;
+					ctx.stroke();
 				} else {
-					this.__ctx.fillStyle = color;
-					this.__ctx.fill();
+					ctx.fillStyle = color;
+					ctx.fill();
 				}
 
-				this.__ctx.closePath();
+				ctx.closePath();
 
 			}
 
@@ -289,13 +305,16 @@ lychee.define('Renderer').tags({
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
 
+			var ctx = this.__ctx;
+
+
 			if (background === false) {
-				this.__ctx.lineWidth   = lineWidth;
-				this.__ctx.strokeStyle = color;
-				this.__ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+				ctx.lineWidth   = lineWidth;
+				ctx.strokeStyle = color;
+				ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
 			} else {
-				this.__ctx.fillStyle   = color;
-				this.__ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
+				ctx.fillStyle   = color;
+				ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
 			}
 
 		},
@@ -309,9 +328,12 @@ lychee.define('Renderer').tags({
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
 
-			this.__ctx.beginPath();
+			var ctx = this.__ctx;
 
-			this.__ctx.arc(
+
+			ctx.beginPath();
+
+			ctx.arc(
 				x,
 				y,
 				radius,
@@ -320,15 +342,15 @@ lychee.define('Renderer').tags({
 			);
 
 			if (background === false) {
-				this.__ctx.lineWidth   = lineWidth;
-				this.__ctx.strokeStyle = color;
-				this.__ctx.stroke();
+				ctx.lineWidth   = lineWidth;
+				ctx.strokeStyle = color;
+				ctx.stroke();
 			} else {
-				this.__ctx.fillStyle   = color;
-				this.__ctx.fill();
+				ctx.fillStyle   = color;
+				ctx.fill();
 			}
 
-			this.__ctx.closePath();
+			ctx.closePath();
 
 		},
 
@@ -339,16 +361,20 @@ lychee.define('Renderer').tags({
 			color = typeof color === 'string' ? color : '#000';
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
-			this.__ctx.beginPath();
 
-			this.__ctx.moveTo(x1, y1);
-			this.__ctx.lineTo(x2, y2);
+			var ctx = this.__ctx;
 
-			this.__ctx.lineWidth   = lineWidth;
-			this.__ctx.strokeStyle = color;
-			this.__ctx.stroke();
 
-			this.__ctx.closePath();
+			ctx.beginPath();
+
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
+
+			ctx.lineWidth   = lineWidth;
+			ctx.strokeStyle = color;
+			ctx.stroke();
+
+			ctx.closePath();
 
 		},
 
@@ -400,16 +426,16 @@ lychee.define('Renderer').tags({
 
 			if (this.__state !== 'running') return;
 
-			var t, l;
+			font = font instanceof lychee.Font ? font : null;
 
-			// sprite based rendering
-			if (font instanceof lychee.Font) {
+
+			if (font !== null) {
 
 				var settings = font.getSettings();
 				var sprite = font.getSprite();
 
 
-				var chr;
+				var chr, t, l;
 
 				// Measure text if we have to center it later
 				if (x1 === 'center' || y1 === 'center') {
@@ -469,38 +495,6 @@ lychee.define('Renderer').tags({
 					margin += chr.real + settings.kerning;
 
 				}
-
-			// text based rendering
-			} else if (Object.prototype.toString.call(font) === '[object Object]'){
-
-				font.color = typeof font.color === 'string' ? font.color : '#000';
-				font.font = typeof font.font === 'string' ? font.font : 'Arial';
-				font.size = typeof font.size === 'number' ? font.size : 12;
-
-
-				if (x1 === 'center' || y1 === 'center') {
-
-					var width = 0;
-					for (t = 0, l = text.length; t < l; t++) {
-						var m = this.__ctx.measureText(text[t]);
-						width += m.charWidth;
-					}
-
-
-					if (x1 === 'center') {
-						x1 = (this.__width / 2) - (width / 2);
-					}
-
-					if (y1 === 'center') {
-						y1 = (this.__height / 2) - (data.size / 2);
-					}
-
-				}
-
-
-				this.__ctx.font = font.size + 'px "' + font.font + '"';
-				this.__ctx.fillStyle = font.color;
-				this.__ctx.fillText(text, x1, y1);
 
 			}
 
