@@ -11,14 +11,53 @@ lychee.define('lychee.game.Loop').includes([
 
 }).exports(function(lychee, global) {
 
-	var _globalIntervalId = null,
-		_timeoutId = 0,
+	var _instances = [];
+
+	var _listeners = {
+
+		interval: function() {
+
+			for (var i = 0, l = _instances.length; i < l; i++) {
+
+				var instance = _instances[i];
+				var clock = Date.now() - instance.__clock.start;
+
+				instance._updateLoop(clock);
+				instance._renderLoop(clock);
+
+			}
+
+		}
+
+	};
+
+
+	(function(callsPerSecond) {
+
+		var interval = typeof setInterval === 'function';
+		if (interval === true) {
+			global.setInterval(_listeners.interval, callsPerSecond);
+		}
+
+
+		if (lychee.debug === true) {
+
+			var methods = [];
+			if (interval) methods.push('setInterval');
+
+			if (methods.length === 0) methods.push('NONE');
+
+			console.log('lychee.game.Loop: Supported interval methods are ' + methods.join(', '));
+
+		}
+
+
+	})(1000 / 60);
+
+
+
+	var _timeoutId  = 0,
 		_intervalId = 0;
-
-
-	if (lychee.debug === true) {
-		console.log('lychee.game.Loop: Supported interval methods are setInterval()');
-	}
 
 
 	var Class = function(data) {
@@ -32,7 +71,10 @@ lychee.define('lychee.game.Loop').includes([
 		lychee.Events.call(this, 'loop');
 
 
-		this.reset(settings.update, settings.render);
+		var ok = this.reset(settings.update, settings.render);
+		if (ok === true) {
+			_instances.push(this);
+		}
 
 		settings = null;
 
@@ -74,9 +116,6 @@ lychee.define('lychee.game.Loop').includes([
 
 			this.__updateFps = updateFps;
 			this.__renderFps = renderFps;
-
-
-			this.__setup();
 
 
 			return true;
@@ -214,68 +253,6 @@ lychee.define('lychee.game.Loop').includes([
 					this.__timeouts[tId] = null;
 					data.callback.call(data.scope, clock);
 				}
-
-			}
-
-		},
-
-
-
-		/*
-		 * PRIVATE API
-		 */
-
-		__setup: function() {
-
-			if (_globalIntervalId !== null) {
-				global.clearInterval(_globalIntervalId);
-			}
-
-
-			this.__ms.min = 1000;
-
-			if (this.__ms.update !== undefined) {
-				this.__ms.min = Math.min(this.__ms.min, this.__ms.update);
-			}
-
-			if (this.__ms.render !== undefined) {
-				this.__ms.min = Math.min(this.__ms.min, this.__ms.render);
-			}
-
-
-			var that = this;
-
-
-			// Don't use unnecessary checks,
-			// there are three different cases
-			if (
-				this.__ms.update !== undefined
-				&& this.__ms.render !== undefined
-			) {
-
-				_globalIntervalId = global.setInterval(function() {
-					var clock = Date.now() - that.__clock.start;
-					that._updateLoop(clock);
-					that._renderLoop(clock);
-				}, this.__ms.min);
-
-			} else if (
-				this.__ms.update !== undefined
-			) {
-
-				_globalIntervalId = global.setInterval(function() {
-					var clock = Date.now() - that.__clock.start;
-					that._updateLoop(clock);
-				}, this.__ms.min);
-
-			} else if (
-				this.__ms.render !== undefined
-			) {
-
-				_globalIntervalId = global.setInterval(function() {
-					var clock = Date.now() - that.__clock.start;
-					that._renderLoop(clock);
-				}, this.__ms.min);
 
 			}
 
