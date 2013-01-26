@@ -48,6 +48,8 @@ lychee.define('Renderer').tags({
 			offset: {}
 		};
 
+		this.__cache = {};
+
 		this.__state = null;
 		this.__alpha = 1;
 		this.__background = null;
@@ -155,7 +157,7 @@ lychee.define('Renderer').tags({
 			var env = this.__environment;
 
 
-			env.screen.width = global.innerWidth;
+			env.screen.width  = global.innerWidth;
 			env.screen.height = global.innerHeight;
 
 			env.offset.x = this.__canvas.offsetLeft;
