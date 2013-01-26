@@ -120,9 +120,14 @@ lychee.define('Renderer').tags({
 
 		drawLine: function(x1, y1, x2, y2, color, lineWidth) {},
 
+		// points, x1, y1, [ ... x(a), y(a) ... ], [ color, background, lineWidth ]
+		drawPolygon: function(points, x1, y1) {},
+
 		drawSprite: function(x1, y1, sprite, map) {},
 
-		drawText: function(x1, y1, text, font) {}
+		drawText: function(x1, y1, text, font) {},
+
+		drawTriangle: function(x1, y1, x2, y2, x3, y3, color, background, lineWidth) {}
 
 	};
 
