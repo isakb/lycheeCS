@@ -184,7 +184,7 @@ lychee.define('Renderer').tags({
 
 		setBackground: function(color) {
 
-			color = typeof color === 'string' ? color : '#000';
+			color = typeof color === 'string' ? color : '#000000';
 
 			this.__background = color;
 			this.__canvas.style.backgroundColor = color;
@@ -201,7 +201,7 @@ lychee.define('Renderer').tags({
 
 			if (this.__state !== 'running') return;
 
-			color = typeof color === 'string' ? color : '#000';
+			color = typeof color === 'string' ? color : '#000000';
 			background = background === true ? true : false;
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
@@ -241,7 +241,7 @@ lychee.define('Renderer').tags({
 
 				var optargs = l - (points * 2) - 1;
 
-				var color      = '#000';
+				var color      = '#000000';
 				var background = false;
 				var lineWidth  = 1;
 
@@ -300,7 +300,7 @@ lychee.define('Renderer').tags({
 
 			if (this.__state !== 'running') return;
 
-			color = typeof color === 'string' ? color : '#000';
+			color = typeof color === 'string' ? color : '#000000';
 			background = background === true ? true : false;
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
@@ -323,7 +323,7 @@ lychee.define('Renderer').tags({
 
 			if (this.__state !== 'running') return;
 
-			color = typeof color === 'string' ? color : '#000';
+			color = typeof color === 'string' ? color : '#000000';
 			background = background === true ? true : false;
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
@@ -358,7 +358,7 @@ lychee.define('Renderer').tags({
 
 			if (this.__state !== 'running') return;
 
-			color = typeof color === 'string' ? color : '#000';
+			color = typeof color === 'string' ? color : '#000000';
 			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
 
 
@@ -398,7 +398,7 @@ lychee.define('Renderer').tags({
 						y1,
 						x1 + map.w,
 						y1 + map.h,
-						'#f00',
+						'#ff0000',
 						false,
 						1
 					);
@@ -473,7 +473,7 @@ lychee.define('Renderer').tags({
 							y1,
 							x1 + margin + chr.real,
 							y1 + chr.height,
-							'#ff0',
+							'#ffff00',
 							false,
 							1
 						);
