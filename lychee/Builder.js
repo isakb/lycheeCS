@@ -97,10 +97,27 @@
 										this.__preloader.load(mapping.attachments, mapping);
 									}
 
+								} else if (mapping.alternatives !== undefined) {
+
+									var candidate = mapping.alternatives[0];
+
+									candidate.namespaceId = mapping.namespaceId;
+									candidate.refererId   = mapping.refererId;
+
+									candidate._loading = candidate.attachments.length + 1;
+
+									if (mapping.alternatives.length > 1) {
+										candidate.alternatives = mapping.alternatives.splice(1, mapping.alternatives.length - 1);
+									}
+
+
+									this.__loading.classes[candidate.packageId + '.' + candidate.classId] = true;
+									this.__preloader.load(candidate.url, candidate);
+
 								} else {
 
 									if (lychee.debug === true) {
-										console.warn('> loading ' + mapping.packageId + '.' + mapping.classId + ' failed. Corrupt definition block at ' + url + '. (refered by ' + mapping.refererId + ')');
+										console.warn('> loading ' + mapping.packageId + '.' + mapping.classId + ' failed. Either corrupt definition block at ' + url + ' or no alternatives available. (refered by ' + mapping.refererId + ')');
 									}
 
 
@@ -209,6 +226,8 @@
 						classId: classId
 					});
 
+					return;
+
 				}
 
 			// 2. Load Class
@@ -255,30 +274,36 @@
 						}
 
 
-						for (var c = 0, l = candidates.length; c < l; c++) {
+						if (candidates.length > 0) {
 
-							var candidate = candidates[c];
+							var candidate = candidates[0];
 
-							candidate.namespaceId = namespaceId;
-							candidate.refererId = refererId;
+							candidate.namespaceId  = namespaceId;
+							candidate.refererId    = refererId;
+
 							candidate._loading = candidate.attachments.length + 1;
+
+							if (candidates.length > 1) {
+								candidate.alternatives = candidates.splice(1, candidates.length - 1);
+							}
 
 
 							this.__loading.classes[candidate.packageId + '.' + candidate.classId] = true;
 							this.__preloader.load(candidate.url, candidate);
 
-						}
+							return;
 
-					} else {
-
-						if (lychee.debug === true) {
-							console.warn('> loading ' + packageId + '.' + classId + ' failed. (required by ' + refererId + ')');
 						}
 
 					}
 
 				}
 
+			}
+
+
+			if (lychee.debug === true) {
+				console.warn('> loading ' + packageId + '.' + classId + ' failed. (required by ' + refererId + ')');
 			}
 
 		},
@@ -795,7 +820,7 @@
 					if (!incLyDefBlock || !incLyDefBlock.prototype) {
 
 						if (lychee.debug === true) {
-							console.warn('Inclusion of ' + id + 'failed. You either forgot to return it inside lychee.exports() or created an invalid definition block.');
+							console.warn('Inclusion of ' + id + ' failed. You either forgot to return it inside lychee.exports() or created an invalid definition block.');
 						}
 
 					} else {
