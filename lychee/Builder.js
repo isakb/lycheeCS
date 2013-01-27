@@ -11,9 +11,10 @@
 
 	lychee.Builder = function() {
 
-		this.__packages = {};
-		this.__namespaces = {};
-		this.__classes = {};
+		this.__attachments = {};
+		this.__classes     = {};
+		this.__namespaces  = {};
+		this.__packages    = {};
 
 		// will be set in build()
 		this.__tree = null;
@@ -60,6 +61,7 @@
 
 				var content = assets[url];
 				var mapping = mappings[url];
+				var uid     = mapping.packageId + '.' + mapping.classId;
 
 				if (
 					mapping !== null
@@ -79,19 +81,24 @@
 
 						if (
 							url.substr(-2) === 'js'
-							&& this.__classes[mapping.packageId + '.' + mapping.classId] === undefined
+							&& this.__classes[uid] === undefined
 						) {
 
-							if (this.__classes[mapping.packageId + '.' + mapping.classId] == null) {
+							if (this.__classes[uid] == null) {
 
-								var lyDefBlock = this.__tree[mapping.packageId + '.' + mapping.classId];
+								var lyDefBlock = this.__tree[uid];
 								if (lyDefBlock !== undefined) {
 
 									if (lychee.debug === true) {
 										console.log('> using ' + mapping.url);
 									}
 
-									this.__classes[mapping.packageId + '.' + mapping.classId] = lyDefBlock;
+									this.__classes[uid] = lyDefBlock;
+
+
+									if (mapping.attachments.length > 0) {
+										this.__attachments[uid] = mapping.attachments;
+									}
 
 									if (mapping._loading !== 0) {
 										this.__preloader.load(mapping.attachments, mapping);
@@ -111,20 +118,20 @@
 									}
 
 
-									this.__loading.classes[candidate.packageId + '.' + candidate.classId] = true;
+									this.__loading.classes[uid] = true;
 									this.__preloader.load(candidate.url, candidate);
 
 								} else {
 
 									if (lychee.debug === true) {
-										console.warn('> loading ' + mapping.packageId + '.' + mapping.classId + ' failed. Either corrupt definition block at ' + url + ' or no alternatives available. (refered by ' + mapping.refererId + ')');
+										console.warn('> loading ' + uid + ' failed. Either corrupt definition block at ' + url + ' or no alternatives available. (refered by ' + mapping.refererId + ')');
 									}
 
 
 									// This will silently ignore the mistake and still "try" to build successfully.
-									this.__loading.classes[mapping.packageId + '.' + mapping.classId] = false;
-									this.__classes[mapping.packageId + '.' + mapping.classId] = null;
-									this.__tree[mapping.packageId + '.' + mapping.classId] = null;
+									this.__loading.classes[uid] = false;
+									this.__classes[uid] = null;
+									this.__tree[uid] = null;
 
 								}
 
@@ -135,7 +142,7 @@
 
 						if (mapping._loading === 0) {
 
-							this.__loading.classes[mapping.packageId + '.' + mapping.classId] = false;
+							this.__loading.classes[uid] = false;
 							refresh = true;
 
 						}
@@ -784,13 +791,33 @@
 
 		__export: function(lyDefBlock) {
 
-			var namespace = this.__getNamespace(lyDefBlock._space, this.__buildScope);
+			var id        = lyDefBlock._space + '.' + lyDefBlock._name;
 			var classname = lyDefBlock._name;
+			var namespace = this.__getNamespace(lyDefBlock._space, this.__buildScope);
+
+
+			var attachmentsmap = null;
+			var attachments    = this.__attachments[id] || null;
+			if (attachments !== null) {
+
+				attachmentsmap = {};
+
+				for (var a = 0, al = attachments.length; a < al; a++) {
+
+					var url = attachments[a];
+					var tmp = url.split('/');
+					var id = tmp[tmp.length - 1].substr(classname.length + 1);
+
+					attachmentsmap[id] = this.__preloader.get(url);
+
+				}
+
+			}
 
 
 			var data = null;
 			if (lyDefBlock._exports !== null) {
-				data = lyDefBlock._exports.call(lyDefBlock._exports, lychee, global);
+				data = lyDefBlock._exports.call(lyDefBlock._exports, lychee, global, attachmentsmap);
 			}
 
 
