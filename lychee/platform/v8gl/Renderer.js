@@ -27,7 +27,8 @@ lychee.define('Renderer').tags({
 			offset: {}
 		};
 
-		this.__colorcache = {};
+		this.__colorcache = { r: 0, g: 0, b: 0 };
+
 		this.__window = null;
 		this.__state = null;
 		this.__alpha = 1;
@@ -155,17 +156,16 @@ lychee.define('Renderer').tags({
 
 		__hexToRGB: function(hex) {
 
-			if (typeof hex === 'string') {
+			if (
+				typeof hex === 'string'
+				&& hex.length === 7
+			) {
 
-				if (hex.length === 7) {
+				this.__colorcache.r = parseInt(hex[1] + hex[2], 16);
+				this.__colorcache.g = parseInt(hex[3] + hex[4], 16);
+				this.__colorcache.b = parseInt(hex[5] + hex[6], 16);
 
-					this.__colorcache.r = parseInt(hex[1] + hex[2], 16);
-					this.__colorcache.g = parseInt(hex[3] + hex[4], 16);
-					this.__colorcache.b = parseInt(hex[5] + hex[6], 16);
-
-					return this.__colorcache;
-
-				}
+				return this.__colorcache;
 
 			}
 
@@ -491,25 +491,23 @@ lychee.define('Renderer').tags({
 
 		},
 
-
-		// TODO: Evaluate if native Font Rendering shall be supported.
-		drawText: function(x, y, text, font, color) {
+		drawText: function(x1, y1, text, font) {
 
 			if (this.__state !== 'running') return;
 
-			var t, l;
+			font = font instanceof lychee.Font ? font : null;
 
-			// sprite based rendering
-			if (font instanceof lychee.Font) {
+
+			if (font !== null) {
 
 				var settings = font.getSettings();
 				var sprite = font.getSprite();
 
 
-				var chr;
+				var chr, t, l;
 
 				// Measure text if we have to center it later
-				if (x === 'center' || y === 'center') {
+				if (x1 === 'center' || y1 === 'center') {
 
 					var width = 0,
 						height = 0;
@@ -520,19 +518,21 @@ lychee.define('Renderer').tags({
 						height = Math.max(height, chr.height);
 					}
 
-					if (x === 'center') {
-						x = (this.__width / 2) - (width / 2);
+					if (x1 === 'center') {
+						x1 = (this.__width / 2) - (width / 2);
 					}
 
-					if (y === 'center') {
-						y = (this.__height / 2) - (height / 2);
+					if (y1 === 'center') {
+						y1 = (this.__height / 2) - (height / 2);
 					}
 
 				}
 
 
 				var margin = 0;
-				var x1, y1, x2, y2;
+				var xorg = x1;
+				var yorg = y1;
+				var x2, y2;
 				var sx1, sy1, sx2, sy2;
 
 				for (t = 0, l = text.length; t < l; t++) {
@@ -553,9 +553,8 @@ lychee.define('Renderer').tags({
 					}
 
 
-
-					x1 = x + margin - settings.spacing;
-					y1 = y + settings.baseline;
+					x1 = xorg + margin - settings.spacing;
+					y1 = yorg + settings.baseline;
 					x2 = x1 + chr.width;
 					y2 = y1 + chr.height;
 
@@ -595,10 +594,10 @@ lychee.define('Renderer').tags({
 					if (lychee.debug === true) {
 
 						this.drawBox(
-							x + margin,
-							y,
-							x + margin + chr.real,
-							y + chr.height,
+							xorg + margin,
+							yorg,
+							xorg + margin + chr.real,
+							yorg + chr.height,
 							'#ffff00',
 							false,
 							1
@@ -609,13 +608,6 @@ lychee.define('Renderer').tags({
 					margin += chr.real + settings.kerning;
 
 				}
-
-			// text based rendering
-			} else if (Object.prototype.toString.call(font) === '[object Object]'){
-
-				font.color = typeof font.color === 'string' ? font.color : '#000000';
-				font.font = typeof font.font === 'string' ? font.font : 'Arial';
-				font.size = typeof font.size === 'number' ? font.size : 12;
 
 			}
 
