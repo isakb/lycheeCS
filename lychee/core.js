@@ -117,7 +117,7 @@ if (typeof global !== 'undefined') {
 	};
 
 
-	lychee.build = function(tags, callback, scope) {
+	lychee.build = function(callback, scope) {
 		throw "lychee.build: You need to include the lychee.Builder to build the dependency tree.";
 	};
 
