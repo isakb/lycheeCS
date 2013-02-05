@@ -66,12 +66,19 @@ lychee.define('Renderer').tags({
 
 			if (width !== this.__width || height !== this.__height) {
 
+				glut.destroyWindow(global.window);
+				glut.initWindowSize(width, height);
+				global.window = glut.createWindow(this.__id);
+
+				// Somehow, this results in a strange skewing effect
+				/*
 				if (this.__window !== null) {
 					glut.reshapeWindow(width, height);
 				} else {
 					glut.initWindowSize(width, height);
 					this.__window = glut.createWindow(this.__id);
 				}
+				*/
 
 
 				this.__width = width;
