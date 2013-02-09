@@ -438,7 +438,6 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			scope = scope !== undefined ? scope : this;
 
 
-			var tween = null;
 			if (Object.prototype.toString.call(position) === '[object Object]') {
 
 				position.x = typeof position.x === 'number' ? position.x : this.__position.x;
@@ -447,7 +446,7 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 
 				var pos = this.getPosition();
 
-				tween = {
+				var tween = {
 					start: this.__clock,
 					duration: duration,
 					from: {
@@ -460,11 +459,14 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 					scope: scope
 				};
 
+				this.__tween = tween;
+
 			}
 
+		},
 
-			this.__tween = tween;
-
+		clearTween: function() {
+			this.__tween = null;
 		},
 
 		getPosition: function() {
@@ -668,15 +670,13 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 			loop = loop === true ? true : false;
 
 
-			var animation = null;
 			if (duration !== null || settings !== null) {
 
 				// Faster than an animationdefaults object lookup
 				settings.frame  = settings.frame || 0;
 				settings.frames = settings.frames || 10;
 
-
-				animation = {
+				var animation = {
 					start: this.__clock,
 					frame: settings.frame,
 					frames: settings.frames,
@@ -684,10 +684,9 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 					loop: loop
 				};
 
+				this.__animation = animation;
+
 			}
-
-
-			this.__animation = animation;
 
 		},
 
@@ -730,7 +729,6 @@ lychee.define('lychee.game.Entity').exports(function(lychee) {
 				} else {
 					effect.settings = settings;
 				}
-
 
 				this.__effect = effect;
 
