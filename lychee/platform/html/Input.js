@@ -19,6 +19,7 @@ lychee.define('Input').tags({
 
 	var _instances = [];
 
+	var _mouseactive = false;
 	var _listeners = {
 
 		keydown: function(event) {
@@ -89,6 +90,8 @@ lychee.define('Input').tags({
 
 		mousestart: function(event) {
 
+			_mouseactive = true;
+
 			for (var i = 0, l = _instances.length; i < l; i++) {
 				_instances[i].__processTouch(0, event.pageX, event.pageY);
 			}
@@ -97,6 +100,8 @@ lychee.define('Input').tags({
 
 		mousemove: function(event) {
 
+			if (_mouseactive === false) return;
+
 			for (var i = 0, l = _instances.length; i < l; i++) {
 				_instances[i].__processSwipe(0, 'move', event.pageX, event.pageY);
 			}
@@ -104,6 +109,10 @@ lychee.define('Input').tags({
 		},
 
 		mouseend: function(event) {
+
+			if (_mouseactive === false) return;
+
+			_mouseactive = false;
 
 			for (var i = 0, l = _instances.length; i < l; i++) {
 				_instances[i].__processSwipe(0, 'end', event.pageX, event.pageY);
