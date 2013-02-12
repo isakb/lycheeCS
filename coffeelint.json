@@ -1,0 +1,32 @@
+{
+  "no_tabs": {
+    "level": "error"
+  },
+
+  "no_trailing_whitespace": {
+    "level": "error"
+  },
+
+  "max_line_length": {
+    "value": 120,
+    "level": "error"
+  },
+
+  "camel_case_classes": {
+    "level": "error"
+  },
+
+  "no_plusplus": {
+    "level": "error"
+  },
+
+  "no_throwing_strings": {
+    "level": "error"
+  },
+
+  "cyclomatic_complexity": {
+    "value": 12,
+    "level": "error"
+  }
+
+}
