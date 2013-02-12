@@ -321,6 +321,42 @@ lychee.define('Renderer').tags({
 
 		},
 
+		drawArc: function(x, y, start, end, radius, color, background, lineWidth) {
+
+			if (this.__state !== 'running') return;
+
+			color = typeof color === 'string' ? color : '#000000';
+			background = background === true ? true : false;
+			lineWidth = typeof lineWidth === 'number' ? lineWidth : 1;
+
+
+			var ctx = this.__ctx;
+			var pi2 = Math.PI * 2;
+
+
+			ctx.beginPath();
+
+			ctx.arc(
+				x,
+				y,
+				radius,
+				start * pi2,
+				end * pi2
+			);
+
+			if (background === false) {
+				ctx.lineWidth   = lineWidth;
+				ctx.strokeStyle = color;
+				ctx.stroke();
+			} else {
+				ctx.fillStyle   = color;
+				ctx.fill();
+			}
+
+			ctx.closePath();
+
+		},
+
 		drawCircle: function(x, y, radius, color, background, lineWidth) {
 
 			if (this.__state !== 'running') return;
