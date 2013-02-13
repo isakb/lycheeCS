@@ -456,7 +456,8 @@ lychee.define('Input').tags({
 
 
 			var position = {
-				x: x, y: y
+				x: x || this.__swipes[id].x,
+				y: y || this.__swipes[id].y
 			};
 
 			var swipe = {
