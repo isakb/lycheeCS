@@ -5,7 +5,11 @@ lychee.define('lychee.game.Loop').tags({
 	'lychee.Events'
 ]).supports(function(lychee, global) {
 
-	if (global.setInterval && global.glut && global.glut.displayFunc) {
+	if (
+		typeof setInterval === 'function'
+		&& global.glut !== undefined
+		&& typeof global.glut.displayFunc === 'function'
+	) {
 		return true;
 	}
 
@@ -23,9 +27,9 @@ lychee.define('lychee.game.Loop').tags({
 	}
 
 
-	var Class = function(settings) {
+	var Class = function(data) {
 
-		this.settings = lychee.extend({}, this.defaults, settings);
+		var settings = lychee.extend({}, data);
 
 		this.__timeouts = {};
 		this.__intervals = {};
@@ -33,28 +37,25 @@ lychee.define('lychee.game.Loop').tags({
 		lychee.Events.call(this, 'loop');
 
 
-		this.reset(this.settings.updateFps, this.settings.renderFps);
+		this.reset(settings.update, settings.render);
+
+		settings = null;
 
 	};
 
 
 	Class.prototype = {
 
-		defaults: {
-			context: null,
-			renderFps: 60,
-			updateFps: 60
-		},
-
 		reset: function(updateFps, renderFps) {
 
-			updateFps = typeof updateFps === 'number' ? updateFps : null;
-			renderFps = typeof renderFps === 'number' ? renderFps : null;
+			updateFps = typeof updateFps === 'number' ? updateFps : 0;
+			renderFps = typeof renderFps === 'number' ? renderFps : 0;
 
-			if (
-				updateFps === null || renderFps === null
-				|| updateFps <= 1 || renderFps <= 1
-			) {
+
+			if (updateFps < 0) updateFps = 0;
+			if (renderFps < 0) renderFps = 0;
+
+			if (updateFps === 0 && renderFps === 0) {
 				return false;
 			}
 
@@ -65,50 +66,21 @@ lychee.define('lychee.game.Loop').tags({
 				render: 0
 			};
 
-			this.__ms = {
-				update: 1000 / updateFps,
-				render: 1000 / renderFps
-			};
+
+			this.__ms = {};
+
+			if (updateFps > 0) this.__ms.update = 1000 / updateFps;
+			if (renderFps > 0) this.__ms.render = 1000 / updateFps;
 
 
-			this.settings.updateFps = updateFps;
-			this.settings.renderFps = renderFps;
+			this.__updateFps = updateFps;
+			this.__renderFps = renderFps;
 
 
-			this.setup();
+			this.__setup();
 
 
 			return true;
-
-		},
-
-		setup: function() {
-
-			if (_globalIntervalId !== null) {
-				global.clearInterval(_globalIntervalId);
-			}
-
-
-			this.__ms.min = this.__ms.update < this.__ms.render ? this.__ms.update : this.__ms.render;
-
-
-			var that = this;
-
-			glut.displayFunc(function() {
-
-				var clock = Date.now() - that.__clock.start;
-				that._renderLoop(clock);
-
-			});
-
-			_globalIntervalId = global.setInterval(function() {
-
-				var clock = Date.now() - that.__clock.start;
-				that._updateLoop(clock);
-
-				glut.postRedisplay();
-
-			}, this.__ms.min);
 
 		},
 
@@ -180,6 +152,12 @@ lychee.define('lychee.game.Loop').tags({
 
 		},
 
+
+
+		/*
+		 * PROTECTED API
+		 */
+
 		_renderLoop: function(clock) {
 
 			if (this.__state !== 'running') return;
@@ -201,10 +179,7 @@ lychee.define('lychee.game.Loop').tags({
 
 			var delta = clock - this.__clock.update;
 
-			if (
-				delta >= this.__ms.update
-				|| this.__ms.min === this.__ms.update
-			) {
+			if (delta >= this.__ms.update) {
 				this.trigger('update', [ clock, delta ]);
 				this.__clock.update = clock;
 			}
@@ -238,6 +213,76 @@ lychee.define('lychee.game.Loop').tags({
 					this.__timeouts[tId] = null;
 					data.callback.call(data.scope, clock);
 				}
+
+			}
+
+		},
+
+
+
+		/*
+		 * PRIVATE API
+		 */
+
+		__setup: function() {
+
+			if (_globalIntervalId !== null) {
+				global.clearInterval(_globalIntervalId);
+			}
+
+
+			this.__ms.min = 1000;
+
+			if (this.__ms.update !== undefined) {
+				this.__ms.min = Math.min(this.__ms.min, this.__ms.update);
+			}
+
+			if (this.__ms.render !== undefined) {
+				this.__ms.min = Math.min(this.__ms.min, this.__ms.render);
+			}
+
+
+			var that = this;
+
+
+			if (
+				this.__ms.update !== undefined
+				&& this.__ms.render !== undefined
+			) {
+
+				glut.displayFunc(function() {
+
+					var clock = Date.now() - that.__clock.start;
+					that._renderLoop(clock);
+
+				});
+
+				_globalIntervalId = global.setInterval(function() {
+
+					var clock = Date.now() - that.__clock.start;
+					that._updateLoop(clock);
+
+					glut.postRedisplay();
+
+				}, this.__ms.min);
+
+			} else if (
+				this.__ms.update !== undefined
+			) {
+
+				_globalIntervalId = global.setInterval(function() {
+
+					var clock = Date.now() - that.__clock.start;
+					that._updateLoop(clock);
+
+				}, this.__ms.min);
+
+			} else if (
+				this.__ms.render !== undefined
+			) {
+
+				// Do nothing, can't render something
+				// via GLUT without an update loop.
 
 			}
 

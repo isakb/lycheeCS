@@ -164,6 +164,7 @@ lychee.define('game.scene.GameBoard').requires([
 
 
 					entity.setState(entity.getRandomState());
+					entity.clearTween();
 					entity.setTween(y * tween, {
 						y: y * tile + tile / 2
 					}, lychee.game.Entity.TWEEN.bounceEaseOut);
@@ -348,6 +349,7 @@ lychee.define('game.scene.GameBoard').requires([
 						var replacement = this.__getEntityByGrid(x, y - 1);
 						if (replacement !== null) {
 
+							replacement.clearTween();
 							replacement.setTween(tween, {
 								y: y * tile + tile / 2
 							}, lychee.game.Entity.TWEEN.bounceEaseOut);
@@ -366,6 +368,7 @@ lychee.define('game.scene.GameBoard').requires([
 							this.__cache.y = -1 * tile;
 
 							replacement.setPosition(this.__cache);
+							replacement.clearTween();
 							replacement.setTween(tween, {
 								y: y * tile + tile / 2
 							}, lychee.game.Entity.TWEEN.bounceEaseOut);

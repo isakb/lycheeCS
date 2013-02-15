@@ -2,6 +2,7 @@
 lychee.define('game.Main').requires([
 	'lychee.Font',
 	'lychee.Input',
+	'lychee.Viewport',
 	'game.Jukebox',
 	'game.Renderer',
 	'game.state.Game',
@@ -32,7 +33,7 @@ lychee.define('game.Main').requires([
 			base: './asset',
 			sound: true,
 			music: true,
-			fullscreen: false,
+			fullscreen: true,
 			renderFps: 60,
 			updateFps: 60,
 			width: 896,
@@ -100,11 +101,21 @@ lychee.define('game.Main').requires([
 
 		},
 
-		reset: function() {
+		reset: function(width, height) {
 
 			game.DeviceSpecificHacks.call(this);
 
+
 			var env = this.renderer.getEnvironment();
+
+			if (
+				typeof width === 'number'
+				&& typeof height === 'number'
+			) {
+				env.screen.width  = width;
+				env.screen.height = height;
+			}
+
 
 			if (this.settings.fullscreen === true) {
 				this.settings.width = env.screen.width;
@@ -126,14 +137,48 @@ lychee.define('game.Main').requires([
 			lychee.game.Main.prototype.init.call(this);
 
 			this.renderer = new game.Renderer('game');
-
 			this.renderer.reset(
 				this.settings.width,
 				this.settings.height,
 				true
 			);
-
 			this.renderer.setBackground("#222222");
+
+
+			this.viewport = new lychee.Viewport();
+			this.viewport.bind('reshape', function(orientation, rotation, width, height) {
+
+				this.reset(width, height);
+
+				for (var id in this.states) {
+					this.states[id].reset();
+				}
+
+				var state = this.getState();
+				state.leave && state.leave();
+				state.enter && state.enter();
+
+			}, this);
+			this.viewport.bind('hide', function() {
+
+				if (
+					this.jukebox
+					&& this.jukebox.isPlaying('music') === true
+				) {
+					this.jukebox.stop('music');
+				}
+
+			}, this);
+			this.viewport.bind('show', function() {
+
+				if (
+					this.jukebox
+					&& this.jukebox.isPlaying('music')
+				) {
+					this.jukebox.play('music');
+				}
+
+			}, this);
 
 
 			this.reset();
@@ -142,16 +187,16 @@ lychee.define('game.Main').requires([
 			this.jukebox = new game.Jukebox(this);
 
 			this.input = new lychee.Input({
-				delay: 0,
-				fireModifiers: true
+				delay:        0,
+				fireModifier: false,
+				fireKey:      false, // change to true for NodeJS support
+				fireTouch:    true,
+				fireSwipe:    false
 			});
 
 
-			this.states = {
-				game:    new game.state.Game(this),
-				menu:    new game.state.Menu(this)
-			};
-
+			this.states.game = new game.state.Game(this);
+			this.states.menu = new game.state.Menu(this);
 
 			this.setState('menu');
 

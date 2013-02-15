@@ -2,12 +2,12 @@
 lychee.define('game.Main').requires([
 	'lychee.Font',
 	'lychee.Input',
+	'lychee.Viewport',
 	'game.Jukebox',
 	'game.Renderer',
 	'game.state.Credits',
 	'game.state.GameBlast',
 	'game.state.GameBoard',
-	'game.state.GamePuzzle',
 	'game.state.Menu',
 	'game.state.Result',
 	'game.DeviceSpecificHacks'
@@ -36,15 +36,15 @@ lychee.define('game.Main').requires([
 			base: './asset',
 			sound: true,
 			music: true,
-			fullscreen: false,
+			fullscreen: true,
 			play: {
 				hits: 3,
 				intro: 5000,
 				hint: 2000,
-				time: 120000 // TODO: Set back to 60 seconds
+				time: 60000
 			},
-			renderFps: 60,
-			updateFps: 60,
+			renderFps: 40,
+			updateFps: 40,
 			width: 896,
 			height: 384,
 			tile: 64
@@ -68,7 +68,7 @@ lychee.define('game.Main').requires([
 
 
 			this.preloader = new lychee.Preloader({
-				timeout: 3000
+				timeout: Infinity
 			});
 
 			this.preloader.bind('ready', function(assets) {
@@ -126,12 +126,21 @@ lychee.define('game.Main').requires([
 
 		},
 
-		reset: function() {
+		reset: function(width, height) {
 
 			game.DeviceSpecificHacks.call(this);
 
 
 			var env = this.renderer.getEnvironment();
+
+			if (
+				typeof width === 'number'
+				&& typeof height === 'number'
+			) {
+				env.screen.width  = width;
+				env.screen.height = height;
+			}
+
 
 			if (this.settings.fullscreen === true) {
 				this.settings.width = env.screen.width;
@@ -173,18 +182,6 @@ lychee.define('game.Main').requires([
 
 			this.__offset = env.offset; // Linked
 
-
-			if (this.states.menu !== undefined) {
-
-				this.states.menu.reset();
-				this.states.gameboard.reset();
-				this.states.gamepuzzle.reset();
-				this.states.gameblast.reset();
-				this.states.credits.reset();
-				this.states.result.reset();
-
-			}
-
 		},
 
 		init: function() {
@@ -197,22 +194,64 @@ lychee.define('game.Main').requires([
 				this.settings.height,
 				true
 			);
-
 			this.renderer.setBackground("#222222");
 
-			this.jukebox = new game.Jukebox(this);
+
+			this.viewport = new lychee.Viewport();
+			this.viewport.bind('reshape', function(orientation, rotation, width, height) {
+
+				this.reset(width, height);
+
+				for (var id in this.states) {
+					this.states[id].reset();
+				}
+
+				var state = this.getState();
+				state.leave && state.leave();
+				state.enter && state.enter();
+
+			}, this);
+			this.viewport.bind('hide', function() {
+
+				if (
+					this.jukebox
+					&& this.jukebox.isPlaying('music') === true
+				) {
+					this.jukebox.stop('music');
+				}
+
+				this.stop();
+
+			}, this);
+			this.viewport.bind('show', function() {
+
+				if (
+					this.jukebox
+					&& this.jukebox.isPlaying('music')
+				) {
+					this.jukebox.play('music');
+				}
+
+				this.start();
+
+			}, this);
+
 
 			this.reset();
 
 
+			this.jukebox = new game.Jukebox(this);
+
 			this.input = new lychee.Input({
-				delay: 0,
-				fireModifiers: true
+				delay:        0,
+				fireKey:      false, // change to true for NodeJS support
+				fireModifier: false,
+				fireTouch:    true,
+				fireSwipe:    false
 			});
 
 
 			this.states.gameboard  = new game.state.GameBoard(this);
-			this.states.gamepuzzle = new game.state.GamePuzzle(this);
 			this.states.gameblast  = new game.state.GameBlast(this);
 			this.states.result     = new game.state.Result(this);
 			this.states.menu       = new game.state.Menu(this);

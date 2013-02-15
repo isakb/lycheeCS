@@ -244,7 +244,7 @@ lychee.define('game.state.Game').includes([
 
 		},
 
-		__processTouch: function(position, delta) {
+		__processTouch: function(id, position, delta) {
 
 			if (this.__locked === true) return;
 

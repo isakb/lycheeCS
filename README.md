@@ -1,20 +1,32 @@
 
-# lycheeJS (v0.5)
+# lycheeJS (v0.6)
 
 Web Documentation: [http://martens.ms/lycheeJS](http://martens.ms/lycheeJS)
 
 lycheeJS is a JavaScript Game library that offers a
-complete environment for prototyping and deployment
-of HTML5 Canvas or WebGL based games inside the Web Browser.
+complete solution for prototyping and deployment
+of HTML5 Canvas, WebGL or native OpenGL(ES) based
+games inside the Web Browser or native environments.
 
-Its architecture is **independent of the environment** which
-means it will run on any JavaScript environment, such as
-V8, Node, Spidermonkey etc. The only requirement for such a
-platform is a lychee.Preloader.
 
-If you want to support a different platform like NodeJS, you
-are invited to take a look at the [lychee.Preloader API Docs](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html)
-and - if you have a client-side environment - at the [lychee.Renderer API Docs](http://martens.ms/lycheeJS/docs/api-lychee-Renderer.html)
+## Other (yet unsupported) JavaScript runtimes
+
+**The lycheeJS architecture is independent of the environment which
+means it will run on any theoretical JavaScript environment.**
+
+The only requirement for such a platform is a fully implemented
+[lychee.Preloader](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html)
+API.
+
+As the lychee.Preloader itself is inside the core, you only need
+to implement the [lychee.Preloader.\_load](http://martens.ms/lycheeJS/docs/api-lychee-Preloader.html#lychee-Preloader-_load)
+method.
+
+For fully supporting a client-side environment, you will also
+have to implement a [lychee.Renderer](http://martens.ms/lycheeJS/docs/api-lychee-Renderer.html)
+and a [lychee.Input](http://martens.ms/lycheeJS/docs/api-lychee-Input.html),
+but these are fully optional and only necessary if you are using
+them inside your Game or App.
 
 
 # lycheeJS-ADK (App Development Kit)
@@ -28,9 +40,32 @@ bindings as the target environment. The equivalent environment
 integration is the platform/v8gl inside the lycheeJS Game library.
 
 
-# Limitations
+# Limitations for NodeJS
 
-At the time this was written (August 2012), iOS based platforms
+As NodeJS is a TTY-environment by default, there are some limitations.
+You can implement an ASCII Renderer in theory, but that's up to you :)
+
+- lychee.Input: Only **fireKey** can be used, other input methods are not supported.
+- lychee.Renderer: It draws simply nothing and is an emulation layer.
+- lychee.Jukebox: It plays simply nothing and is an emulation layer.
+
+
+# Limitations for Native Shipping / V8GL
+
+The V8GL environment is the custom environment that I provide and
+allows you to ship games to other platforms natively. It is part
+of the **lycheeJS-ADK** project and its support for missing
+features will improve with it. As this project is currently only
+programmed by myself (you are invited to join development!), there
+are some limitations:
+
+- lychee.Input: Bleeding-edge freeglut has currently no Multi-Touch support.
+- lychee.Jukebox: The V8GL environment has currently no support for audio playback via OpenSL/OpenAL.
+
+
+# Limitations for iOS
+
+At the time this was written (November 2012), iOS based platforms
 are only deliverable natively using a WebView (WebKit) implementation,
 because custom JIT runtimes are not allowed. Blame Apple for not
 offering a high-performance alternative, not me.
@@ -41,55 +76,15 @@ are gone with iOS6+ due to the WebKitAudioContext (WebAudio API)
 availability.
 
 
-# Roadmap
-
-**v0.5 (September 2012) lycheeJS-ADK**
-
-- Completion of OpenGLSL bindings, Shader and Buffer data types
-- OpenAL/OpenSL bindings
-- cutting-edge freeglut integration
-- Android NDK integration for V8GL and ADK shell script, using simple Java wrapper for V8GL process.
-
-
-**v0.6 (October 2012) lycheeJS-ADK**
-
-- Packaging: Debian/Ubuntu (DEB)
-- Packaging: Windows Metro (via VisualStudio project)
-- Packaging: Android (APK)
-- Packaging: Mac OSX (APP)
-
-**v0.6 (October 2012) lycheeJS**
-
-- v8gl: lychee.Track and lychee.Jukebox
-- v8gl: lychee.Input: Multi-Touch integration
-- v8gl: lychee.Viewport: orientationchange, resize, pageshow and pagehide
-
-**v0.7 (November 2012) lycheeJS-adk**
-
-- Multi-Thread API, synchronized with freeglut's glut.timerFunc callstack.
-- Nothing else planned (yet).
-
-**v0.7 (November 2012) lycheeJS**
-
-- Nothing planned (yet).
-
-
 # License
 
 The lycheeJS framework is licensed under MIT License.
 
 
-# Features
-
-I'm not a marketing guy, so I don't give a shit on
-selling you stuff. it's open source, grab the demos
-and grab the code, dude!
-
-
 # Examples and Game Boilerplate
 
 There is the [Game Boilerplate](http://martens.ms/lycheeJS/game/boilerplate)
-and the [Jewelz Clone](http://martens.ms/lycheeJS/game/jewelz) that show you
+and the [Jewelz Game](http://martens.ms/lycheeJS/game/jewelz) that show you
 how to develop a real cross-platform game and best practices in high-performance
 JavaScript code.
 

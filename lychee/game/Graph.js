@@ -230,9 +230,9 @@ lychee.define('lychee.game.Graph').exports(function(lychee) {
 			if (node.entity !== null) {
 
 				var position = node.entity.getPosition();
-				var hwidth   = (node.entity.width || 0) / 2;
-				var hheight  = (node.entity.height || 0) / 2;
-				var hdepth   = (node.entity.depth || 0) / 2;
+				var hwidth   = (node.entity.width  / 2) || node.entity.radius || 0;
+				var hheight  = (node.entity.height / 2) || node.entity.radius || 0;
+				var hdepth   = (node.entity.depth  / 2) || node.entity.radius || 0;
 
 
 				posX += position.x;

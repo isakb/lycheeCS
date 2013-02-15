@@ -1,16 +1,20 @@
-// Why? Asynchronous loading, Builder can be faster -.-
-if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
-	this.lychee = {};
-}
-
 
 (function(lychee, global) {
 
+	// Asynchronous loading, this file
+	// can be ready before lycheeJS core.
+
+	if (lychee === undefined) {
+		global.lychee = lychee = {};
+	}
+
+
 	lychee.Builder = function() {
 
-		this.__packages = {};
-		this.__namespaces = {};
-		this.__classes = {};
+		this.__attachments = {};
+		this.__classes     = {};
+		this.__namespaces  = {};
+		this.__packages    = {};
 
 		// will be set in build()
 		this.__tree = null;
@@ -32,8 +36,9 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 		this.__clock = 0;
 
 
+		// This stuff here can't timeout on slow internet connections!
 		this.__preloader = new lychee.Preloader({
-			timeout: 2000
+			timeout: Infinity
 		});
 
 		this.__preloader.bind('ready', this.__load, this);
@@ -48,6 +53,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 		 * Loading Stuff
 		 *
 		 */
+
 		__load: function(assets, mappings) {
 
 			var refresh = false;
@@ -55,6 +61,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 				var content = assets[url];
 				var mapping = mappings[url];
+				var uid     = mapping.packageId + '.' + mapping.classId;
 
 				if (
 					mapping !== null
@@ -74,35 +81,57 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 						if (
 							url.substr(-2) === 'js'
-							&& this.__classes[mapping.packageId + '.' + mapping.classId] === undefined
+							&& this.__classes[uid] === undefined
 						) {
 
-							if (this.__classes[mapping.packageId + '.' + mapping.classId] == null) {
+							if (this.__classes[uid] == null) {
 
-								var lyDefBlock = this.__tree[mapping.packageId + '.' + mapping.classId];
+								var lyDefBlock = this.__tree[uid];
 								if (lyDefBlock !== undefined) {
 
 									if (lychee.debug === true) {
 										console.log('> using ' + mapping.url);
 									}
 
-									this.__classes[mapping.packageId + '.' + mapping.classId] = lyDefBlock;
+									this.__classes[uid] = lyDefBlock;
+
+
+									if (mapping.attachments.length > 0) {
+										this.__attachments[uid] = mapping.attachments;
+									}
 
 									if (mapping._loading !== 0) {
 										this.__preloader.load(mapping.attachments, mapping);
 									}
 
+								} else if (mapping.alternatives !== undefined) {
+
+									var candidate = mapping.alternatives[0];
+
+									candidate.namespaceId = mapping.namespaceId;
+									candidate.refererId   = mapping.refererId;
+
+									candidate._loading = candidate.attachments.length + 1;
+
+									if (mapping.alternatives.length > 1) {
+										candidate.alternatives = mapping.alternatives.splice(1, mapping.alternatives.length - 1);
+									}
+
+
+									this.__loading.classes[uid] = true;
+									this.__preloader.load(candidate.url, candidate);
+
 								} else {
 
 									if (lychee.debug === true) {
-										console.warn('> loading ' + mapping.packageId + '.' + mapping.classId + ' failed. Corrupt definition block at ' + url + '. (refered by ' + mapping.refererId + ')');
+										console.warn('> loading ' + uid + ' failed. Either corrupt definition block at ' + url + ' or no alternatives available. (refered by ' + mapping.refererId + ')');
 									}
 
 
 									// This will silently ignore the mistake and still "try" to build successfully.
-									this.__loading.classes[mapping.packageId + '.' + mapping.classId] = false;
-									this.__classes[mapping.packageId + '.' + mapping.classId] = null;
-									this.__tree[mapping.packageId + '.' + mapping.classId] = null;
+									this.__loading.classes[uid] = false;
+									this.__classes[uid] = null;
+									this.__tree[uid] = null;
 
 								}
 
@@ -113,7 +142,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 						if (mapping._loading === 0) {
 
-							this.__loading.classes[mapping.packageId + '.' + mapping.classId] = false;
+							this.__loading.classes[uid] = false;
 							refresh = true;
 
 						}
@@ -144,7 +173,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 		},
 
-		__unload: function(mappings) {
+		__unload: function(assets, mappings) {
 
 			for (var url in mappings) {
 
@@ -204,13 +233,15 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 						classId: classId
 					});
 
+					return;
+
 				}
 
 			// 2. Load Class
 			} else if (packageId !== null && classId !== null) {
 
 				// Wait for next __refresh() if package config wasn't loaded yet
-				if (this.__packages[packageId] === undefined) return;
+				if (this.__packages[packageId] == null) return;
 
 
 				if (this.__classes[packageId + '.' + classId] === undefined) {
@@ -250,30 +281,36 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 						}
 
 
-						for (var c = 0, l = candidates.length; c < l; c++) {
+						if (candidates.length > 0) {
 
-							var candidate = candidates[c];
+							var candidate = candidates[0];
 
-							candidate.namespaceId = namespaceId;
-							candidate.refererId = refererId;
+							candidate.namespaceId  = namespaceId;
+							candidate.refererId    = refererId;
+
 							candidate._loading = candidate.attachments.length + 1;
+
+							if (candidates.length > 1) {
+								candidate.alternatives = candidates.splice(1, candidates.length - 1);
+							}
 
 
 							this.__loading.classes[candidate.packageId + '.' + candidate.classId] = true;
 							this.__preloader.load(candidate.url, candidate);
 
-						}
+							return;
 
-					} else {
-
-						if (lychee.debug === true) {
-							console.warn('> loading ' + packageId + '.' + classId + ' failed. (required by ' + refererId + ')');
 						}
 
 					}
 
 				}
 
+			}
+
+
+			if (lychee.debug === true) {
+				console.warn('> loading ' + packageId + '.' + classId + ' failed. (required by ' + refererId + ')');
 			}
 
 		},
@@ -285,6 +322,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 		 * Parsing Stuff
 		 *
 		 */
+
 		__getAllIdsFromTree: function(tree, prefix, ids) {
 
 			prefix = typeof prefix === 'string' ? prefix : '';
@@ -466,21 +504,56 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 						// e.g. lychee/parser/ASTScope.js > lychee.ASTScope
 						} else if (filtered[id] === undefined && all[a].substr(-1 * path.length) === path) {
 
-							if (filtered[id] === undefined) {
-								filtered[id] = [ all[a] ];
-							} else {
+							// 2.2.1 validate folder against other tags
+							var isInvalid = false;
+							for (var tag in this.__tags) {
 
-								var alreadyInFiltered = false;
+								for (var otherValue in config.tags[tag]) {
 
-								for (var f = 0, fl = filtered[id].length; f < fl; f++) {
-									if (filtered[id][f] === all[a]) {
-										alreadyInFiltered = true;
-										break;
+									for (var v = 0, l = this.__tags[tag].length; v < l; v++) {
+
+										var value = this.__tags[tag][v];
+										if (value !== otherValue) {
+
+											var folder = config.tags[tag][otherValue];
+											if (all[a].substr(0, folder.length) === folder) {
+												isInvalid = true;
+												break;
+											}
+
+										}
+
 									}
+
+									if (isInvalid === true) break;
+
 								}
 
-								if (alreadyInFiltered === false) {
-									filtered[id].push(all[a]);
+								if (isInvalid === true) break;
+
+							}
+
+
+							// 2.2.2 If the folder is validated, check if it was already set
+							if (isInvalid === false) {
+
+								if (filtered[id] === undefined) {
+									filtered[id] = [ all[a] ];
+								} else if (filtered[id] !== undefined) {
+
+									var alreadyInFiltered = false;
+
+									for (var f = 0, fl = filtered[id].length; f < fl; f++) {
+										if (filtered[id][f] === all[a]) {
+											alreadyInFiltered = true;
+											break;
+										}
+									}
+
+									if (alreadyInFiltered === false) {
+										filtered[id].push(all[a]);
+									}
+
 								}
 
 							}
@@ -650,6 +723,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 		 * Building Stuff
 		 *
 		 */
+
 		build: function(env, callback, scope) {
 
 			if (lychee.debug === true) {
@@ -717,13 +791,33 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 		__export: function(lyDefBlock) {
 
-			var namespace = this.__getNamespace(lyDefBlock._space, this.__buildScope);
+			var id        = lyDefBlock._space + '.' + lyDefBlock._name;
 			var classname = lyDefBlock._name;
+			var namespace = this.__getNamespace(lyDefBlock._space, this.__buildScope);
+
+
+			var attachmentsmap = null;
+			var attachments    = this.__attachments[id] || null;
+			if (attachments !== null) {
+
+				attachmentsmap = {};
+
+				for (var a = 0, al = attachments.length; a < al; a++) {
+
+					var url = attachments[a];
+					var tmp = url.split('/');
+					var id = tmp[tmp.length - 1].substr(classname.length + 1);
+
+					attachmentsmap[id] = this.__preloader.get(url);
+
+				}
+
+			}
 
 
 			var data = null;
 			if (lyDefBlock._exports !== null) {
-				data = lyDefBlock._exports.call(lyDefBlock._exports, lychee, global);
+				data = lyDefBlock._exports.call(lyDefBlock._exports, lychee, global, attachmentsmap);
 			}
 
 
@@ -753,7 +847,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 					if (!incLyDefBlock || !incLyDefBlock.prototype) {
 
 						if (lychee.debug === true) {
-							console.warn('Inclusion of ' + id + 'failed. You either forgot to return it inside lychee.exports() or created an invalid definition block.');
+							console.warn('Inclusion of ' + id + ' failed. You either forgot to return it inside lychee.exports() or created an invalid definition block.');
 						}
 
 					} else {
@@ -823,9 +917,8 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 		 * Code Merging Stuff
 		 *
 		 */
-		getCode: function() {
 
-			var base = lychee.getEnvironment().bases.lychee;
+		generate: function(env) {
 
 			var code = '';
 			var namespaces = {
@@ -836,6 +929,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 			var b, l, reference, lyDefBlock;
 
+			// 1. Preparation of Namespaces
 			for (b = 0, l = this.__buildOrder.length; b < l; b++) {
 
 				reference = this.__buildOrder[b];
@@ -845,7 +939,7 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 
 			}
 
-
+			// 2. Definition Blocks (exports)
 			for (b = 0, l = this.__buildOrder.length; b < l; b++) {
 
 				reference = this.__buildOrder[b];
@@ -856,6 +950,73 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 			}
 
 
+			// 3. Inheritation (includes)
+			code += "(function(map, global) {                                \n";
+			code += "                                                        \n";
+			code += "  var _get = function(path) {                           \n";
+			code += "                                                        \n";
+			code += "    var node = global;                                  \n";
+			code += "    var tmp = path.split('.');                          \n";
+			code += "                                                        \n";
+			code += "    var t = 0;                                          \n";
+			code += "    while(t < tmp.length) {                             \n";
+			code += "      node = node[tmp[t++]];                            \n";
+			code += "    }                                                   \n";
+			code += "                                                        \n";
+			code += "    return node;                                        \n";
+			code += "                                                        \n";
+			code += "  };                                                    \n";
+			code += "                                                        \n";
+			code += "                                                        \n";
+			code += "  for (var name in map) {                               \n";
+			code += "                                                        \n";
+			code += "    var ref = _get(name);                               \n";
+			code += "    var proto = {};                                     \n";
+			code += "    for (var prop in ref.prototype) {                   \n";
+			code += "      proto[prop] = ref.prototype[prop];                \n";
+			code += "    }                                                   \n";
+			code += "                                                        \n";
+			code += "    ref.prototype = {};                                 \n";
+			code += "                                                        \n";
+			code += "    var args = [ ref.prototype ];                       \n";
+			code += "                                                        \n";
+			code += "    for (var i = 0, l = map[name].length; i < l; i++) { \n";
+			code += "      args.push(_get(map[name][i]).prototype);          \n";
+			code += "    }                                                   \n";
+			code += "                                                        \n";
+			code += "    args.push(proto);                                   \n";
+			code += "                                                        \n";
+			code += "    lychee.extend.apply(lychee, args);                  \n";
+			code += "                                                        \n";
+			code += "  }                                                     \n";
+			code += "                                                        \n";
+			code += "})({                                                    \n";
+
+			for (b = 0, l = this.__buildOrder.length; b < l; b++) {
+
+				reference = this.__buildOrder[b];
+				lyDefBlock = this.__tree[reference];
+
+				if (lyDefBlock._includes.length) {
+
+					code += '\t\'' + reference + '\': [\'';
+					code += lyDefBlock._includes.join('\',\'');
+					code += '\']';
+
+					if (b < l - 1) {
+						code += ',\n';
+					} else {
+						code += '\n';
+					}
+
+				}
+
+			}
+
+			code += "}, this);                                               \n";
+
+
+			// 4. Initialization
 			code += '(' + this.__buildCallback + ')(this.lychee, this);';
 
 			return code;
@@ -889,17 +1050,29 @@ if (Object.prototype.toString.call(this.lychee) !== '[object Object]') {
 	};
 
 
+	var _builder = null;
+
 	lychee.build = function(callback, scope) {
 
-		var builder = new lychee.Builder();
-		var env = lychee.getEnvironment();
-
-		builder.build(env, callback, scope);
-
-		return builder;
+		_builder = new lychee.Builder();
+		_builder.build(lychee.getEnvironment(), callback, scope);
 
 	};
 
-})(this.lychee, this);
+	lychee.generate = function(callback, scope) {
 
+		callback = callback instanceof Function ? callback : function() {};
+		scope = scope !== undefined ? scope : global;
+
+		if (_builder === null) {
+			_builder = new lychee.Builder();
+		}
+
+		var code = _builder.generate(lychee.getEnvironment());
+
+		callback.call(scope, code);
+
+	};
+
+})(lychee, typeof global !== 'undefined' ? global : this);
 

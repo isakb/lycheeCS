@@ -64,7 +64,6 @@ lychee.define('Track').tags({
 	}
 
 
-
 	var _supportedFormats = [];
 	for (var ext in _codecs) {
 		if (_codecs[ext] !== false) {
@@ -75,7 +74,6 @@ lychee.define('Track').tags({
 	if (lychee.debug === true) {
 		console.log("lychee.Track: Supported media formats are " + _supportedFormats.join(', '));
 	}
-
 
 
 	var Class = function(id, settings, isReady) {
@@ -133,6 +131,12 @@ lychee.define('Track').tags({
 				formats: []
 			},
 
+
+
+			/*
+			 * PRIVATE API
+			 */
+
 			__init: function(url) {
 
 				// Shared context = more performance
@@ -174,6 +178,7 @@ lychee.define('Track').tags({
 			/*
 			 * PUBLIC API
 			 */
+
 			play: function(loop) {
 
 				loop = loop === true ? true : false;
@@ -228,6 +233,7 @@ lychee.define('Track').tags({
 			// a setTimeout() way of doing this, but it caused
 			// several timing problems due to different behaviours
 			// of timeouts if a Page/Tab is hidden
+
 			pause: function() {
 				this.__wasLoopingBeforePause = this.__isLooping;
 				this.stop();
@@ -245,12 +251,7 @@ lychee.define('Track').tags({
 					this.__gain.gain.value = 0;
 					this.__isMuted = true;
 
-					return true;
-
 				}
-
-
-				return false;
 
 			},
 
@@ -261,27 +262,7 @@ lychee.define('Track').tags({
 					this.__gain.gain.value = this.__unmuteVolume || 1;
 					this.__isMuted = false;
 
-					return true;
-
 				}
-
-
-				return false;
-
-			},
-
-			getVolume: function() {
-				return this.__gain.gain.value;
-			},
-
-			setVolume: function(volume) {
-
-				var newVolume = Math.min(Math.max(0, volume), 1);
-				this.__gain.gain.value = newVolume;
-
-
-				// Actually can't fail by spec, hugh?
-				return true;
 
 			},
 
@@ -310,6 +291,17 @@ lychee.define('Track').tags({
 
 			isReady: function() {
 				return this.isIdle() && this.__isReady;
+			},
+
+			getVolume: function() {
+				return this.__gain.gain.value;
+			},
+
+			setVolume: function(volume) {
+
+				var newVolume = Math.min(Math.max(0, volume), 1);
+				this.__gain.gain.value = newVolume;
+
 			}
 
 		};
@@ -332,6 +324,7 @@ lychee.define('Track').tags({
 			/*
 			 * PRIVATE API
 			 */
+
 			__init: function(url) {
 
 				this.__audio = new Audio(url);
@@ -390,6 +383,7 @@ lychee.define('Track').tags({
 			/*
 			 * PUBLIC API
 			 */
+
 			play: function(loop) {
 
 				loop = loop === true ? true : false;
@@ -433,11 +427,7 @@ lychee.define('Track').tags({
 					this.__audio.volume = 0;
 					this.__isMuted = true;
 
-					return true;
-
 				}
-
-				return false;
 
 			},
 
@@ -448,28 +438,7 @@ lychee.define('Track').tags({
 					this.__audio.volume = this.__unmuteVolume || 1;
 					this.__isMuted = false;
 
-					return true;
-
 				}
-
-				return false;
-
-			},
-
-			getVolume: function() {
-				return this.__audio.volume;
-			},
-
-			setVolume: function(volume) {
-
-				var newVolume = Math.min(Math.max(0, volume), 1);
-				this.__audio.volume = newVolume;
-
-				if (newVolume === volume) {
-					return true;
-				}
-
-				return false;
 
 			},
 
@@ -503,6 +472,17 @@ lychee.define('Track').tags({
 
 			isReady: function() {
 				return this.isIdle() && this.__isReady === true;
+			},
+
+			getVolume: function() {
+				return this.__audio.volume;
+			},
+
+			setVolume: function(volume) {
+
+				var newVolume = Math.min(Math.max(0, volume), 1);
+				this.__audio.volume = newVolume;
+
 			}
 
 		};

@@ -6,32 +6,39 @@ lychee.define('game.DeviceSpecificHacks').exports(function(lychee, global) {
 
 	var Callback = function() {
 
-		if (global.navigator.appName === 'V8GL') {
+		if (typeof global.navigator !== 'undefined') {
 
-			this.settings.fullscreen = true;
+			if (global.navigator.appName === 'V8GL') {
 
-			_alreadyBound = true;
+				this.settings.fullscreen = true;
 
-			return;
+				_alreadyBound = true;
 
-		} else if (global.navigator.userAgent.match(/iPad/)) {
+				return;
 
-			this.settings.fullscreen = true;
+			} else if (global.navigator.userAgent.match(/iPad/)) {
 
-		} else if (global.navigator.userAgent.match(/Android/)) {
+				this.settings.fullscreen = true;
 
-			if (_orientation !== 0) {
-				// FIXME: What to do then? Crappy Android behaviours...
+			} else if (global.navigator.userAgent.match(/Android/)) {
+
+				if (_orientation !== 0) {
+					// FIXME: What to do then? Crappy Android behaviours...
+				}
+
+				global.scrollTo(0, 1);
+
+				this.settings.fullscreen = true;
+
 			}
-
-			global.scrollTo(0, 1);
-
-			this.settings.fullscreen = true;
 
 		}
 
 
-		if (_alreadyBound === false) {
+		if (
+			typeof global.addEventListener === 'function'
+			&& _alreadyBound === false
+		) {
 
 			var that = this;
 

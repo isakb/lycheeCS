@@ -1,11 +1,64 @@
 
 lychee.define('lychee.game.Loop').includes([
 	'lychee.Events'
-]).exports(function(lychee, global) {
+]).supports(function(lychee, global) {
 
-	var _globalIntervalId = null,
-		_timeoutId = 0,
+	if (typeof setInterval === 'function') {
+		return true;
+	}
+
+	return false;
+
+}).exports(function(lychee, global) {
+
+	var _instances = [];
+
+	var _listeners = {
+
+		interval: function() {
+
+			for (var i = 0, l = _instances.length; i < l; i++) {
+
+				var instance = _instances[i];
+				var clock = Date.now() - instance.__clock.start;
+
+				instance._updateLoop(clock);
+				instance._renderLoop(clock);
+
+			}
+
+		}
+
+	};
+
+
+	(function(callsPerSecond) {
+
+		var interval = typeof setInterval === 'function';
+		if (interval === true) {
+			global.setInterval(_listeners.interval, callsPerSecond);
+		}
+
+
+		if (lychee.debug === true) {
+
+			var methods = [];
+			if (interval) methods.push('setInterval');
+
+			if (methods.length === 0) methods.push('NONE');
+
+			console.log('lychee.game.Loop: Supported interval methods are ' + methods.join(', '));
+
+		}
+
+
+	})(1000 / 60);
+
+
+
+	var _timeoutId  = 0,
 		_intervalId = 0;
+
 
 	var Class = function(data) {
 
@@ -13,11 +66,15 @@ lychee.define('lychee.game.Loop').includes([
 
 		this.__timeouts = {};
 		this.__intervals = {};
+		this.__state = 'running';
 
 		lychee.Events.call(this, 'loop');
 
 
-		this.reset(settings.update, settings.render);
+		var ok = this.reset(settings.update, settings.render);
+		if (ok === true) {
+			_instances.push(this);
+		}
 
 		settings = null;
 
@@ -26,16 +83,20 @@ lychee.define('lychee.game.Loop').includes([
 
 	Class.prototype = {
 
+		/*
+		 * PUBLIC API
+		 */
+
 		reset: function(updateFps, renderFps) {
 
-			updateFps = typeof updateFps === 'number' ? updateFps : null;
-			renderFps = typeof renderFps === 'number' ? renderFps : null;
+			updateFps = typeof updateFps === 'number' ? updateFps : 0;
+			renderFps = typeof renderFps === 'number' ? renderFps : 0;
 
 
-			if (
-				updateFps === null || renderFps === null
-				|| updateFps < 1 || renderFps < 1
-			) {
+			if (updateFps < 0) updateFps = 0;
+			if (renderFps < 0) renderFps = 0;
+
+			if (updateFps === 0 && renderFps === 0) {
 				return false;
 			}
 
@@ -46,17 +107,15 @@ lychee.define('lychee.game.Loop').includes([
 				render: 0
 			};
 
-			this.__ms = {
-				update: 1000 / updateFps,
-				render: 1000 / renderFps
-			};
+
+			this.__ms = {};
+
+			if (updateFps > 0) this.__ms.update = 1000 / updateFps;
+			if (renderFps > 0) this.__ms.render = 1000 / updateFps;
 
 
 			this.__updateFps = updateFps;
 			this.__renderFps = renderFps;
-
-
-			this.__setup();
 
 
 			return true;
@@ -131,6 +190,10 @@ lychee.define('lychee.game.Loop').includes([
 
 		},
 
+		isRunning: function() {
+			return this.__state === 'running';
+		},
+
 
 
 		/*
@@ -148,7 +211,6 @@ lychee.define('lychee.game.Loop').includes([
 				this.__clock.render = clock;
 			}
 
-
 		},
 
 		_updateLoop: function(clock) {
@@ -157,10 +219,7 @@ lychee.define('lychee.game.Loop').includes([
 
 
 			var delta = clock - this.__clock.update;
-			if (
-				delta >= this.__ms.update
-				|| this.__ms.min === this.__ms.update
-			) {
+			if (delta >= this.__ms.update) {
 				this.trigger('update', [ clock, delta ]);
 				this.__clock.update = clock;
 			}
@@ -196,34 +255,6 @@ lychee.define('lychee.game.Loop').includes([
 				}
 
 			}
-
-		},
-
-
-
-		/*
-		 * PRIVATE API
-		 */
-
-		__setup: function() {
-
-			if (_globalIntervalId !== null) {
-				global.clearInterval(_globalIntervalId);
-			}
-
-
-			this.__ms.min = this.__ms.update < this.__ms.render ? this.__ms.update : this.__ms.render;
-
-			var that = this;
-
-			_globalIntervalId = global.setInterval(function() {
-
-				var clock = Date.now() - that.__clock.start;
-				that._updateLoop(clock);
-				that._renderLoop(clock);
-
-
-			}, this.__ms.min);
 
 		}
 
