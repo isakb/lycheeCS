@@ -1,4 +1,3 @@
-
 # lycheeCS (v0.6)
 
 Forked from lycheeJS v0.6, lycheeCS is a CoffeeScript conversion of a useful
@@ -18,13 +17,9 @@ The lycheeCS framework is licensed under MIT License.
 # Examples and Game Boilerplate
 
 There is the [Game Boilerplate](http://martens.ms/lycheeJS/game/boilerplate)
-and the [Jewelz Game](http://martens.ms/lycheeJS/game/jewelz) that show you
-how to develop a real cross-platform game and best practices in high-performance
-JavaScript code.
+and the [Jewelz Game](http://martens.ms/lycheeJS/game/jewelz) from lycheeJS to examine.
 
-The example source codes are all available at the github repository:
-
-[Link to game folder on github](https://github.com/martensms/lycheeJS/tree/master/game)
+[The example source codes are all available at the lycheeJS github repository](https://github.com/martensms/lycheeJS/tree/master/game).
 
 
 # Documentation
