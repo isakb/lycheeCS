@@ -269,8 +269,8 @@ lychee
       console.log "lychee.Input:", key, name, delta  if lychee.debug is true
 
       # allow bind('key') and bind('ctrl-a');
-      @trigger "key", [key, name, delta]
-      @trigger name, [delta]
+      @trigger "key", [key, name, delta, event]
+      @trigger name, [delta, event]
       @_clock.key = Date.now()
 
     _processTouch: (id, x, y) ->
