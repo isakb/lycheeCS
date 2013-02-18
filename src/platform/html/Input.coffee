@@ -12,113 +12,81 @@ lychee
 
   _listeners =
     keydown: (event) ->
-      i = 0
-      l = _instances.length
-
-      while i < l
-        _instances[i]._processKey event.keyCode, event.ctrlKey, event.altKey, event.shiftKey
-        i++
+      for instance in _instances
+        instance._processKeyEvent event
+      null
 
     touchstart: (event) ->
       event.preventDefault()
       event.stopPropagation()
-      i = 0
-      l = _instances.length
-
-      while i < l
-        if event.touches and event.touches.length
-          t = 0
-          tl = event.touches.length
-
-          while t < tl
-            _instances[i]._processTouch t, event.touches[t].pageX, event.touches[t].pageY
-            t++
+      for instance in _instances
+        if event.touches?.length
+            instance._processTouch i, touches.pageX, touches.pageY
         else
-          _instances[i]._processTouch 0, event.pageX, event.pageY
-        i++
+          instance._processTouch 0, event.pageX, event.pageY
+      null
 
     touchmove: (event) ->
-      i = 0
-      l = _instances.length
-
-      while i < l
-        if event.touches and event.touches.length
-          t = 0
-          tl = event.touches.length
-
-          while t < tl
-            _instances[i]._processSwipe t, "move", event.touches[t].pageX, event.touches[t].pageY
-            t++
+      for instance in _instances
+        if event.touches?.length
+          for touches, i in event.touches
+            instance._processSwipe i, "move", touches.pageX, touches.pageY
         else
-          _instances[i]._processSwipe 0, "move", event.pageX, event.pageY
-        i++
+          instance._processSwipe 0, "move", event.pageX, event.pageY
+      null
 
     touchend: (event) ->
-      i = 0
-      l = _instances.length
-
-      while i < l
-        if event.touches and event.touches.length
-          t = 0
-          tl = event.touches.length
-
-          while t < tl
-            _instances[i]._processSwipe t, "end", event.touches[t].pageX, event.touches[t].pageY
-            t++
+      for instance in _instances
+        if event.touches?.length
+          for touches, i in event.touches
+            instance._processSwipe i, "end", touches.pageX, touches.pageY
         else
-          _instances[i]._processSwipe 0, "end", event.pageX, event.pageY
-        i++
+          instance._processSwipe 0, "end", event.pageX, event.pageY
+      null
 
     mousestart: (event) ->
       _mouseactive = true
-      i = 0
-      l = _instances.length
-
-      while i < l
-        _instances[i]._processTouch 0, event.pageX, event.pageY
-        i++
+      for instance in _instances
+        instance._processTouch 0, event.pageX, event.pageY
+      null
 
     mousemove: (event) ->
-      return  if _mouseactive is false
-      i = 0
-      l = _instances.length
-
-      while i < l
-        _instances[i]._processSwipe 0, "move", event.pageX, event.pageY
-        i++
+      return  unless _mouseactive
+      for instance in _instances
+        instance._processSwipe 0, "move", event.pageX, event.pageY
+      null
 
     mouseend: (event) ->
-      return  if _mouseactive is false
+      return  unless _mouseactive
       _mouseactive = false
-      i = 0
-      l = _instances.length
+      for instance in _instances
+        instance._processSwipe 0, "end", event.pageX, event.pageY
+      null
 
-      while i < l
-        _instances[i]._processSwipe 0, "end", event.pageX, event.pageY
-        i++
-
-  (->
+  do ->
     keyboard = "onkeydown" of global
-    document.addEventListener "keydown", _listeners.keydown, true  if keyboard is true
+    document.addEventListener "keydown", _listeners.keydown, true  if keyboard
     touch = "ontouchstart" of global
     mouse = "onmousedown" of global
-    if touch is true
-      document.addEventListener "touchstart", _listeners.touchstart, true
-      document.addEventListener "touchmove", _listeners.touchmove, true
-      document.addEventListener "touchend", _listeners.touchend, true
-    else if mouse is true
-      document.addEventListener "mousedown", _listeners.mousestart, true
-      document.addEventListener "mousemove", _listeners.mousemove, true
-      document.addEventListener "mouseup", _listeners.mouseend, true
-      document.addEventListener "mouseout", _listeners.mouseend, true
-    if lychee.debug is true
+
+    listen = (eventName, listenerName = eventName) ->
+      document.addEventListener eventName, _listeners[listenerName], true
+
+    if touch
+      for eventName in ["touchstart", "touchmove", "touchend"]
+        listen eventName
+    else if mouse
+      listen "mousedown", "mousestart"
+      listen "mousemove", "mousemove"
+      listen "mouseup", "mouseend"
+      listen "mouseout", "mouseend"
+    if lychee.debug
       methods = []
       methods.push "Keyboard"  if keyboard
       methods.push "Touch"  if touch
       methods.push "Mouse"  if mouse
       methods.push "NONE"  if methods.length is 0
       console.log "lychee.Input: Supported input methods are " + methods.join(", ")
-  )()
 
 
   Class = class Input
@@ -232,59 +200,70 @@ lychee
       id = (if typeof id is "string" then id else null)
       if id isnt null and @_touchareas[id] isnt undefined
         delete @_touchareas[id]
-
         return true
       false
-
 
     #
     # PRIVATE API
     #
-    _processKey: (code, ctrl, alt, shift) ->
-      return  if @_fireKey is false
+    _processKeyEvent: (event) ->
+      {keyCode, ctrlKey, altKey, shiftKey} = event
+
+      return  unless @_fireKey
 
       # 1. Validate key event
-      return  if Class.KEYMAP[code] is undefined
-      ctrl = (if ctrl is true then true else false)
-      alt = (if alt is true then true else false)
-      shift = (if shift is true then true else false)
+      return  if Class.KEYMAP[keyCode] is undefined
+
+      ctrl = !!ctrlKey
+      alt = !!altKey
+      shift = !!shiftKey
 
       # 2. Only fire after the enforced delay
       delta = Date.now() - @_clock.key
       return  if delta < @_delay
 
       # 3. Check for current key being a modifier
-      return  if @_fireModifiers is false and (code is 16 or code is 17 or code is 18) and (ctrl is true or alt is true or shift is true)
-      key = Class.KEYMAP[code]
-      name = ""
-      name += "ctrl-"  if ctrl is true and key isnt "ctrl"
-      name += "alt-"  if alt is true and key isnt "alt"
-      if shift is true and key isnt "shift"
-        name += "shift-"
+      return  if not @_fireModifiers and (keyCode in [16, 17, 18]) and (ctrl or alt or shift)
 
+      key = Class.KEYMAP[keyCode]
+      name = ""
+      name += "ctrl-"  if ctrl and key isnt "ctrl"
+      name += "alt-"  if alt and key isnt "alt"
+
+      if shift and key isnt "shift"
+        name += "shift-"
         # WTF is this shit?
         # t > T, but 0 > ! doesn't work.
-        key = String.fromCharCode(code)
+        key = String.fromCharCode(keyCode)
+
       name += key.toLowerCase()
-      console.log "lychee.Input:", key, name, delta  if lychee.debug is true
+
+      if @_events[name]
+        event.preventDefault()
+        event.stopPropagation()
+
+      console.log "lychee.Input:", key, name, delta  if lychee.debug
 
       # allow bind('key') and bind('ctrl-a');
-      @trigger "key", [key, name, delta, event]
-      @trigger name, [delta, event]
+      @trigger "key", [key, name, delta]
+      @trigger name, [delta]
       @_clock.key = Date.now()
 
     _processTouch: (id, x, y) ->
-      return  if @_fireTouch is false
+      return  unless @_fireTouch
 
       # 1. Only fire after the enforced delay
       delta = Date.now() - @_clock.touch
       return  if delta < @_delay
 
       # Don't cancel the swipe event by default
-      cancelSwipe = @trigger("touch", [id,
+      cancelSwipe = if @trigger("touch", [id,
         x: x
         y: y
-      , delta]) is true
+      , delta])
+        true
+      else
+        false
 
       # 2. Fire known Touchareas
       for tid of @_touchareas
@@ -296,11 +275,12 @@ lychee
       @_processSwipe id, "start", x, y  if cancelSwipe isnt true and @_swipes[id] is null
 
     _processSwipe: (id, state, x, y) ->
-      return  if @_fireSwipe is false
+      return   unless @_fireSwipe
 
       # 1. Only fire after the enforced delay
       delta = Date.now() - @_clock.swipe
       return  if delta < @_delay
+
       position =
         x: x
         y: y
