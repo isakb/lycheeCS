@@ -1,0 +1,20 @@
+{
+  "name": "lycheeCS",
+  "version": "0.0.0",
+  "description": "Forked from lycheeJS v0.6, lycheeCS is a CoffeeScript conversion of a useful subset of the lycheeJS game library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/isakb/lycheeCS"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/isakb/lycheeCS/issues"
+  },
+  "devDependencies": {
+    "coffee-script-redux": "~2.0.0-beta7"
+  }
+}
