@@ -1,6 +1,6 @@
 COFFEE := node_modules/.bin/coffee
 COFFEE_SOURCES := $(shell find src/ -name '*.coffee')
-COFFEE_OBJECTS := $(addprefix lib/,$(subst src/,,$(COFFEE_SOURCES:%.coffee=%.js)))
+COFFEE_OBJECTS := $(subst src/,lib/,$(COFFEE_SOURCES:%.coffee=%.js))
 
 .PHONY: all deps prepare build clean
 
@@ -14,7 +14,6 @@ prepare:
 	@mkdir -p lib/physics lib/game lib/ui || true
 	@cp src/package.json lib/
 	@cp src/platform/html/bootstrap.progress.css lib/platform/html/
-	#@node_modules/.bin/coffee -c -o lib src
 
 build: $(COFFEE_OBJECTS)
 
