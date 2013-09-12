@@ -3,7 +3,7 @@ lychee
 .includes(["lychee.game.Graph"])
 .exports (lychee, global) ->
 
-  class lychee.ui.Graph
+  class lychee.ui.Graph extends lychee.game.Graph
     constructor: (renderer) ->
       @_renderer = (if renderer isnt undefined then renderer else null)
       @_clock = null
@@ -14,8 +14,7 @@ lychee
 
       @_tween = null
       @_cache = tween: {}
-      lychee.game.Graph.call this
-
+      super
 
     #
     # PUBLIC API
@@ -45,9 +44,8 @@ lychee
     render: (clock, delta) ->
       @_renderNode @_tree, @_offset.x, @_offset.y  if @_renderer isnt null
 
-    getEntityByPosition: (x, y, z, convert) ->
-      convert = (if convert is true then true else false)
-      if convert is true
+    getEntityByPosition: (x, y, z, convert = false) ->
+      if convert
         x -= @_offset.x  if x isnt null
         y -= @_offset.y  if y isnt null
         z -= @_offset.z  if z isnt null
@@ -67,7 +65,6 @@ lychee
           from:
             x: @_offset.x
             y: @_offset.y
-
           to: position
           callback: callback
           scope: scope
@@ -78,9 +75,9 @@ lychee
 
     setOffset: (offset) ->
       return false  if Object::toString.call(offset) isnt "[object Object]"
-      @_offset.x = (if typeof offset.x is "number" then offset.x else @_offset.x)
-      @_offset.y = (if typeof offset.y is "number" then offset.y else @_offset.y)
-      @_offset.z = (if typeof offset.z is "number" then offset.z else @_offset.z)
+      @_offset.x = if typeof offset.x is "number" then offset.x else @_offset.x
+      @_offset.y = if typeof offset.y is "number" then offset.y else @_offset.y
+      @_offset.z = if typeof offset.z is "number" then offset.z else @_offset.z
       true
 
 
@@ -89,21 +86,16 @@ lychee
     #
     _relayoutNode: (node, parent) ->
       node.entity.relayout parent.entity  if parent isnt null and parent.entity isnt null and node.entity isnt null and typeof node.entity.relayout is "function"
-      c = 0
-      l = node.children.length
-
-      while c < l
-        @_relayoutNode node.children[c], node
-        c++
+      for childNode in node.children
+        @_relayoutNode childNode, node
+      null
 
     _renderNode: (node, offsetX, offsetY) ->
       if node.entity isnt null
         @_renderer.renderUIEntity node.entity, offsetX, offsetY
-        offsetX += node.entity.getPosition().x
-        offsetY += node.entity.getPosition().y
-      c = 0
-      l = node.children.length
-
-      while c < l
-        @_renderNode node.children[c], offsetX, offsetY
-        c++
+        {x, y} = node.entity.getPosition()
+        offsetX += x
+        offsetY += y
+      for childNode in node.children
+        @_renderNode childNode, offsetX, offsetY
+      null

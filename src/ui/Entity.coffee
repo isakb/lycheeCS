@@ -3,7 +3,7 @@ lychee
 .includes(["lychee.game.Entity"])
 .exports (lychee, global) ->
 
-  class lychee.ui.Entity
+  class lychee.ui.Entity extends lychee.game.Entity
     constructor: (data) ->
       settings = lychee.extend({}, data)
       @_layout = null
@@ -12,7 +12,7 @@ lychee
       if settings.layout
         @setLayout settings.layout
         delete settings.layout
-      lychee.game.Entity.call this, settings
+      super settings
       settings = null
 
     #

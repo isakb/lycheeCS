@@ -153,7 +153,7 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
     _getAllIdsFromTree: (tree, prefix, ids) ->
       prefix = (if typeof prefix is "string" then prefix else "")
       returnTree = false
-      if Object::toString.call(ids) isnt "[object Array]"
+      if not Array.isArray(ids)
         ids = []
         returnTree = true
       for id of tree
@@ -377,12 +377,11 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
     build: (env, callback, scope) ->
       console.group "lychee.Builder"  if lychee.debug is true
       @_clock = Date.now()
-      @_tree = (if Object::toString.call(env.tree) is "[object Object]" then env.tree else {})
-      @_bases = (if Object::toString.call(env.bases) is "[object Object]" then env.bases else {})
-      @_tags = (if Object::toString.call(env.tags) is "[object Object]" then env.tags else {})
-      callback = (if callback instanceof Function then callback else ->
-      )
-      scope = (if scope isnt undefined then scope else global)
+      @_tree = if lychee.isObject(env.tree) then env.tree else {}
+      @_bases = if lychee.isObject(env.bases) then env.bases else {}
+      @_tags = if lychee.isObject(env.tags) then env.tags else {}
+      callback = if callback instanceof Function then callback else ->
+      scope = if scope isnt undefined then scope else global
       @_buildCallback = callback
       @_buildScope = scope
       @_buildStart = Object.keys(@_tree)[0]  if Object.keys(@_tree).length is 1

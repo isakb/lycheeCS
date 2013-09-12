@@ -3,8 +3,7 @@ lychee
 .tags(platform: "html")
 .includes(["lychee.Events"])
 .supports((lychee, global) ->
-  return true  if global.document and typeof global.document.addEventListener is "function"
-  false
+  global.document and typeof global.document.addEventListener is "function"
 ).exports (lychee, global) ->
 
   _instances = []

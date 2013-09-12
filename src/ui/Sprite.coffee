@@ -3,22 +3,18 @@ lychee
 .includes(["lychee.ui.Entity"])
 .exports (lychee, global) ->
 
-  class lychee.ui.Sprite
+  class lychee.ui.Sprite extends lychee.ui.Entity
     constructor: (data) ->
       settings = lychee.extend({}, data)
       @_image = null
       @_map = null
-
       # No Texture or Image validation
       @_image = settings.image  if settings.image isnt undefined
       @_map = settings.map  if Object::toString.call(settings.map) is "[object Object]"
       delete settings.image
-
       delete settings.map
-
-      lychee.ui.Entity.call this, settings
+      super settings
       settings = null
-
 
     setState: (id) ->
       result = lychee.ui.Entity::setState.call(this, id)

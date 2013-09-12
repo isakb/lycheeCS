@@ -23,6 +23,12 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
       namespace = "lychee"
     new lychee.DefinitionBlock(namespace, classname)
 
+  lychee.isObject = (x) ->
+    Object(x) is x
+
+  lychee.isArray = (x) ->
+    Array.isArray(x)
+
   lychee.extend = (obj, objs...) ->
     for obj2 in objs
       if obj2
@@ -30,22 +36,18 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
           obj[prop] = obj2[prop]
     obj
 
-  lychee.rebase = (settings) ->
-    settings = (if Object::toString.call(settings) is "[object Object]" then settings else null)
-    if settings isnt null
-      for namespace of settings
-        _bases[namespace] = settings[namespace]
+  lychee.rebase = (settings = {}) ->
+    for namespace of settings
+      _bases[namespace] = settings[namespace]
     lychee
 
-  lychee.tag = (settings) ->
-    settings = (if Object::toString.call(settings) is "[object Object]" then settings else null)
-    if settings isnt null
-      for tag of settings
-        values = null
-        if Object::toString.call(settings[tag]) is "[object Array]"
-          values = settings[tag]
-        else values = [settings[tag]]  if typeof settings[tag] is "string"
-        _tags[tag] = values  if values isnt null
+  lychee.tag = (settings = {}) ->
+    for tag of settings
+      setting = settings[tag]
+      if Array.isArray setting
+        _tags[tag] = setting
+      else if typeof setting is "string"
+        _tags[tag] = [setting]
     lychee
 
   lychee.getEnvironment = ->
@@ -61,8 +63,8 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
 
     constructor: (space, name) ->
       # allows new lychee.DefinitionBlock('Renderer') without a namespace
-      space = (if typeof name is "string" then space else null)
-      name = (if typeof name is "string" then name else space)
+      space = if typeof name is "string" then space else null
+      name = if typeof name is "string" then name else space
       @_space = space
       @_name = name
       @_tags = {}
@@ -70,13 +72,12 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
       @_includes = []
       @_exports = null
       @_supports = null
-      this
 
     _throw: (message) ->
       console.warn "lychee.DefinitionBlock: Use lychee.define('" + @_space + "." + @_id + "')." + message + " instead.", this  if lychee.debug is true
 
     tags: (tags) ->
-      if Object::toString.call(tags) isnt "[object Object]"
+      if not lychee.isObject tags
         @_throw "tags({ tag: 'value' })"
         return this
       for name of tags

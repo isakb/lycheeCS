@@ -4,7 +4,7 @@ lychee
 .includes(["lychee.ui.Entity"])
 .exports (lychee, global) ->
 
-  class lychee.ui.Button
+  class lychee.ui.Button extends lychee.ui.Entity
     constructor: (data) ->
       settings = lychee.extend({}, data)
       @_background = null
@@ -19,7 +19,7 @@ lychee
         @_label = settings.label
         settings.width = settings.label.width  if settings.label.width > settings.width
         settings.height = settings.label.height  if settings.label.height > settings.height
-      lychee.ui.Entity.call this, settings
+      super settings
       settings = null
 
 

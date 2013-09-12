@@ -4,9 +4,7 @@ lychee
 .includes(["lychee.Renderer"])
 .exports (lychee, global) ->
 
-  class lychee.ui.Renderer
-    constructor: (id) ->
-      lychee.Renderer.call this, id
+  class lychee.ui.Renderer extends lychee.Renderer
 
     renderUIEntity: (entity, offsetX, offsetY) ->
       if entity instanceof lychee.ui.Button
@@ -15,34 +13,35 @@ lychee
         @renderUISprite entity, offsetX, offsetY
       else if entity instanceof lychee.ui.Text
         @renderUIText entity, offsetX, offsetY
-      else @renderUITile entity, offsetX, offsetY  if entity instanceof lychee.ui.Tile
+      else if entity instanceof lychee.ui.Tile
+        @renderUITile entity, offsetX, offsetY
 
-    renderUIButton: (entity, offsetX, offsetY) ->
-      offsetX = offsetX or 0
-      offsetY = offsetY or 0
-      pos = entity.getPosition()
+    renderUIButton: (entity, offsetX = 0, offsetY = 0) ->
+      {x, y} = entity.getPosition()
+      x += offsetX
+      y += offsetY
       background = entity.getBackground()
-      @renderUISprite background, pos.x + offsetX, pos.y + offsetY  if background isnt null
+      if background isnt null
+        @renderUISprite background, x, y
       label = entity.getLabel()
-      @renderUIText label, pos.x + offsetX, pos.y + offsetY  if label isnt null
+      if label isnt null
+        @renderUIText label, x, y
 
-    renderUISprite: (entity, offsetX, offsetY) ->
-      offsetX = offsetX or 0
-      offsetY = offsetY or 0
-      map = entity.getMap()
-      pos = entity.getPosition()
-      image = entity.getImage()
-      @drawSprite pos.x + offsetX - entity.width / 2, pos.y + offsetY - entity.height / 2, image, map
+    renderUISprite: (entity, offsetX = 0, offsetY = 0) ->
+      {x, y, width, height} = entity.getBounds()
+      x += offsetX - width / 2
+      y += offsetY - height / 2
+      @drawSprite x, y, entity.getImage(), entity.getMap()
 
-    renderUIText: (entity, offsetX, offsetY) ->
-      offsetX = offsetX or 0
-      offsetY = offsetY or 0
-      pos = entity.getPosition()
-      @drawText pos.x + offsetX - entity.width / 2, pos.y + offsetY - entity.height / 2, entity.text, entity.font
+    renderUIText: (entity, offsetX = 0, offsetY = 0) ->
+      {x, y, width, height} = entity.getBounds()
+      x += offsetX - width / 2
+      y += offsetY - height / 2
+      @drawText x, y, entity.text, entity.font
 
-    renderUITile: (entity, offsetX, offsetY) ->
-      return  if entity.color is null
-      offsetX = offsetX or 0
-      offsetY = offsetY or 0
-      pos = entity.getPosition()
-      @drawBox pos.x + offsetX - entity.width / 2, pos.y + offsetY - entity.height / 2, pos.x + offsetX + entity.width / 2, pos.y + offsetY + entity.height / 2, entity.color, true
+    renderUITile: (entity, offsetX = 0, offsetY = 0) ->
+      return  unless entity.color?
+      {x, y, width, height} = entity.getBounds()
+      x += offsetX
+      y += offsetY
+      @drawBox x, y, x + width, y + height, entity.color, true

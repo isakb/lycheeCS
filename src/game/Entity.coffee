@@ -40,11 +40,9 @@ lychee
       if Object::toString.call(settings.animation) is "[object Object]"
         if typeof settings.animation.duration is "number"
           duration = settings.animation.duration
-          loop_ = (if settings.animation.loop is true then true else false)
+          loop_ = !!settings.animation.loop
           delete settings.animation.duration
-
           delete settings.animation.loop
-
           @setAnimation duration, settings.animation, loop_
       settings = null
 
@@ -92,79 +90,85 @@ lychee
 
     @TWEEN =
       linear: (t, dx, dy, dz) ->
-        @_cache.tween.x = t * dx
-        @_cache.tween.y = t * dy
-        @_cache.tween.z = t * dz
-        @_cache.tween
+        {tween} = @_cache
+        tween.x = t * dx
+        tween.y = t * dy
+        tween.z = t * dz
+        tween
 
       easeIn: (t, dx, dy, dz) ->
         f = 1 * Math.pow(t, 3)
-        @_cache.tween.x = f * dx
-        @_cache.tween.y = f * dy
-        @_cache.tween.z = f * dz
-        @_cache.tween
+        {tween} = @_cache
+        tween.x = f * dx
+        tween.y = f * dy
+        tween.z = f * dz
+        tween
 
       easeOut: (t, dx, dy, dz) ->
         f = Math.pow(t - 1, 3) + 1
-        @_cache.tween.x = f * dx
-        @_cache.tween.y = f * dy
-        @_cache.tween.z = f * dz
-        @_cache.tween
+        {tween} = @_cache
+        tween.x = f * dx
+        tween.y = f * dy
+        tween.z = f * dz
+        tween
 
       easeInOut: (t, dx, dy, dz) ->
-        f = undefined
-        if (t /= 0.5) < 1
-          f = 0.5 * Math.pow(t, 3)
+        f = if (t /= 0.5) < 1
+          0.5 * Math.pow(t, 3)
         else
-          f = 0.5 * (Math.pow(t - 2, 3) + 2)
-        @_cache.tween.x = f * dx
-        @_cache.tween.y = f * dy
-        @_cache.tween.z = f * dz
-        @_cache.tween
+          0.5 * (Math.pow(t - 2, 3) + 2)
+        {tween} = @_cache
+        tween.x = f * dx
+        tween.y = f * dy
+        tween.z = f * dz
+        tween
 
       bounceEaseIn: (t, dx, dy, dz) ->
         k = 1 - t
-        if (k /= 1) < (1 / 2.75)
-          f = 1 * (7.5625 * Math.pow(k, 2))
+        f = if (k /= 1) < (1 / 2.75)
+          1 * (7.5625 * Math.pow(k, 2))
         else if k < (2 / 2.75)
-          f = 7.5625 * (k -= (1.5 / 2.75)) * k + .75
+          7.5625 * (k -= (1.5 / 2.75)) * k + .75
         else if k < (2.5 / 2.75)
-          f = 7.5625 * (k -= (2.25 / 2.75)) * k + .9375
+          7.5625 * (k -= (2.25 / 2.75)) * k + .9375
         else
-          f = 7.5625 * (k -= (2.625 / 2.75)) * k + .984375
-        @_cache.tween.x = (1 - f) * dx
-        @_cache.tween.y = (1 - f) * dy
-        @_cache.tween.z = (1 - f) * dz
-        @_cache.tween
+          7.5625 * (k -= (2.625 / 2.75)) * k + .984375
+        {tween} = @_cache
+        tween.x = (1 - f) * dx
+        tween.y = (1 - f) * dy
+        tween.z = (1 - f) * dz
+        tween
 
       bounceEaseOut: (t, dx, dy, dz) ->
-        f = undefined
-        if (t /= 1) < (1 / 2.75)
-          f = 1 * (7.5625 * Math.pow(t, 2))
+        f = if (t /= 1) < (1 / 2.75)
+          1 * (7.5625 * Math.pow(t, 2))
         else if t < (2 / 2.75)
-          f = 7.5625 * (t -= (1.5 / 2.75)) * t + .75
+          7.5625 * (t -= (1.5 / 2.75)) * t + .75
         else if t < (2.5 / 2.75)
-          f = 7.5625 * (t -= (2.25 / 2.75)) * t + .9375
+          7.5625 * (t -= (2.25 / 2.75)) * t + .9375
         else
-          f = 7.5625 * (t -= (2.625 / 2.75)) * t + .984375
-        @_cache.tween.x = f * dx
-        @_cache.tween.y = f * dy
-        @_cache.tween.z = f * dz
-        @_cache.tween
+          7.5625 * (t -= (2.625 / 2.75)) * t + .984375
+        {tween} = @_cache
+        tween.x = f * dx
+        tween.y = f * dy
+        tween.z = f * dz
+        tween
 
       sinEaseIn: (t, dx, dy, dz) ->
         f = -1 * Math.cos(t * Math.PI / 2) + 1
-        @_cache.tween.x = f * dx
-        @_cache.tween.y = f * dy
-        @_cache.tween.z = f * dz
-        @_cache.tween
+        {tween} = @_cache
+        tween.x = f * dx
+        tween.y = f * dy
+        tween.z = f * dz
+        tween
 
       sinEaseOut: (t, dx, dy, dz) ->
         f = 1 * Math.sin(t * Math.PI / 2)
-        @_cache.tween.x = f * dx
-        @_cache.tween.y = f * dy
-        @_cache.tween.z = f * dz
-        @_cache.tween
+        {tween} = @_cache
+        tween.x = f * dx
+        tween.y = f * dy
+        tween.z = f * dz
+        tween
 
 
     #
@@ -292,6 +296,14 @@ lychee
 
     getPosition: ->
       @_position
+
+    getBounds: ->
+      {
+        x: @_position.x
+        y: @_position.y
+        @width
+        @height
+      }
 
     setPosition: (position) ->
       return false  if Object::toString.call(position) isnt "[object Object]"

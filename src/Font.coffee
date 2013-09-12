@@ -9,7 +9,7 @@ lychee
       @_cache = {}
       @_images = null
       @_sprite = null
-      if Object::toString.call(spriteOrImages) is "[object Array]"
+      if Array.isArray spriteOrImages
         @_images = spriteOrImages
       else
         @_sprite = spriteOrImages
@@ -26,18 +26,16 @@ lychee
       map: null
 
     _init: ->
-
       # Single Image Mode
       if @_images isnt null
         @_initImages()
-
       # Sprite Image Mode
-      else if @_sprite isnt null
-        if Object::toString.call(@settings.map) is "[object Array]"
-          test = @settings.map[0]
-          if Object::toString.call(test) is "[object Object]"
-            @_initSpriteXY()
-          else @_initSpriteX()  if typeof test is "number"
+      else if @_sprite isnt null and Array.isArray @settings.map
+        test = @settings.map[0]
+        if lychee.isObject test
+          @_initSpriteXY()
+        else if typeof test is "number"
+          @_initSpriteX()
 
     _initImages: ->
       c = 0

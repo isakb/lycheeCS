@@ -79,13 +79,11 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
       event = (if typeof event is "string" then event else null)
       if event isnt null and @_events[event] isnt undefined
         delete @_events[event]
-
         return true
       false
 
-    trigger: (event, args) ->
-      args = (if Object::toString.call(args) is "[object Array]" then args else [])
-      if @_events[event] isnt undefined
+    trigger: (event, args = []) ->
+      if @_events[event]
         @_events[event].callback.apply @_events[event].scope, args
         return true
       false
@@ -94,11 +92,11 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
     #
     # PUBLIC API
     #
-    load: (urls, map, forced) ->
-      urls = (if typeof urls is "string" then [urls] else urls)
-      map = (if map isnt undefined then map else null)
-      forced = (if typeof forced is "string" then forced else null)
-      return false  if Object::toString.call(urls) isnt "[object Array]"
+    load: (urls, map = null, forced) ->
+      urls = if typeof urls is "string" then [urls] else urls
+      return false  unless Array.isArray(urls)
+      map = if map isnt undefined then map else null
+      forced = if typeof forced is "string" then forced else null
       @_clock = Date.now()
 
       # 1. Load the assets via platform-specific APIs
