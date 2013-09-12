@@ -63,8 +63,8 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
                   candidate.namespaceId = mapping.namespaceId
                   candidate.refererId = mapping.refererId
                   candidate._loading = candidate.attachments.length + 1
-                  candidate.alternatives =
-                    mapping.alternatives.splice(1, mapping.alternatives.length - 1)  if mapping.alternatives.length > 1
+                  if mapping.alternatives.length > 1
+                    candidate.alternatives = mapping.alternatives.splice(1, mapping.alternatives.length - 1)
                   @_loading.classes[uid] = true
                   @_preloader.load candidate.url, candidate
                 else
@@ -424,17 +424,17 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
       includes = lyDefBlock._includes
       if includes.length and data?
         proto = {}
-        for prop of data::
+        for prop of data.prototype
           proto[prop] = data::[prop]
         namespace[classname] = data
-        namespace[classname]:: = {}
-        args = [namespace[classname]::]
+        namespace[classname].prototype = {}
+        args = [namespace[classname].prototype]
         for id in includes
           incLyDefBlock = @_getNodeFromTree(@_buildScope, id, ".")
-          if not incLyDefBlock or not incLyDefBlock::
+          if not incLyDefBlock or not incLyDefBlock.prototype
             console.warn "Inclusion of " + id + " failed. You either forgot to return it inside lychee.exports() or created an invalid definition block."  if lychee.debug is true
           else
-            args.push @_getNodeFromTree(@_buildScope, id, ".")::
+            args.push @_getNodeFromTree(@_buildScope, id, ".").prototype
         args.push proto
         lychee.extend.apply lychee, args
       else namespace[classname] = data  if data?

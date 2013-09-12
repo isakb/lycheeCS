@@ -12,7 +12,7 @@ lychee
       settings.height = @height
       delete settings.text
       delete settings.font
-      super settings
+      lychee.ui.Entity.call this, settings
 
     get: ->
       @text

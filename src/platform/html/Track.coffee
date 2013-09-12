@@ -276,9 +276,9 @@ lychee
 
 
   apiPrototype = if _context isnt null
-    AdvancedAudioApi::
+    AdvancedAudioApi.prototype
   else if _audio isnt null
-    BasicAudioApi::
+    BasicAudioApi.prototype
   else
     {}
 

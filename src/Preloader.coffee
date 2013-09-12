@@ -123,9 +123,9 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
 
       # 2. Start the global interval
       if _globalIntervalId is null
-        _globalIntervalId = global.setInterval(->
+        _globalIntervalId = global.setInterval((->
           _globalInterval()
-        , 100)
+        ), 100)
 
     get: (url) ->
       return _cache[url]  if _cache[url] isnt undefined
@@ -137,6 +137,6 @@ do (lychee = lychee, global = (if typeof global isnt "undefined" then global els
     #
 
     _load: (url, type, _cache) ->
-      throw new Error "lychee.Preloader: You need to include the platform-specific bootstrap.js to load other files.";
+      throw new Error "lychee.Preloader: You need to include the platform-specific bootstrap.js to load other files."
 
     _progress: (url, _cache) ->

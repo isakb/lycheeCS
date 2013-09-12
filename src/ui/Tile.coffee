@@ -9,6 +9,6 @@ lychee
       @color = settings.color
       delete settings.color
       settings.shape = lychee.game.Entity.SHAPE.rectangle
-      super settings
+      lychee.ui.Entity.call this, settings
 
   lychee.ui.Tile

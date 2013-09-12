@@ -19,7 +19,7 @@ lychee
         @_label = settings.label
         settings.width = settings.label.width  if settings.label.width > settings.width
         settings.height = settings.label.height  if settings.label.height > settings.height
-      super settings
+      lychee.ui.Entitye.call this, settings
       settings = null
 
 

@@ -256,10 +256,7 @@ lychee
       return  if delta < @_delay
 
       # Don't cancel the swipe event by default
-      cancelSwipe = if @trigger("touch", [id,
-        x: x
-        y: y
-      , delta])
+      cancelSwipe = if @trigger("touch", [id, {x, y}, delta])
         true
       else
         false

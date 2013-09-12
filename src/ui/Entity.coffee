@@ -12,7 +12,7 @@ lychee
       if settings.layout
         @setLayout settings.layout
         delete settings.layout
-      super settings
+      lychee.game.Entity.call this, settings
       settings = null
 
     #

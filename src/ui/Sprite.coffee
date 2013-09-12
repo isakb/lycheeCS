@@ -13,7 +13,7 @@ lychee
       @_map = settings.map  if Object::toString.call(settings.map) is "[object Object]"
       delete settings.image
       delete settings.map
-      super settings
+      lychee.ui.Entity.call this, settings
       settings = null
 
     setState: (id) ->

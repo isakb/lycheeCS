@@ -14,7 +14,7 @@ lychee
 
       @_tween = null
       @_cache = tween: {}
-      super
+      lychee.game.Graph.call this
 
     #
     # PUBLIC API
