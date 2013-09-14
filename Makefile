@@ -1,4 +1,5 @@
 COFFEE := node_modules/.bin/coffee
+COFFEE_ARGS := --contracts
 COFFEE_SOURCES := $(shell find src/ -name '*.coffee')
 COFFEE_OBJECTS := $(subst src/,lib/,$(COFFEE_SOURCES:%.coffee=%.js))
 
@@ -21,4 +22,4 @@ clean:
 	@rm -rf ./lib/
 
 lib/%.js: src/%.coffee
-	$(COFFEE) -j -i $< -o $@
+	$(COFFEE) $(COFFEE_ARGS) -c $< > $@
