@@ -15,6 +15,6 @@
     "url": "https://github.com/isakb/lycheeCS/issues"
   },
   "devDependencies": {
-    "coffee-script-redux": "~2.0.0-beta7"
+    "contracts.coffee": "~0.3.4"
   }
 }
